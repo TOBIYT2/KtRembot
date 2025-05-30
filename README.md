@@ -6,7 +6,10 @@ Bot con más de 300 comandos 👑
 
 
 ## Instalación por Cloud Shell
+
+```bash
 git clone https://github.com/TOBI-12/Rembot
+```
 
 ```bash
 cd Rembot
