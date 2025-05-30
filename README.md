@@ -2,7 +2,7 @@
 
 Si gustas un bot para tu grupo puedes hablar con mi owner 🐢 
 
-![Logo de Rembot](Menu3.jpg)
+![Logo de Rembot](Grupo.jpg)
 
 Bot con más de 300 comandos 👑
 
