@@ -8,14 +8,14 @@ Bot con más de 300 comandos 👑
 
 # Redes oficiales del bot
 
-## Grupo OFC
+**Grupo OFC**
 
 
 [![](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/E9j3js91NjYAYQvGW6Et2T)
 
 
 
-## canal OFC 
+**canal OFC**
 
 [![](https://img.shields.io/badge/WhatsApp%20Canal-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://whatsapp.com/channel/0029VapASNA9cDDT9yfhXr30)
 
