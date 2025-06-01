@@ -46,7 +46,7 @@ let handler = async (m, { conn, text, args, groupMetadata }) => {
     }
 
     if (args[0] === 'kick') {
-        if (total === 0) return conn.reply(m.chat, `❄️ *No hay bandos para patear en este grupo.*`, m)
+        if (total === 0) return conn.reply(m.chat, `💙 *No hay bandos para patear en este grupo.*`, m)
 
         for (const user of sider) {
             try {
@@ -56,10 +56,10 @@ let handler = async (m, { conn, text, args, groupMetadata }) => {
             }
         }
 
-        return conn.reply(m.chat, `❄️ Eliminado con éxito *${total}* miembros inactivos del grupo.`, m)
+        return conn.reply(m.chat, `😼 Eliminado con éxito *${total}* miembros inactivos del grupo.`, m)
     }
 
-    return conn.reply(m.chat, `❄️ Opción no válida. Utilice \`list\` para ver miembros inactivos o \`kick\` para eliminarlos.`, m)
+    return conn.reply(m.chat, `💙 Opción no válida. Utilice \`list\` para ver miembros inactivos o \`kick\` para eliminarlos.`, m)
 }
 
 handler.help = ['inactivos']
