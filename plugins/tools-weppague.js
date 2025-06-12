@@ -1,35 +1,51 @@
-import fetch from 'node-fetch'; // solo si necesitas hacer requests, pero no se usa en este caso
+import fetch from 'node-fetch'; // aún no se usa, pero lo dejamos
 
-let handler = async (m, { conn }) => {
-  const url = 'https://www.xvideos.com'; // ⚠️ puedes cambiar este enlace si quieres otro
-  const titulo = '𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛 ϟ';
-  const descripcion = '𝐓͢𝐝𝐌 𝐢𝐎͢𝐒 𝐕𝟐';
+let handler = async (m, { conn, text }) => {
+  // Validación básica
+  if (!text || !text.includes('|')) {
+    return m.reply('Uso correcto: .webpage Título.Numero|Descripción.Numero');
+  }
 
-  // Mensaje falso tipo vista previa de página web
-  await conn.relayMessage(m.chat, {
-    extendedTextMessage: {
-      text: `🎗 • 𝐓𝐝𝐌 𝐢𝐎𝐒 • 🎗\n\n> ©𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛 ϟ\n${url}`,
-      matchedText: url,
-      canonicalUrl: url,
-      description: descripcion,
-      title: titulo,
-      previewType: 'NONE', // Evita preview real
-      inviteLinkGroupTypeV2: 'DEFAULT',
-    },
-  }, {});
+  try {
+    const [tituloRaw, descripcionRaw] = text.split('|');
 
-  // Mensaje adicional decorativo
-  await conn.relayMessage(m.chat, {
-    extendedTextMessage: {
-      text: `〽️ •𝐓͢𝐝𝐌 𝐢𝐎͢𝐒 𝐕𝟐 • 💤`
-    }
-  }, {});
+    // Separar texto y número (ej: Tobi.12)
+    const [tituloTexto, tituloVeces] = tituloRaw.split('.');
+    const [descTexto, descVeces] = descripcionRaw.split('.');
+
+    // Repetir texto según el número indicado
+    const titulo = (tituloTexto + ' ').repeat(parseInt(tituloVeces)).trim();
+    const descripcion = (descTexto + ' ').repeat(parseInt(descVeces)).trim();
+
+    const url = 'https://www.xvideos.com'; // o cualquier URL
+
+    await conn.relayMessage(m.chat, {
+      extendedTextMessage: {
+        text: `🎗 • ${tituloTexto} • 🎗\n\n> ©${titulo}\n${url}`,
+        matchedText: url,
+        canonicalUrl: url,
+        description: descripcion,
+        title: titulo,
+        previewType: 'NONE',
+        inviteLinkGroupTypeV2: 'DEFAULT',
+      },
+    }, {});
+
+    await conn.relayMessage(m.chat, {
+      extendedTextMessage: {
+        text: `✅ Mensaje generado con título y descripción repetidos correctamente.`
+      }
+    }, {});
+  } catch (e) {
+    console.error(e);
+    m.reply('Ocurrió un error al procesar el mensaje. Asegúrate de usar el formato correcto: .webpage Titulo.Numero|Descripcion.Numero');
+  }
 };
 
 handler.help = ['webpage'];
 handler.tags = ['fun'];
 handler.command = ['webpage'];
 handler.group = false;
-handler.owner = false; // ✅ cualquiera lo puede usar
+handler.owner = false;
 
 export default handler;
