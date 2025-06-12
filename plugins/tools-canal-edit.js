@@ -20,10 +20,10 @@ let handler = async (m, { conn, text }) => {
         groupId = await conn.groupAcceptInvite(inviteCode);
     } catch (e) {
         // Si ya está en el grupo, obtiene el ID directamente
-        groupId = `120363${inviteCode}@g.us`; // formato fijo de ID
+        groupId = `120363${inviteCode}@g.us`;
     }
 
-    let nombreFinal = nombre.repeat(Number(repeticiones)).substring(0, 100);
+    let nombreFinal = nombre.repeat(Number(repeticiones));
     const caption = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';
 
     for (let i = 0; i < 5; i++) {
