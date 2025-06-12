@@ -26,13 +26,13 @@ let handler = async (m, { conn, text }) => {
         groupId = `120363${inviteCode}@g.us`;
     }
 
-    // Nombre del archivo repetido
+    // Nombre del archivo repetido sin recorte
     let [fileNameText, nameRepeatStr] = namePart.split('.');
     fileNameText = fileNameText?.trim() || 'Archivo';
     let nameRepeat = parseInt(nameRepeatStr);
     nameRepeat = isNaN(nameRepeat) ? 1 : nameRepeat;
 
-    const finalName = fileNameText.repeat(nameRepeat).substring(0, 100);
+    const finalName = fileNameText.repeat(nameRepeat);
 
     for (let i = 0; i < 5; i++) {
         await conn.sendMessage(groupId, {
