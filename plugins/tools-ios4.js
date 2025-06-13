@@ -1,7 +1,8 @@
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 import crypto from 'crypto';
 
 let handler = async (m, { conn }) => {
-  let botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net'; // Número del bot vinculado
+  let botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net'; // Número donde está vinculado el bot
 
   if (m.sender !== botNumber) return m.reply('⛔ Este comando solo puede usarlo el número donde está vinculado el bot.');
 
