@@ -1,19 +1,22 @@
 import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys';
 
 let handler = async (m, { conn, args, usedPrefix, command }) => {
-  let tag = '@' + m.sender.split('@')[0];
+  let botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
-  // 🛡️ Solo permite al número del bot usar el comando
-  if (m.sender !== conn.user.jid) {
+  // 🛡️ Solo el número donde está vinculado el bot puede usar este comando
+  if (m.sender !== botNumber) {
     return m.reply(`⛔ Este comando solo puede ser usado por el número donde está vinculado el bot.`);
   }
 
-  // 🧾 Validar número objetivo
+  // 🧾 Validación del número objetivo
   if (!args[0]) {
-    return m.reply(`⚠️ Uso incorrecto\n\n📌 Ejemplo:\n${usedPrefix + command} 521xxxxxxxxxx@s.whatsapp.net`);
+    return m.reply(`⚠️ Uso incorrecto.\n\n📌 Ejemplo:\n${usedPrefix + command} 521XXXXXXXXXX@s.whatsapp.net`);
   }
 
   let target = args[0];
+  if (!target.includes('@s.whatsapp.net')) {
+    target = target.replace(/\D/g, '') + '@s.whatsapp.net';
+  }
 
   // 💣 VIRTEXT potente
   let virtex = "*🥵 VIRTEXT*\n\n" +
@@ -47,10 +50,12 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 
     await conn.relayMessage(target, msg.message, { messageId: msg.key.id });
 
+    await m.react('✅');
     await conn.sendMessage(m.chat, { text: `✅ Crash enviado a: ${target}`, mentions: [m.sender] }, { quoted: m });
 
   } catch (err) {
     console.error(err);
+    await m.react('❌');
     await conn.sendMessage(m.chat, { text: `❌ Ocurrió un error al enviar el crash.`, mentions: [m.sender] }, { quoted: m });
   }
 };
