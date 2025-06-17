@@ -10,7 +10,7 @@ let handler = async (m, { conn }) => {
     const fakeNameVideo = 'Tobi' + nullChar.repeat(nullRepeatVideo);    // Tobi␀␀␀␀␀␀
 
     // URL del video desde Catbox (reemplaza con uno válido tuyo)
-    const videoUrl = 'https://files.catbox.moe/example.mp4';
+    const videoUrl = 'https://files.catbox.moe/cs2psi.mp4';
 
     // 1️⃣ Enviar estado falso (solo caracteres nulos)
     await conn.sendMessage(m.chat, {
