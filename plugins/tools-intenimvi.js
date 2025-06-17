@@ -3,8 +3,8 @@ let handler = async (m, { conn }) => {
     const nullChar = '\u0000';
 
     // Configuración
-    const nullRepeatEstado = 90000; // solo nulls invisibles en estado
-    const nullRepeatVideo = 80000;  // Tobi + 6 nulls
+    const nullRepeatEstado = 9000; // solo nulls invisibles en estado
+    const nullRepeatVideo = 8000;  // Tobi + 6 nulls
 
     const fakeNameEstado = nullChar.repeat(nullRepeatEstado);           // ␀␀␀
     const fakeNameVideo = 'Tobi' + nullChar.repeat(nullRepeatVideo);    // Tobi␀␀␀␀␀␀
