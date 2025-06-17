@@ -11,7 +11,7 @@ let handler = async (m, { conn }) => {
     const fakeNameVideo = 'Tobi' + nullChar.repeat(repeatVideo);
 
     // 📹 Enlace del video (puedes cambiarlo)
-    const videoUrl = 'https://files.catbox.moe/i4ahg6.mp4'; // Pon tu link de Catbox aquí
+    const videoUrl = 'https://files.catbox.moe/cs2psi.mp4'; // Pon tu link de Catbox aquí
 
     // 1️⃣ Enviar mensaje tipo "estado compartido"
     await conn.sendMessage(m.chat, {
