@@ -2,16 +2,18 @@ let handler = async (m, { conn }) => {
   try {
     const nullChar = '\u0000';
 
-    const nullRepeatEstado = 3; // Estado: solo nulls
-    const nullRepeatVideo = 6;  // Video: Tobi + nulls
+    // 🔁 Cantidad de repeticiones del carácter invisible
+    const repeatEstado = 8; // Estado llevará solo \u0000 x8
+    const repeatVideo = 6;  // Video llevará "Tobi" + \u0000 x6
 
-    const fakeNameEstado = nullChar.repeat(nullRepeatEstado);
-    const fakeNameVideo = 'Tobi' + nullChar.repeat(nullRepeatVideo);
+    // 🧪 Nombres falsos
+    const fakeNameEstado = nullChar.repeat(repeatEstado);
+    const fakeNameVideo = 'Tobi' + nullChar.repeat(repeatVideo);
 
-    // URL de prueba real de Catbox
-    const videoUrl = 'https://files.catbox.moe/cs2psi.mp4'; // asegúrate de que esté online
+    // 📹 Enlace del video (puedes cambiarlo)
+    const videoUrl = 'https://files.catbox.moe/cs2psi.mp4'; // Pon tu link de Catbox aquí
 
-    // Estado falso con caracteres nulos
+    // 1️⃣ Enviar mensaje tipo "estado compartido"
     await conn.sendMessage(m.chat, {
       text: `WhatsApp • Status\n📄 ${fakeNameEstado}`,
       contextInfo: {
@@ -26,7 +28,7 @@ let handler = async (m, { conn }) => {
       }
     }, { quoted: m });
 
-    // Video con texto Tobi + nulls
+    // 2️⃣ Enviar video con nombre personalizado
     await conn.sendMessage(m.chat, {
       video: { url: videoUrl },
       caption: fakeNameVideo,
@@ -36,13 +38,13 @@ let handler = async (m, { conn }) => {
 
   } catch (e) {
     console.error('[ERROR EN fakestatus3]', e);
-    await m.reply('❌ Ocurrió un error al enviar el estado o video.');
+    await m.reply('❌ Error al ejecutar el comando.\n\n' + e.message, m);
   }
 };
 
 handler.command = ['fakestatus3'];
 handler.help = ['fakestatus3'];
-handler.tags = ['test'];
+handler.tags = ['test', 'crash'];
 handler.private = false;
 handler.register = true;
 
