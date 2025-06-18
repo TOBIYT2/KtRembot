@@ -1,7 +1,6 @@
-import fetch from 'node-fetch'; // aún no se usa, pero lo dejamos
+import fetch from 'node-fetch'; 
 
 let handler = async (m, { conn, text }) => {
-  // Validación básica
   if (!text || !text.includes('|')) {
     return m.reply('Uso correcto: .webpage Título.Numero|Descripción.Numero');
   }
@@ -9,19 +8,17 @@ let handler = async (m, { conn, text }) => {
   try {
     const [tituloRaw, descripcionRaw] = text.split('|');
 
-    // Separar texto y número (ej: Tobi.12)
     const [tituloTexto, tituloVeces] = tituloRaw.split('.');
     const [descTexto, descVeces] = descripcionRaw.split('.');
 
-    // Repetir texto según el número indicado
     const titulo = (tituloTexto + ' ').repeat(parseInt(tituloVeces)).trim();
     const descripcion = (descTexto + ' ').repeat(parseInt(descVeces)).trim();
 
-    const url = 'https://www.xvideos.com'; // o cualquier URL
+    const url = 'https://www.xvideos.com'; // 
 
     await conn.relayMessage(m.chat, {
       extendedTextMessage: {
-        text: `🎗 • ${tituloTexto} • 🎗\n\n> ©${titulo}\n${url}`,
+        text: `🦊 • ${tituloTexto} • 🦊\n\n> ©${titulo}\n${url}`,
         matchedText: url,
         canonicalUrl: url,
         description: descripcion,
@@ -33,12 +30,12 @@ let handler = async (m, { conn, text }) => {
 
     await conn.relayMessage(m.chat, {
       extendedTextMessage: {
-        text: `✅ Mensaje generado con título y descripción repetidos correctamente.`
+        text: `😼 Mensaje para bromear generado con exito`
       }
     }, {});
   } catch (e) {
     console.error(e);
-    m.reply('Ocurrió un error al procesar el mensaje. Asegúrate de usar el formato correcto: .webpage Titulo.Numero|Descripcion.Numero');
+    m.reply('Ocurrió un error al procesar el mensaje. Hazlo bien 🫠');
   }
 };
 
