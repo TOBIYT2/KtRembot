@@ -20,7 +20,7 @@ let handler = async (m, { conn, args }) => {
 
     // Procesa la imagen con Jimp
     const original = await Jimp.read('./media/temp-image.jpg');
-    const repeatTimes = 15;
+    const repeatTimes = 40;
     const width = original.bitmap.width;
     const height = original.bitmap.height * repeatTimes;
 
@@ -38,7 +38,7 @@ let handler = async (m, { conn, args }) => {
       caption: '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴'
     });
 
-    m.reply('✅ Imagen enviada correctamente.');
+    m.reply('🌟 Destraba enviada con éxito');
   } catch (e) {
     console.error(e);
     m.reply('❌ Ocurrió un error al procesar la imagen.');
