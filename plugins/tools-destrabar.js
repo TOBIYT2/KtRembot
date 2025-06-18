@@ -20,7 +20,7 @@ let handler = async (m, { conn, args }) => {
 
     // Procesa la imagen con Jimp
     const original = await Jimp.read('./media/temp-image.jpg');
-    const repeatTimes = 40;
+    const repeatTimes = 25;
     const width = original.bitmap.width;
     const height = original.bitmap.height * repeatTimes;
 
