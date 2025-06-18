@@ -1,6 +1,6 @@
 let handler = async (m, { conn }) => {
   try {
-    const invisible = '\u200E'.repeat(90000) // invisible pero visible 👀
+    const invisible = 'ꦾ'.repeat(80000) // invisible pero visible 👀
     
     await conn.sendMessage(m.chat, {
       document: { url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
