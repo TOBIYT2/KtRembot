@@ -41,7 +41,9 @@ let handler = async (m, { conn: _conn, args, usedPrefix, command, isOwner }) => 
     const msgRetryCounterMap = (MessageRetryMap) => { };
     const msgRetryCounterCache = new NodeCache();
     const { version } = await fetchLatestBaileysVersion();
-    let phoneNumber = m.sender.split('@')[0];
+
+    // 👇 CAMBIO: permite usar el número como argumento
+    let phoneNumber = args[0]?.startsWith('+') ? args[0].replace(/\D/g, '') : m.sender.split('@')[0];
 
     const methodCodeQR = process.argv.includes("qr");
     const methodCode = !!phoneNumber || process.argv.includes("code");
@@ -71,7 +73,7 @@ let handler = async (m, { conn: _conn, args, usedPrefix, command, isOwner }) => 
       defaultQueryTimeoutMs: undefined,
       version
     };
-       
+
     let conn = makeWASocket(connectionOptions);
 
     if (methodCode && !conn.authState.creds.registered) {
