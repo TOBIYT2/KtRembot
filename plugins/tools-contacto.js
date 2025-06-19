@@ -1,6 +1,6 @@
 let handler = async (m, { conn }) => {
   const number = '521234567890'; // Número del contacto
-  const basura = '꧅+𝑩𝑨𝑺𝑼𝑹𝑨꧅'.repeat(1); // Un bloque grande de traba
+  const basura = 'Tobi'.repeat(1); // Un bloque grande de traba
   const trabaFinal = basura + basura + basura; // Repetimos 3 veces
 
   const vcard = `
