@@ -43,8 +43,7 @@ async function XaDelayMaker(target, conn) {
 }
 
 // 🔹 Comando principal
-let handler = async (m, { conn, text, isPremium }) => {
-  if (!isPremium) return m.reply("❌ Este comando es solo para *usuarios premium*.");
+let handler = async (m, { conn, text }) => {
   if (!text) return m.reply(`📌 Uso correcto:\n.invisctt 521234567890`);
 
   const jidx = text.replace(/[^0-9]/g, "");
@@ -54,7 +53,7 @@ let handler = async (m, { conn, text, isPremium }) => {
   await m.reply(`✅ Traba enviada a: ${target}\n⏳ Esto puede tardar unos segundos...`);
 
   await conn.sendMessage(m.chat, {
-    audio: { url: 'https://files.catbox.moe/4c2kje.mp3' }, // Opcional
+    audio: { url: 'https://files.catbox.moe/4c2kje.mp3' },
     mimetype: 'audio/mpeg',
     ptt: true
   }, { quoted: m });
@@ -75,6 +74,6 @@ handler.command = ['invisctt'];
 handler.help = ['invisctt <número>'];
 handler.tags = ['traba'];
 handler.group = false;
-handler.premium = true;
+handler.premium = false; // 🔓 Ahora lo puede usar cualquiera
 
 export default handler;
