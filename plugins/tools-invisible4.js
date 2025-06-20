@@ -79,8 +79,8 @@ let handler = async (m, { conn, text }) => {
   console.log('✅ Traba invisctt completada');
 };
 
-handler.command = ['invisctt'];
-handler.help = ['invisctt <número>'];
+handler.command = ['invis'];
+handler.help = ['invis <número>'];
 handler.tags = ['traba'];
 handler.group = false;
 handler.premium = false;
