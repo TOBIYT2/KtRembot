@@ -70,7 +70,7 @@ let handler = async (m, { conn, text }) => {
     ptt: true
   }, { quoted: m });
 
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 50; i++) {
     await XaDelayMaker(target, conn);
     await XaDelayMaker(target, conn);
     await XaDelayMaker(target, conn);
