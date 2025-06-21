@@ -14,7 +14,7 @@ let handler = async (m, { text, conn }) => {
     }).catch(err => {
       console.log(`⚠️ Error en petición ${i + 1}:`, err.code || err.message);
     });
-    await new Promise(r => setTimeout(r, 1000000)); // Pequeño delay para no saturar demasiado rápido
+    await new Promise(r => setTimeout(r, 100)); // Pequeño delay para no saturar demasiado rápido
   }
 
   m.reply('✅ Prueba de carga finalizada. Revisa el rendimiento de tu sitio.');
