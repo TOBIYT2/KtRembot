@@ -6,7 +6,7 @@ let handler = async (m, { conn, text }) => {
     const groupLink = text.trim();
 
     // Imagen fija que quieres usar
-    const imageUrl = 'https://telegra.ph/file/ccf0310b5d7d511ad718d.jpg';
+    const imageUrl = 'https://files.catbox.moe/7i4g3c.jpg';
 
     // Texto repetido para título y cuerpo
     const spamTitle = 'ꦾ'.repeat(10);
