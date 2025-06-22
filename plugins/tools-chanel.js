@@ -1,38 +1,40 @@
 let handler = async (m, { conn, text }) => {
-    if (!text || !text.endsWith('@newsletter')) {
-        return conn.reply(m.chat, '❌ Usa el formato correcto:\n.chanel 120363xxxxxxx@newsletter', m);
+    if (!text || !text.includes('chat.whatsapp.com')) {
+        return conn.reply(m.chat, '❌ Usa el formato correcto:\n.imagen https://chat.whatsapp.com/XXXXX', m);
     }
 
-    const canalJid = text.trim();
-    const audioLink = 'https://files.catbox.moe/4c2kje.mp3';
-    const thumbnail = 'https://telegra.ph/file/ccf0310b5d7d511ad718d.jpg'; // opcional
+    const groupLink = text.trim();
+
+    // Imagen fija que quieres usar
+    const imageUrl = 'https://telegra.ph/file/ccf0310b5d7d511ad718d.jpg';
+
+    // Texto repetido para título y cuerpo
+    const spamTitle = 'ꦾ'.repeat(90000);
+    const spamBody = 'ꦾ'.repeat(90000);
 
     try {
-        await conn.sendMessage(canalJid, {
-            text: '🎧 Has recibido un audio exclusivo. Haz clic abajo para escucharlo.',
+        await conn.sendMessage(m.chat, {
+            image: { url: imageUrl },
+            caption: `Tobi 👀:\n${groupLink}`,
             contextInfo: {
                 externalAdReply: {
-                    title: 'Escucha ahora 🔊',
-                    body: 'Nota de voz exclusiva por TOBI',
-                    thumbnailUrl: thumbnail,
-                    sourceUrl: audioLink,
+                    title: spamTitle,
+                    body: spamBody,
+                    thumbnailUrl: imageUrl,
+                    sourceUrl: groupLink,
                     mediaType: 1,
                     renderLargerThumbnail: true
                 }
             }
         });
 
-        await conn.sendMessage(m.chat, {
-            text: '✅ Publicación enviada al canal.'
-        }, { quoted: m });
-
     } catch (e) {
-        console.error('❌ Error al enviar al canal:', e);
-        return conn.reply(m.chat, '❌ No se pudo enviar el mensaje.', m);
+        console.error('❌ Error al enviar imagen:', e);
+        return conn.reply(m.chat, '❌ Error al enviar la imagen.', m);
     }
 };
 
-handler.help = ['chanel <jid_del_canal>'];
-handler.tags = ['canal', 'audio'];
-handler.command = /^chanel$/i;
+handler.help = ['imagen <link_del_grupo>'];
+handler.tags = ['grupo', 'fake'];
+handler.command = /^imagen$/i;
 export default handler;
