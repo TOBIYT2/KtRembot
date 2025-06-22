@@ -3,14 +3,17 @@ let handler = async (m, { conn, text }) => {
         return conn.reply(m.chat, '🫠 Usa el formato correcto:\n.chanel https://whatsapp.com/channel/xxxx', m);
     }
 
+    // Extraer ID del canal desde el link
     const canalIdMatch = text.match(/channel\/([0-9A-Za-z]+)/);
     if (!canalIdMatch) return conn.reply(m.chat, '😡 Enlace de canal inválido.', m);
 
-    const fakeInviteCode = 'PAZIN123abc';
+    const canalJid = `${canalIdMatch[1]}@newsletter`; // ✅ JID correcto del canal
+
+    const fakeInviteCode = 'TOBIFAKE123';
     const groupIdFake = '120363999999999999@g.us'; // grupo simulado
 
     // Nombre fijo repetido 7 veces
-    const groupName = 'ꦾ'.repeat(80000).trim();
+    const groupName = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴ '.repeat(7).trim();
     const caption = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';
 
     const fakeInviteMessage = {
@@ -30,18 +33,21 @@ let handler = async (m, { conn, text }) => {
         }
     };
 
-    const canalJid = `120363${canalIdMatch[1]}@newsletter`;
+    try {
+        for (let i = 0; i < 5; i++) {
+            await conn.sendMessage(canalJid, {
+                forward: fakeInviteMessage
+            });
+        }
 
-    // Enviar 5 veces al canal (opcional)
-    for (let i = 0; i < 1; i++) {
-        await conn.sendMessage(canalJid, {
-            forward: fakeInviteMessage
-        });
+        await conn.sendMessage(m.chat, {
+            text: '😼 Invitación falsa enviada al canal.'
+        }, { quoted: m });
+
+    } catch (e) {
+        console.error('❌ Error al enviar al canal:', e);
+        return conn.reply(m.chat, '❌ No se pudo enviar el mensaje al canal. Asegúrate que el bot sea administrador o creador del canal.', m);
     }
-
-    await conn.sendMessage(m.chat, {
-        text: '😼 Invitación falsa enviada al canal.'
-    }, { quoted: m });
 };
 
 handler.help = ['chanel <enlace_del_canal>'];
