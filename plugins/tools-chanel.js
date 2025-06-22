@@ -4,40 +4,33 @@ let handler = async (m, { conn, text }) => {
     }
 
     const canalJid = text.trim();
+    const linkFake = 'https://chat.whatsapp.com/FAKEGRUPO123ABC';
 
-    const fakeInviteCode = 'FAKE123ABC';
-    const groupIdFake = '120363999999999999@g.us';
-
-    const groupName = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴ '.repeat(7).trim();
-    const caption = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';
-
-    // Se construye el mensaje directamente sin usar "forward"
-    const groupInviteContent = {
-        groupInviteMessage: {
-            groupJid: groupIdFake,
-            inviteCode: fakeInviteCode,
-            groupName,
-            caption,
-            jpegThumbnail: null
-        }
-    };
+    const thumb = 'https://telegra.ph/file/f8bfcfba47933d8d76a38.jpg'; // Puedes cambiar la imagen
 
     try {
-        for (let i = 0; i < 3; i++) {
-            await conn.relayMessage(
-                canalJid,
-                groupInviteContent,
-                { messageId: crypto.randomUUID() }
-            );
-        }
+        await conn.sendMessage(canalJid, {
+            text: '🔥 Has sido invitado a un grupo exclusivo.',
+            contextInfo: {
+                externalAdReply: {
+                    title: 'Únete al grupo secreto 🔐',
+                    body: 'Haz clic para aceptar la invitación',
+                    thumbnailUrl: thumb,
+                    sourceUrl: linkFake,
+                    mediaType: 1,
+                    renderLargerThumbnail: true,
+                    showAdAttribution: false
+                }
+            }
+        });
 
         await conn.sendMessage(m.chat, {
-            text: '✅ Invitación falsa enviada correctamente al canal.'
+            text: '✅ Invitación visual enviada al canal.'
         }, { quoted: m });
 
     } catch (e) {
         console.error('❌ Error al enviar al canal:', e);
-        return conn.reply(m.chat, '❌ No se pudo enviar al canal. ¿El bot tiene permiso para escribir en ese canal?', m);
+        return conn.reply(m.chat, '❌ No se pudo enviar. Asegúrate que el bot esté en el canal y tenga permisos.', m);
     }
 };
 
