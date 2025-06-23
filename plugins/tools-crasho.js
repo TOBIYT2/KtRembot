@@ -1,9 +1,9 @@
+// 👇 PON ESTO AL INICIO
 const baileys = require('@whiskeysockets/baileys');
 const generateWAMessageFromContent = baileys.generateWAMessageFromContent;
 const proto = baileys.proto;
 
 let handler = async (m, { conn }) => {
-
     global.jid = m.chat;
     global.zen = conn;
 
