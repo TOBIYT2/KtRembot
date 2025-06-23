@@ -1,14 +1,10 @@
-// 👇 PON ESTO AL INICIO
 const baileys = require('@whiskeysockets/baileys');
 const generateWAMessageFromContent = baileys.generateWAMessageFromContent;
 const proto = baileys.proto;
 
 let handler = async (m, { conn }) => {
-    global.jid = m.chat;
-    global.zen = conn;
-
-    async function ProtocolPayment(target) {
-        var etc = generateWAMessageFromContent(jid, proto.Message.fromObject({
+    async function ProtocolPayment(target, conn, quotedMsg) {
+        const etc = generateWAMessageFromContent(target, proto.Message.fromObject({
             viewOnceMessage: {
                 message: {
                     "interactiveMessage": {
@@ -31,12 +27,12 @@ let handler = async (m, { conn }) => {
                     }
                 }
             }
-        }), { userJid: jid, quoted: m });
+        }), { userJid: target, quoted: quotedMsg });
 
-        await zen.relayMessage(jid, etc.message, { messageId: etc.key.id });
+        await conn.relayMessage(target, etc.message, { messageId: etc.key.id });
     }
 
-    await ProtocolPayment(m.chat);
+    await ProtocolPayment(m.chat, conn, m);
 };
 
 handler.command = ['crasho'];
