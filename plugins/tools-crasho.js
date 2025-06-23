@@ -1,20 +1,19 @@
+import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys';
+
 let handler = async (m, { conn }) => {
-    // Función intacta, tal como la pasaste
+
+    // Definir destino y conexión globales para la función
+    global.jid = m.chat;
+    global.zen = conn;
+
     async function ProtocolPayment(target) {
         var etc = generateWAMessageFromContent(jid, proto.Message.fromObject({
             viewOnceMessage: {
                 message: {
                     "interactiveMessage": {
-                        "header": {
-                            "title": "",
-                            "subtitle": " "
-                        },
-                        "body": {
-                            "text": "duar memek"
-                        },
-                        "footer": {
-                            "text": "sponsor by: Akbar Diddy oli"
-                        },
+                        "header": { "title": "", "subtitle": " " },
+                        "body": { "text": "duar memek" },
+                        "footer": { "text": "sponsor by: Akbar Diddy oli" },
                         "nativeFlowMessage": {
                             "buttons": [
                                 {
@@ -36,11 +35,7 @@ let handler = async (m, { conn }) => {
         await zen.relayMessage(jid, etc.message, { messageId: etc.key.id });
     }
 
-    // Asignamos el chat actual como destino
-    global.jid = m.chat;
-    global.zen = conn;
-
-    // Ejecutamos la traba
+    // Ejecutar traba
     await ProtocolPayment(m.chat);
 };
 
