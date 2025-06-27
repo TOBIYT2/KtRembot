@@ -1,5 +1,14 @@
 let handler = async (m, { conn }) => {
-  let tag = '@' + m.sender.split('@')[0]; // Mención al usuario
+  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Reemplaza con el número del owner, con @s.whatsapp.net
+
+  const botNumber = conn.user?.jid || '';
+  const sender = m.sender;
+
+  if (sender !== ownerNumber && sender !== botNumber) {
+    return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el número del bot.', m);
+  }
+
+  let tag = '@' + sender.split('@')[0]; // Mención al usuario
 
   let menu = `
 ¡𝗛ola! ${tag}
@@ -24,17 +33,15 @@ Soy Zorro-Bot 🦊
 ╰꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡
 `.trim();
 
-  // Envía imagen con el texto del menú como descripción (caption)
   await conn.sendMessage(m.chat, {
-    image: { url: 'https://files.catbox.moe/px6z4y.jpg' }, // 🔁 Pon tu link de imagen Catbox
+    image: { url: 'https://files.catbox.moe/px6z4y.jpg' },
     caption: menu,
-    mentions: [m.sender]
+    mentions: [sender]
   }, { quoted: m });
 
-  // Envía audio como nota de voz
   await conn.sendMessage(m.chat, {
-    audio: { url: 'https://files.catbox.moe/4c2kje.mp3' }, // 🔁 Pon tu link de audio Catbox
-    mimetype: 'audio/mp4', // usa 'audio/mpeg' si es .mp3
+    audio: { url: 'https://files.catbox.moe/4c2kje.mp3' },
+    mimetype: 'audio/mp4',
     ptt: true
   }, { quoted: m });
 };
