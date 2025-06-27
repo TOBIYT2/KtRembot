@@ -1,4 +1,12 @@
 let handler = async (m, { text, conn }) => {
+  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Reemplázalo con tu número de owner real
+  const botNumber = conn.user?.jid || '';
+  const sender = m.sender;
+
+  if (sender !== ownerNumber && sender !== botNumber) {
+    return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el número del bot.', m);
+  }
+
   if (!text || !text.includes('.')) {
     return m.reply('😭 Formato incorrecto.\nUsa: .ubicacion nombre.2');
   }
@@ -7,7 +15,7 @@ let handler = async (m, { text, conn }) => {
   let nameRepeat = parseInt(nameRepeatStr);
 
   nameText = nameText?.trim() || 'Japón';
-  nameRepeat = isNaN(nameRepeat) ? 1 : nameRepeat; // Sin límite
+  nameRepeat = isNaN(nameRepeat) ? 1 : nameRepeat;
 
   const finalName = nameText.repeat(nameRepeat);
   const fixedAddress = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';

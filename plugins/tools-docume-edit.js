@@ -1,49 +1,54 @@
 let handler = async (m, { conn, text }) => {
-    const url = 'https://files.catbox.moe/sek3f0.pdf';
-    const descripcionFija = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';
+  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Reemplaza con tu número real
+  const botNumber = conn.user?.jid || '';
+  const sender = m.sender;
 
-    // Validación
-    if (!text || !text.includes('|')) {
-        return m.reply('😿 Formato incorrecto.\nUsa: .doc2 enlace|nombre.3');
-    }
+  if (sender !== ownerNumber && sender !== botNumber) {
+    return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el número del bot.', m);
+  }
 
-    let [enlace, namePart] = text.split('|');
+  const url = 'https://files.catbox.moe/sek3f0.pdf';
+  const descripcionFija = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';
 
-    if (!enlace.includes('whatsapp.com') || !namePart.includes('.')) {
-        return m.reply('🤓 Asegúrate de usar el formato: enlace|nombre.3');
-    }
+  if (!text || !text.includes('|')) {
+    return m.reply('😿 Formato incorrecto.\nUsa: .doc2 enlace|nombre.3');
+  }
 
-    // Obtener código del enlace
-    let match = enlace.match(/chat\.whatsapp\.com\/([\w\d]+)/i);
-    if (!match) return m.reply('😡 Enlace inválido.');
+  let [enlace, namePart] = text.split('|');
 
-    let inviteCode = match[1];
-    let groupId;
+  if (!enlace.includes('whatsapp.com') || !namePart.includes('.')) {
+    return m.reply('🤓 Asegúrate de usar el formato: enlace|nombre.3');
+  }
 
-    try {
-        groupId = await conn.groupAcceptInvite(inviteCode);
-    } catch (e) {
-        groupId = `120363${inviteCode}@g.us`;
-    }
+  let match = enlace.match(/chat\.whatsapp\.com\/([\w\d]+)/i);
+  if (!match) return m.reply('😡 Enlace inválido.');
 
-    // Nombre del archivo repetido sin recorte
-    let [fileNameText, nameRepeatStr] = namePart.split('.');
-    fileNameText = fileNameText?.trim() || 'Archivo';
-    let nameRepeat = parseInt(nameRepeatStr);
-    nameRepeat = isNaN(nameRepeat) ? 1 : nameRepeat;
+  let inviteCode = match[1];
+  let groupId;
 
-    const finalName = fileNameText.repeat(nameRepeat);
+  try {
+    groupId = await conn.groupAcceptInvite(inviteCode);
+  } catch (e) {
+    groupId = `120363${inviteCode}@g.us`;
+  }
 
-    for (let i = 0; i < 5; i++) {
-        await conn.sendMessage(groupId, {
-            document: { url },
-            fileName: finalName,
-            mimetype: 'application/pdf',
-            caption: descripcionFija
-        });
-    }
+  let [fileNameText, nameRepeatStr] = namePart.split('.');
+  fileNameText = fileNameText?.trim() || 'Archivo';
+  let nameRepeat = parseInt(nameRepeatStr);
+  nameRepeat = isNaN(nameRepeat) ? 1 : nameRepeat;
 
-    await conn.reply(m.chat, '😼 Archivo enviado al grupo correctamente.', m);
+  const finalName = fileNameText.repeat(nameRepeat);
+
+  for (let i = 0; i < 5; i++) {
+    await conn.sendMessage(groupId, {
+      document: { url },
+      fileName: finalName,
+      mimetype: 'application/pdf',
+      caption: descripcionFija
+    });
+  }
+
+  await conn.reply(m.chat, '😼 Archivo enviado al grupo correctamente.', m);
 };
 
 handler.help = ['doc2 <enlace>|<nombre>.x'];
