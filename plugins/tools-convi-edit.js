@@ -1,4 +1,12 @@
 let handler = async (m, { conn, text }) => {
+    const ownerNumber = '527442226789@s.whatsapp.net'; // 🔁 Reemplaza con tu número real
+    const botNumber = conn.user?.jid || '';
+    const sender = m.sender;
+
+    if (sender !== ownerNumber && sender !== botNumber) {
+        return conn.reply(m.chat, '🚫 Este comando solo está disponible para el owner y el número del bot.', m);
+    }
+
     if (!text || !text.includes('|') || !text.includes('.')) {
         return conn.reply(m.chat, '🫠 Usa el formato correcto:\n.convite enlace|tobi.3', m);
     }
@@ -19,14 +27,11 @@ let handler = async (m, { conn, text }) => {
     let groupId;
 
     try {
-        // Intenta unirse
         groupId = await conn.groupAcceptInvite(inviteCode);
     } catch (e) {
-        // Ya estaba en el grupo
         groupId = `120363${inviteCode}@g.us`;
     }
 
-    // Nombre sin recorte
     let groupName = (nombreBase + ' ').repeat(nombreReps).trim();
     let caption = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';
 
@@ -61,4 +66,5 @@ let handler = async (m, { conn, text }) => {
 handler.help = ['convite2 <enlace>|<nombre>.n'];
 handler.tags = ['group', 'fake'];
 handler.command = /^convite2$/i;
+
 export default handler;
