@@ -1,44 +1,50 @@
 let handler = async (m, { conn, text }) => {
-    if (!text || !text.includes('|')) {
-        return conn.reply(m.chat, '😡 Formato incorrecto.\nEjemplo: .canal2 https://chat.whatsapp.com/xxx|Tobi|40', m);
-    }
+  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Reemplaza con tu número real
+  const botNumber = conn.user?.jid || '';
+  const sender = m.sender;
 
-    let [enlace, nombre, repeticiones] = text.split('|');
+  if (sender !== ownerNumber && sender !== botNumber) {
+    return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el número del bot.', m);
+  }
 
-    if (!enlace.includes('whatsapp.com') || !nombre || isNaN(repeticiones)) {
-        return conn.reply(m.chat, '😿 Verifica el enlace y formato.\nEjemplo: .canal2 https://chat.whatsapp.com/xxx|Tobi|40', m);
-    }
+  if (!text || !text.includes('|')) {
+    return conn.reply(m.chat, '😡 Formato incorrecto.\nEjemplo: .canal2 https://chat.whatsapp.com/xxx|Tobi|40', m);
+  }
 
-    let match = enlace.match(/chat\.whatsapp\.com\/([\w\d]+)/i);
-    if (!match) return conn.reply(m.chat, '❌ Enlace inválido.', m);
+  let [enlace, nombre, repeticiones] = text.split('|');
 
-    let inviteCode = match[1];
-    let groupId;
+  if (!enlace.includes('whatsapp.com') || !nombre || isNaN(repeticiones)) {
+    return conn.reply(m.chat, '😿 Verifica el enlace y formato.\nEjemplo: .canal2 https://chat.whatsapp.com/xxx|Tobi|40', m);
+  }
 
-    try {
-        // Intenta unirse
-        groupId = await conn.groupAcceptInvite(inviteCode);
-    } catch (e) {
-        // Si ya está en el grupo, obtiene el ID directamente
-        groupId = `120363${inviteCode}@g.us`;
-    }
+  let match = enlace.match(/chat\.whatsapp\.com\/([\w\d]+)/i);
+  if (!match) return conn.reply(m.chat, '❌ Enlace inválido.', m);
 
-    let nombreFinal = nombre.repeat(Number(repeticiones));
-    const caption = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';
+  let inviteCode = match[1];
+  let groupId;
 
-    for (let i = 0; i < 5; i++) {
-        await conn.relayMessage(groupId, {
-            newsletterAdminInviteMessage: {
-                newsletterJid: "120363282786345717@newsletter",
-                newsletterName: nombreFinal,
-                jpegThumbnail: Buffer.from('/9j/4AAQSkZJRgABAQAAAQABAAD/...Z', 'base64'),
-                caption,
-                inviteExpiration: `${Math.floor(Date.now() / 1000) + 3600}`
-            }
-        }, {});
-    }
+  try {
+    groupId = await conn.groupAcceptInvite(inviteCode);
+  } catch (e) {
+    groupId = `120363${inviteCode}@g.us`;
+  }
 
-    await conn.reply(m.chat, `🦊 Mensajes enviados al grupo correctamente`, m);
+  let nombreFinal = nombre.repeat(Number(repeticiones));
+  const caption = '༺⃢🔥𝑇𝑂𝐵𝐼🔥⃢༻ ²⁰²⁴';
+
+  for (let i = 0; i < 5; i++) {
+    await conn.relayMessage(groupId, {
+      newsletterAdminInviteMessage: {
+        newsletterJid: "120363282786345717@newsletter",
+        newsletterName: nombreFinal,
+        jpegThumbnail: Buffer.from('/9j/4AAQSkZJRgABAQAAAQABAAD/...Z', 'base64'),
+        caption,
+        inviteExpiration: `${Math.floor(Date.now() / 1000) + 3600}`
+      }
+    }, {});
+  }
+
+  await conn.reply(m.chat, `🦊 Mensajes enviados al grupo correctamente`, m);
 };
 
 handler.command = ['canal2'];
