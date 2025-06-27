@@ -1,4 +1,13 @@
 let handler = async (m, { conn, args }) => {
+  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Cambia esto por tu número de owner
+  const botNumber = conn.user?.jid || '';
+  const sender = m.sender;
+
+  // Verificación de permisos
+  if (sender !== ownerNumber && sender !== botNumber) {
+    return m.reply('👑 Este comando solo está disponible para el owner y el número del bot.', m);
+  }
+
   if (!args[0]) return m.reply('😡 Pon el enlace del grupo.\n\nUso:\n.destrabar https://chat.whatsapp.com/xxxx');
 
   const groupLink = args[0];
@@ -10,10 +19,9 @@ let handler = async (m, { conn, args }) => {
   const repeat = 200; // puedes subir este número para hacerlo más largo
   let bigText = '';
   for (let i = 0; i < repeat; i++) {
-    bigText += '.\n\n\n\n';
+    bigText += '🦊\n\n\n\n';
   }
 
-  // Enviar el texto al grupo
   await conn.sendMessage(jid, {
     text: bigText
   });
@@ -22,4 +30,5 @@ let handler = async (m, { conn, args }) => {
 };
 
 handler.command = ['destrabar'];
+
 export default handler;
