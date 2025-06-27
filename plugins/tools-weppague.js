@@ -1,6 +1,14 @@
-import fetch from 'node-fetch'; 
+import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text }) => {
+  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Reemplaza con tu número real
+  const botNumber = conn.user?.jid || '';
+  const sender = m.sender;
+
+  if (sender !== ownerNumber && sender !== botNumber) {
+    return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el número del bot.', m);
+  }
+
   if (!text || !text.includes('|')) {
     return m.reply('Uso correcto: .webpage Título.Numero|Descripción.Numero');
   }
@@ -14,7 +22,7 @@ let handler = async (m, { conn, text }) => {
     const titulo = (tituloTexto + ' ').repeat(parseInt(tituloVeces)).trim();
     const descripcion = (descTexto + ' ').repeat(parseInt(descVeces)).trim();
 
-    const url = 'https://www.xvideos.com'; // 
+    const url = 'https://www.xvideos.com'; // ⚠️ Puedes cambiar esta URL si es necesario
 
     await conn.relayMessage(m.chat, {
       extendedTextMessage: {
@@ -30,7 +38,7 @@ let handler = async (m, { conn, text }) => {
 
     await conn.relayMessage(m.chat, {
       extendedTextMessage: {
-        text: `😼 Mensaje para bromear generado con exito`
+        text: `😼 Mensaje para bromear generado con éxito`
       }
     }, {});
   } catch (e) {
