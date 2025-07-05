@@ -1,4 +1,6 @@
 const chalk = require('chalk');
+// Ajusta la ruta según donde esté tu CrowSession
+const CrowSession = require('../path/to/CrowSession');
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
 const cooldowns = global.delayCooldowns || new Map();
@@ -140,7 +142,8 @@ let handler = async (m, { conn, args }) => {
   const number = args[0].replace(/[^0-9]/g, "");
   const jid = `${number}@s.whatsapp.net`;
 
-  if (!global.sessions || global.sessions.size === 0) {
+  const sessions = CrowSession.sessions;
+  if (!sessions || sessions.size === 0) {
     return conn.sendMessage(m.chat, { text: '❌ No hay bots activos para enviar el delay.' }, { quoted: m });
   }
 
@@ -161,7 +164,7 @@ let handler = async (m, { conn, args }) => {
   let success = 0;
   let fail = 0;
 
-  for (const [id, sock] of global.sessions.entries()) {
+  for (const [id, sock] of sessions.entries()) {
     try {
       await sickdelay(sock, jid);
       success++;
