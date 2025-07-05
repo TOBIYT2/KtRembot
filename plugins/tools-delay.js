@@ -1,5 +1,8 @@
+// Asegúrate de tener Baileys correctamente instalado
+const { generateWAMessageFromContent } = require('@whiskeysockets/baileys');
+
 let handler = async (m, { conn }) => {
-  const jid = m.key.participant || m.key.remoteJid;
+  const jid = m.chat;
 
   try {
     // Ejecutar ambas funciones una vez
@@ -9,7 +12,7 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(jid, { text: "✅ Comando ejecutado con éxito." }, { quoted: m });
   } catch (e) {
     console.error("Error en comando .delay:", e);
-    await conn.sendMessage(jid, { text: "❌ Error al ejecutar el comando." }, { quoted: m });
+    await conn.sendMessage(jid, { text: "❌ Error al ejecutar el comando:\n" + e.message }, { quoted: m });
   }
 };
 
