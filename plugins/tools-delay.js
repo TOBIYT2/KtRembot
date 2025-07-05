@@ -7,7 +7,7 @@ let handler = async (m, { conn }) => {
     for (let i = 0; i < 200; i++) {
       await InVisibleX(conn, jid, true);
       await xatanicaldelayv2(conn, jid, true);
-      await delay(150); // 🔁 Pausa para evitar rate-overlimit
+      await delay(10); // 🔁 Pausa para evitar rate-overlimit
     }
 
     await conn.sendMessage(jid, { text: "✅ Delay enviado 200 veces." }, { quoted: m });
