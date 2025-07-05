@@ -1,14 +1,11 @@
-let handler = async (m, { conn, args }) => {
-  if (!args[0]) return await conn.sendMessage(m.chat, { text: '❗️Uso: .delay <número>' }, { quoted: m });
+conn.ev.on('messages.upsert', async ({ messages }) => {
+  const m = messages[0];
+  if (!m.message) return;
 
-  const number = args[0].replace(/[^0-9]/g, "");
-  const jid = number + '@s.whatsapp.net';
+  const text = m.message.conversation || m.message.extendedTextMessage?.text;
+  if (!text) return;
 
-  await conn.sendMessage(m.chat, { text: `Recibido el número: ${number}` }, { quoted: m });
-
-  // Aquí pondrías la función delay (simplificada para testear)
-};
-
-handler.command = ['delay'];
-handler.owner = false; // cualquiera puede usarlo
-module.exports = handler;
+  if (text.startsWith('.delay')) {
+    await conn.sendMessage(m.key.remoteJid, { text: 'Comando delay detectado!' });
+  }
+});
