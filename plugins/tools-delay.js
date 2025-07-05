@@ -218,6 +218,7 @@ let handler = async (m, { conn, args }) => {
   }, { quoted: m });
 };
 
-handler.command = ["delay"];
-handler.owner = false; // ✅ Cualquiera puede usarlo
-export default handler;
+handler.command = ['delay'];
+handler.owner = false;
+
+module.exports = handler;
