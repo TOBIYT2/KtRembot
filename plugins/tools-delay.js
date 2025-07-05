@@ -1,28 +1,24 @@
-// Asegúrate de tener Baileys correctamente instalado
-const { generateWAMessageFromContent } = require('@whiskeysockets/baileys');
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys'; // Si usas require, cámbialo
 
 let handler = async (m, { conn }) => {
   const jid = m.chat;
+  const sender = m.sender;
 
   try {
-    // Ejecutar ambas funciones una vez
     await InVisibleX(conn, jid, true);
     await xatanicaldelayv2(conn, jid, true);
 
-    await conn.sendMessage(jid, { text: "✅ Comando ejecutado con éxito." }, { quoted: m });
+    await conn.sendMessage(jid, { text: "✅ Delay enviado correctamente." }, { quoted: m });
   } catch (e) {
-    console.error("Error en comando .delay:", e);
-    await conn.sendMessage(jid, { text: "❌ Error al ejecutar el comando:\n" + e.message }, { quoted: m });
+    console.error("Error en .delay:", e);
+    await conn.sendMessage(jid, { text: "❌ Error al ejecutar:\n" + e.message }, { quoted: m });
   }
 };
 
-handler.command = ["delay"];
-handler.tags = ["crash"];
-handler.help = ["delay"];
-
+handler.command = ['delay'];
 export default handler;
 
-// FUNCIONES INTERNAS
+// FUNCIONES
 
 async function InVisibleX(sock, jid, mention) {
   let msg = await generateWAMessageFromContent(jid, {
@@ -96,7 +92,7 @@ async function InVisibleX(sock, jid, mention) {
 }
 
 async function xatanicaldelayv2(sock, jid, mention) {
-  let message = {
+  const message = {
     viewOnceMessage: {
       message: {
         stickerMessage: {
