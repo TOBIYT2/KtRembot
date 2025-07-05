@@ -4,7 +4,7 @@ let handler = async (m, { conn }) => {
   const jid = m.chat;
 
   try {
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 20; i++) {
       await InVisibleX(conn, jid, true);
       await xatanicaldelayv2(conn, jid, true);
       await delay(10); // 🔁 Pausa para evitar rate-overlimit
