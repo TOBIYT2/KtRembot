@@ -9,7 +9,7 @@ let handler = async (m, { conn }) => {
   }
 
   try {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 200; i++) {
       const m1 = await InVisibleX(conn, jid, true);
       const m2 = await xatanicaldelayv2(conn, jid, true);
 
