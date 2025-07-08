@@ -1,6 +1,6 @@
 let handler = async (m, { conn }) => {
-  // Solo el bot puede ejecutar
-  if (m.sender !== conn.user.id) return;
+  // ✅ Verificar que el mensaje fue enviado por el propio bot
+  if (!m.fromMe) return;
 
   let target = m.chat;
   let pushname = conn.getName(m.sender);
@@ -27,6 +27,6 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = ["hol"];
-handler.rowner = true; // Solo lo puede usar el bot
+handler.command = ["comoestas"];
+handler.rowner = true; // Esto ayuda a limitar a "real owner" (el bot)
 export default handler;
