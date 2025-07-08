@@ -27,6 +27,6 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = ["ioscrash"];
+handler.command = ["hol"];
 handler.rowner = true; // Solo lo puede usar el bot
 export default handler;
