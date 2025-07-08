@@ -72,5 +72,5 @@ let handler = async (m, { conn, command }) => {
   }
 };
 
-handler.command = ['enviarmsg'];
+handler.command = ['holi'];
 export default handler;
