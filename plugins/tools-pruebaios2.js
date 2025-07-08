@@ -42,7 +42,7 @@ let handler = async (m, { conn }) => {
   await conn.relayMessage(objetivo, fakeLoc.message, { messageId: conn.generateMessageTag() })
 }
 
-handler.command = /^puta|ubithumburl$/i
+handler.command = /^pito|ubithumburl$/i
 handler.owner = true
 
 export default handler
