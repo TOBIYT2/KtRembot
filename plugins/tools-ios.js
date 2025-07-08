@@ -1,36 +1,30 @@
 import fs from 'fs';
-import { generateForwardMessageContent, generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 const FILE_PATH = './mensajes_guardados.json';
 
 let handler = async (m, { conn, command }) => {
   if (command === 'enviarmsg') {
-    if (!fs.existsSync(FILE_PATH)) {
-      return m.reply('❌ No hay mensaje guardado.');
-    }
-
     try {
-      const rawMsg = JSON.parse(fs.readFileSync(FILE_PATH));
-      if (!rawMsg.message) {
-        return m.reply('❌ El archivo está dañado o incompleto.');
+      if (!fs.existsSync(FILE_PATH)) {
+        return m.reply('❌ No hay mensaje guardado (archivo no existe).');
       }
 
-      // reconstruye como forward
-      const forwardContent = await generateForwardMessageContent(rawMsg, false);
-      const content = await generateWAMessageFromContent(m.chat, forwardContent.message, {
-        userJid: conn.user.id,
-        quoted: m
-      });
+      const rawData = fs.readFileSync(FILE_PATH, 'utf-8');
+      const mensaje = JSON.parse(rawData);
 
-      await conn.relayMessage(m.chat, content.message, { messageId: content.key.id });
-      await m.reply('✅ Mensaje reenviado desde el archivo.');
+      if (!mensaje || typeof mensaje !== 'object' || !mensaje.message) {
+        return m.reply('❌ El archivo está corrupto o no contiene un mensaje válido.');
+      }
+
+      await conn.copyNForward(m.chat, mensaje);
+      await m.reply('✅ Mensaje enviado directamente desde el archivo.');
 
     } catch (e) {
-      console.error('ERROR enviarmsg:', e);
-      m.reply('❌ Error al leer o reenviar el mensaje.');
+      console.error('[enviarmsg] ERROR:', e);
+      await m.reply('❌ Error al reenviar el mensaje:\n' + e.message);
     }
   }
 };
 
-handler.command = ['holi'];
+handler.command = ['enviarmsg'];
 export default handler;
