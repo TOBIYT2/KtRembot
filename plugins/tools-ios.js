@@ -5,33 +5,36 @@ const FILE_PATH = './mensajes_guardados.json';
 
 let handler = async (m, { conn }) => {
   try {
+    // 1. No permitir en grupos
     if (m.isGroup) return m.reply('❌ Este comando no puede usarse en grupos.');
 
+    // 2. Solo número del bot puede usarlo
     const botNumber = conn.user?.jid || '';
     if (m.sender !== botNumber) {
-      return m.reply('❌ Solo el número del bot puede usar este comando.');
+      return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
     }
 
+    // 3. Verificar archivo guardado
     if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
-    if (!mensaje?.message) return m.reply('❌ El archivo está dañado.');
+    if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    // 1. Enviar el mensaje guardado
-    const reenviado = await conn.copyNForward(m.chat, mensaje, true);
+    // 4. Enviar mensaje guardado tal cual (no generado)
+    const enviado1 = await conn.copyNForward(m.chat, mensaje, true);
 
-    // 2. Eliminar usando el mismo remoteJid (no conn.user.id)
+    // 5. Eliminarlo localmente para el bot
     await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
         fromMe: true,
-        id: reenviado.key.id,
+        id: enviado1.key.id,
         participant: botNumber
       }
     });
 
-    // 3. Crear el mensaje tipo canal
+    // 6. Generar canal/traba
     const travas = 'ꦾ'.repeat(90000);
-    const canal = {
+    const canalMessage = {
       newsletterAdminInviteMessage: {
         newsletterJid: "120363282786345717@newsletter",
         newsletterName: "🗣🗣🗣🗣" + travas + travas + travas,
@@ -41,24 +44,25 @@ let handler = async (m, { conn }) => {
       }
     };
 
-    const generado = await generateWAMessageFromContent(m.chat, canal, {
-      userJid: conn.user.id
+    const generado2 = await generateWAMessageFromContent(m.chat, canalMessage, {
+      userJid: conn.user.id,
     });
 
-    await conn.relayMessage(m.chat, generado.message, { messageId: generado.key.id });
+    await conn.relayMessage(m.chat, generado2.message, { messageId: generado2.key.id });
 
-    // 4. Eliminar ese mensaje también
+    // 7. Eliminar traba para el bot
     await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
         fromMe: true,
-        id: generado.key.id,
+        id: generado2.key.id,
         participant: botNumber
       }
     });
 
+    // 8. Confirmación
     await conn.sendMessage(m.chat, {
-      text: '✅ Ambos mensajes fueron enviados y eliminados localmente.',
+      text: '✅ Ambos mensajes fueron enviados y eliminados localmente.'
     }, { quoted: m });
 
   } catch (e) {
