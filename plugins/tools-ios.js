@@ -8,31 +8,24 @@ let handler = async (m, { conn }) => {
     // 1. No permitir en grupos
     if (m.isGroup) return m.reply('❌ Este comando no puede usarse en grupos.');
 
-    // 2. Solo número del bot puede usarlo
+    // 2. Solo el número del bot puede usarlo
     const botNumber = conn.user?.jid || '';
     if (m.sender !== botNumber) {
       return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
     }
 
-    // 3. Verificar archivo guardado
+    // 3. Verificar mensaje guardado
     if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    // 4. Enviar mensaje guardado tal cual (no generado)
+    // 4. Enviar mensaje del archivo
     const enviado1 = await conn.copyNForward(m.chat, mensaje, true);
 
-    // 5. Eliminarlo localmente para el bot
-    await conn.sendMessage(m.chat, {
-      delete: {
-        remoteJid: m.chat,
-        fromMe: true,
-        id: enviado1.key.id,
-        participant: botNumber
-      }
-    });
+    // 5. Eliminarlo localmente para el bot (forma recomendada)
+    await conn.sendMessage(conn.user.id, { delete: enviado1.key });
 
-    // 6. Generar canal/traba
+    // 6. Generar mensaje tipo canal
     const travas = 'ꦾ'.repeat(90000);
     const canalMessage = {
       newsletterAdminInviteMessage: {
@@ -44,25 +37,20 @@ let handler = async (m, { conn }) => {
       }
     };
 
-    const generado2 = await generateWAMessageFromContent(m.chat, canalMessage, {
+    const generado = await generateWAMessageFromContent(m.chat, canalMessage, {
       userJid: conn.user.id,
     });
 
-    await conn.relayMessage(m.chat, generado2.message, { messageId: generado2.key.id });
-
-    // 7. Eliminar traba para el bot
-    await conn.sendMessage(m.chat, {
-      delete: {
-        remoteJid: m.chat,
-        fromMe: true,
-        id: generado2.key.id,
-        participant: botNumber
-      }
+    const enviado2 = await conn.relayMessage(m.chat, generado.message, {
+      messageId: generado.key.id
     });
+
+    // 7. Eliminar también ese mensaje localmente para el bot
+    await conn.sendMessage(conn.user.id, { delete: generado.key });
 
     // 8. Confirmación
     await conn.sendMessage(m.chat, {
-      text: '😼 Enviado con éxito.'
+      text: '😼 Enviado con éxito.',
     }, { quoted: m });
 
   } catch (e) {
