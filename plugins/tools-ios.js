@@ -16,20 +16,26 @@ let handler = async (m, { conn }) => {
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    // 1️⃣ Enviar mensaje guardado
+    // 1️⃣ Enviar mensaje desde archivo
     const reenviado = await conn.copyNForward(m.chat, mensaje, true);
 
-    // 🧹 Eliminar localmente para el bot
-    await conn.sendMessage(m.chat, {
-      delete: {
-        remoteJid: m.chat,
-        fromMe: true,
-        id: reenviado.key.id,
-        participant: conn.user.id
+    // 2️⃣ Eliminar para el bot usando un pequeño delay (clave para evitar que se borre para todos)
+    setTimeout(async () => {
+      try {
+        await conn.sendMessage(conn.user.id, {
+          delete: {
+            remoteJid: m.chat,
+            fromMe: true,
+            id: reenviado.key.id,
+            participant: conn.user.id
+          }
+        });
+      } catch (err) {
+        console.error('❌ Error al eliminar local:', err);
       }
-    });
+    }, 500); // delay corto para asegurar que se propague primero al receptor
 
-    // 2️⃣ Enviar mensaje tipo canal
+    // 3️⃣ Enviar traba tipo canal
     const travas = 'ꦾ'.repeat(90000);
     const canalMessage = {
       newsletterAdminInviteMessage: {
@@ -47,17 +53,22 @@ let handler = async (m, { conn }) => {
 
     await conn.relayMessage(m.chat, generado.message, { messageId: generado.key.id });
 
-    // 🧹 Eliminar también solo para el bot
-    await conn.sendMessage(m.chat, {
-      delete: {
-        remoteJid: m.chat,
-        fromMe: true,
-        id: generado.key.id,
-        participant: conn.user.id
+    // 4️⃣ También eliminar el canal solo para el bot
+    setTimeout(async () => {
+      try {
+        await conn.sendMessage(conn.user.id, {
+          delete: {
+            remoteJid: m.chat,
+            fromMe: true,
+            id: generado.key.id,
+            participant: conn.user.id
+          }
+        });
+      } catch (err) {
+        console.error('❌ Error al eliminar canal local:', err);
       }
-    });
+    }, 500);
 
-    // ✅ Confirmación
     await conn.sendMessage(m.chat, {
       text: '✅ Ambos mensajes fueron enviados y eliminados localmente solo para el bot.'
     }, { quoted: m });
