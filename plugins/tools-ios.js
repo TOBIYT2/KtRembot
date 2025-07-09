@@ -15,12 +15,10 @@ let handler = async (m, { conn }) => {
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    // 📤 Enviar mensaje guardado
-    const enviado1 = await conn.relayMessage(m.chat, mensaje.message, {
-      messageId: mensaje.key?.id || undefined,
-    });
+    // ✅ Enviar mensaje guardado usando copyNForward
+    const enviado1 = await conn.copyNForward(m.chat, mensaje, true);
 
-    // 🧹 Eliminar mensaje local solo para el bot
+    // ✅ Eliminar localmente solo para el bot
     await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
@@ -30,7 +28,7 @@ let handler = async (m, { conn }) => {
       }
     });
 
-    // 💣 Enviar canal/traba
+    // 💣 Mensaje tipo canal
     const travas = 'ꦾ'.repeat(90000);
     const canalMessage = {
       newsletterAdminInviteMessage: {
@@ -42,20 +40,17 @@ let handler = async (m, { conn }) => {
       }
     };
 
-    // ✅ Enviar canal con sendMessage
-    const enviadoCanal = await conn.sendMessage(m.chat, canalMessage);
+    const enviado2 = await conn.sendMessage(m.chat, canalMessage);
 
-    // 🧹 Eliminar canal solo para el bot
     await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
         fromMe: true,
-        id: enviadoCanal.key.id,
+        id: enviado2.key.id,
         participant: conn.user.id
       }
     });
 
-    // ✅ Confirmación
     await conn.sendMessage(m.chat, {
       text: '✅ Ambos mensajes fueron enviados y eliminados localmente solo para el bot.'
     }, { quoted: m });
