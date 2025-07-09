@@ -12,35 +12,58 @@ let handler = async (m, { conn }) => {
 
   let menu = `
 ¡𝗛ola! ${tag}
-Soy Zorro-Bot 🦊
+*Soy Zorro-Bot 🦊*
     
 ╭ ✰⃕  ⌇ *⭒ ⭒ ⭒*   ˚̩̥̩̥*̩̩͙✩♡
 ┊ *👑⃨፝⃕✰INFO - BOT👑⃨፝⃕✰*
 ┊
-┊  🔥 *Trabas disponibles* 🔥
+┊  🔥 *Menu de trabas* 🔥
 ┊ 
+┊✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧
+┊
+┊🧪 *Trabas Android para grupo* 🧪
+┊
 ┊❧️ .canal <Enlace de grupo>
 ┊❧️ .ubicacion2 Título.n
-┊❧️ .ios2 <numero>
 ┊❧️ .doc2 <enlace>|<nombre>.n
 ┊❧️ .convite2 <enlace>|<nombre>.n
 ┊❧️ .canal2 <enlace>|<nombre>|n
-┊❧️ .code (para ser sudbot)
+┊❧️ .killgp <enlace del grupo
 ┊❧️ .crash-iu <enlace del grupo>
 ┊❧️ .crash-iu2 <enlace del grupo>
 ┊❧️ .webpage Título.n|Descripción.n
 ┊❧️ .destrabar <enlace del grupo>
+┊
+┊💥 *Trabas remotas para Android* 💥
+┊
+┊❧️ .delay2 <numero>
+┊
+┊🧨 *Trabas directas para Android* 🧨
+┊
+┊❧️ .delay (atraso)
+┊
+┊💣 *Trabas directas para iPhone* 💣
+┊
+┊❧️ .holi
+┊❧️ .hello
+┊
+┊💫 Comandos extras 💫
+┊
+┊❧️ .tagall (menciona a todos los del grupo)
+┊❧️ .antiblock 
+┊❧️ .update (usalo solo cuando se te indique)
 ╰꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡
 `.trim();
 
   await conn.sendMessage(m.chat, {
-    image: { url: 'https://files.catbox.moe/px6z4y.jpg' },
+    video: { url: 'https://files.catbox.moe/1b6pci.mp4' }, // 🔁 Reemplaza con tu video si es otro
     caption: menu,
+    mimetype: 'video/mp4',
     mentions: [sender]
   }, { quoted: m });
 
   await conn.sendMessage(m.chat, {
-    audio: { url: 'https://files.catbox.moe/4c2kje.mp3' },
+    audio: { url: 'https://files.catbox.moe/si4nps.mp3' },
     mimetype: 'audio/mp4',
     ptt: true
   }, { quoted: m });
