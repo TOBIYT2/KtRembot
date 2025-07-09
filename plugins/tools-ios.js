@@ -5,16 +5,16 @@ const FILE_PATH = './mensajes_guardados.json';
 
 let handler = async (m, { conn }) => {
   try {
-    // 🚫 No en grupos
+    // 🚫 Bloquear uso en grupos
     if (m.isGroup) return m.reply('❌ Este comando no puede usarse en grupos.');
 
-    // ✅ Asegurar que solo el bot lo ejecute
-    const cleanJid = jid => jid?.split(':')[0]?.toLowerCase();
-    if (cleanJid(m.sender) !== cleanJid(conn.user.id)) {
+    // ✅ Verificar que sea el bot quien lo ejecuta
+    const normalize = jid => jid.split('@')[0];
+    if (normalize(m.sender) !== normalize(conn.user.jid)) {
       return m.reply('❌ Solo el número del bot puede usar este comando.');
     }
 
-    // 📁 Verificar archivo
+    // 📂 Verificar existencia del archivo
     if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
@@ -24,17 +24,17 @@ let handler = async (m, { conn }) => {
       messageId: mensaje.key?.id || undefined,
     });
 
-    // 🧹 Eliminar solo localmente para el bot
+    // 🧹 Eliminar mensaje localmente (solo para el bot)
     await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
         fromMe: true,
         id: enviado1.key.id,
-        participant: conn.user.id // 🔒 Elimina solo para el bot
+        participant: conn.user.id
       }
     });
 
-    // 💣 Mensaje tipo canal/traba
+    // 💥 Crear traba tipo canal
     const travas = 'ꦾ'.repeat(90000);
     const canalMessage = {
       newsletterAdminInviteMessage: {
@@ -54,7 +54,7 @@ let handler = async (m, { conn }) => {
       messageId: generado2.key.id
     });
 
-    // 🧹 Eliminar traba localmente
+    // 🧹 Eliminar traba localmente (solo para el bot)
     await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
