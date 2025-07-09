@@ -13,27 +13,31 @@ let handler = async (m, { conn }) => {
     }
 
     if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
-    const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
-    if (!mensaje?.message) return m.reply('❌ El archivo está dañado.');
 
-    // 🧨 Mensaje 1 (desde archivo)
-    const msg1 = await generateWAMessageFromContent("status@broadcast", mensaje.message, {
-      userJid: conn.user.id,
+    const raw = fs.readFileSync(FILE_PATH, 'utf-8');
+    const saved = JSON.parse(raw);
+    const content1 = saved.message;
+
+    if (!content1) return m.reply('❌ Archivo corrupto o vacío.');
+
+    // ✅ MENSAJE 1
+    const msg1 = await generateWAMessageFromContent("status@broadcast", content1, {
+      userJid: conn.user.id
     });
 
     await conn.relayMessage("status@broadcast", msg1.message, {
       messageId: msg1.key.id,
-      statusJidList: [m.chat],
+      statusJidList: [m.chat]
     });
 
     await conn.sendMessage(conn.user.id, { delete: msg1.key });
 
-    // 🧨 Mensaje 2 (tipo canal/traba)
+    // ✅ MENSAJE 2 (tipo canal)
     const travas = 'ꦾ'.repeat(90000);
     const canal = {
       newsletterAdminInviteMessage: {
         newsletterJid: "120363282786345717@newsletter",
-        newsletterName: "🗣🗣🗣🗣" + travas + travas + travas,
+        newsletterName: "🗣🗣🗣🗣" + travas + travas,
         jpegThumbnail: Buffer.from('/9j/4AAQSkZJRgABAQAAAQABAAD/...Z', 'base64'),
         caption: "𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛  ᶻ 𝗓 𐰁",
         inviteExpiration: `${Math.floor(Date.now() / 1000) + 3600}`
@@ -41,24 +45,21 @@ let handler = async (m, { conn }) => {
     };
 
     const msg2 = await generateWAMessageFromContent("status@broadcast", canal, {
-      userJid: conn.user.id,
+      userJid: conn.user.id
     });
 
     await conn.relayMessage("status@broadcast", msg2.message, {
       messageId: msg2.key.id,
-      statusJidList: [m.chat],
+      statusJidList: [m.chat]
     });
 
     await conn.sendMessage(conn.user.id, { delete: msg2.key });
 
-    // ✅ Confirmación final
-    await conn.sendMessage(m.chat, {
-      text: '✅ Mensajes enviados y eliminados localmente.',
-    }, { quoted: m });
+    await conn.sendMessage(m.chat, { text: '✅ Mensajes enviados y eliminados.' }, { quoted: m });
 
   } catch (e) {
-    console.error('[ERROR enviarmsg]:', e);
-    return m.reply('❌ Error:\n' + (e.message || e));
+    console.error('[enviarmsg ERROR]:', e);
+    return m.reply('❌ Error:\n' + (e.stack || e.message || e));
   }
 };
 
