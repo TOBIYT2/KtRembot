@@ -1,5 +1,5 @@
 let handler = async (m, { conn }) => {
-  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Reemplaza con el número del owner, con @s.whatsapp.net
+  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Reemplaza con el número del owner
 
   const botNumber = conn.user?.jid || '';
   const sender = m.sender;
@@ -56,7 +56,8 @@ let handler = async (m, { conn }) => {
 `.trim();
 
   await conn.sendMessage(m.chat, {
-    video: { url: 'https://files.catbox.moe/1b6pci.mp4' }, // 🔁 Reemplaza con tu video si es otro
+    video: { url: 'https://files.catbox.moe/1b6pci.mp4' }, // debe ser corto y sin audio para funcionar como gif
+    gifPlayback: true,
     caption: menu,
     mimetype: 'video/mp4',
     mentions: [sender]
