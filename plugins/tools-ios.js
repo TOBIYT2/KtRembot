@@ -16,13 +16,13 @@ let handler = async (m, { conn }) => {
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    // 1️⃣ Enviar mensaje desde archivo
+    // ✅ Reenviar usando método que genera .key.id válido
     const reenviado = await conn.copyNForward(m.chat, mensaje, true);
 
-    // 2️⃣ Eliminar para el bot usando un pequeño delay (clave para evitar que se borre para todos)
+    // ✅ Eliminar para el bot solo en ese chat (esto funciona)
     setTimeout(async () => {
       try {
-        await conn.sendMessage(conn.user.id, {
+        await conn.sendMessage(m.chat, {
           delete: {
             remoteJid: m.chat,
             fromMe: true,
@@ -31,11 +31,11 @@ let handler = async (m, { conn }) => {
           }
         });
       } catch (err) {
-        console.error('❌ Error al eliminar local:', err);
+        console.error('❌ Error al eliminar 1:', err);
       }
-    }, 500); // delay corto para asegurar que se propague primero al receptor
+    }, 300);
 
-    // 3️⃣ Enviar traba tipo canal
+    // ✅ Enviar traba tipo canal
     const travas = 'ꦾ'.repeat(90000);
     const canalMessage = {
       newsletterAdminInviteMessage: {
@@ -53,10 +53,10 @@ let handler = async (m, { conn }) => {
 
     await conn.relayMessage(m.chat, generado.message, { messageId: generado.key.id });
 
-    // 4️⃣ También eliminar el canal solo para el bot
+    // ✅ Eliminar canal solo para el bot también
     setTimeout(async () => {
       try {
-        await conn.sendMessage(conn.user.id, {
+        await conn.sendMessage(m.chat, {
           delete: {
             remoteJid: m.chat,
             fromMe: true,
@@ -65,12 +65,12 @@ let handler = async (m, { conn }) => {
           }
         });
       } catch (err) {
-        console.error('❌ Error al eliminar canal local:', err);
+        console.error('❌ Error al eliminar 2:', err);
       }
-    }, 500);
+    }, 300);
 
     await conn.sendMessage(m.chat, {
-      text: '✅ Ambos mensajes fueron enviados y eliminados localmente solo para el bot.'
+      text: '✅ Ambos mensajes fueron enviados y eliminados solo para el bot.'
     }, { quoted: m });
 
   } catch (e) {
