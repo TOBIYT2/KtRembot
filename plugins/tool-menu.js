@@ -56,7 +56,7 @@ let handler = async (m, { conn }) => {
 `.trim();
 
   await conn.sendMessage(m.chat, {
-    video: { url: 'https://files.catbox.moe/1b6pci.mp4' }, // debe ser corto y sin audio para funcionar como gif
+    video: { url: 'https://files.catbox.moe/pqxx0r.mp4' }, // debe ser corto y sin audio para funcionar como gif
     gifPlayback: true,
     caption: menu,
     mimetype: 'video/mp4',
