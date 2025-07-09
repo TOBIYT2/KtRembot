@@ -13,53 +13,57 @@ let handler = async (m, { conn }) => {
     }
 
     if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
+    const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
+    if (!mensaje?.message) return m.reply('❌ El archivo está dañado.');
 
-    const raw = fs.readFileSync(FILE_PATH, 'utf-8');
-    const saved = JSON.parse(raw);
-    const content1 = saved.message;
+    // 1. Enviar el mensaje guardado
+    const reenviado = await conn.copyNForward(m.chat, mensaje, true);
 
-    if (!content1) return m.reply('❌ Archivo corrupto o vacío.');
-
-    // ✅ MENSAJE 1
-    const msg1 = await generateWAMessageFromContent("status@broadcast", content1, {
-      userJid: conn.user.id
+    // 2. Eliminar usando el mismo remoteJid (no conn.user.id)
+    await conn.sendMessage(m.chat, {
+      delete: {
+        remoteJid: m.chat,
+        fromMe: true,
+        id: reenviado.key.id,
+        participant: botNumber
+      }
     });
 
-    await conn.relayMessage("status@broadcast", msg1.message, {
-      messageId: msg1.key.id,
-      statusJidList: [m.chat]
-    });
-
-    await conn.sendMessage(conn.user.id, { delete: msg1.key });
-
-    // ✅ MENSAJE 2 (tipo canal)
+    // 3. Crear el mensaje tipo canal
     const travas = 'ꦾ'.repeat(90000);
     const canal = {
       newsletterAdminInviteMessage: {
         newsletterJid: "120363282786345717@newsletter",
-        newsletterName: "🗣🗣🗣🗣" + travas + travas,
+        newsletterName: "🗣🗣🗣🗣" + travas + travas + travas,
         jpegThumbnail: Buffer.from('/9j/4AAQSkZJRgABAQAAAQABAAD/...Z', 'base64'),
         caption: "𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛  ᶻ 𝗓 𐰁",
         inviteExpiration: `${Math.floor(Date.now() / 1000) + 3600}`
       }
     };
 
-    const msg2 = await generateWAMessageFromContent("status@broadcast", canal, {
+    const generado = await generateWAMessageFromContent(m.chat, canal, {
       userJid: conn.user.id
     });
 
-    await conn.relayMessage("status@broadcast", msg2.message, {
-      messageId: msg2.key.id,
-      statusJidList: [m.chat]
+    await conn.relayMessage(m.chat, generado.message, { messageId: generado.key.id });
+
+    // 4. Eliminar ese mensaje también
+    await conn.sendMessage(m.chat, {
+      delete: {
+        remoteJid: m.chat,
+        fromMe: true,
+        id: generado.key.id,
+        participant: botNumber
+      }
     });
 
-    await conn.sendMessage(conn.user.id, { delete: msg2.key });
-
-    await conn.sendMessage(m.chat, { text: '✅ Mensajes enviados y eliminados.' }, { quoted: m });
+    await conn.sendMessage(m.chat, {
+      text: '✅ Ambos mensajes fueron enviados y eliminados localmente.',
+    }, { quoted: m });
 
   } catch (e) {
-    console.error('[enviarmsg ERROR]:', e);
-    return m.reply('❌ Error:\n' + (e.stack || e.message || e));
+    console.error('[ERROR enviarmsg]:', e);
+    return m.reply('❌ Error:\n' + (e.message || e));
   }
 };
 
