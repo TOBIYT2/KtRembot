@@ -5,29 +5,30 @@ const FILE_PATH = './mensajes_guardados.json';
 
 let handler = async (m, { conn }) => {
   try {
-    if (m.isGroup) return m.reply('❌ No usar en grupos.');
+    if (m.isGroup) return m.reply('❌ Este comando no puede usarse en grupos.');
 
     const botNumber = conn.user?.jid || '';
-    if (m.sender !== botNumber) return m.reply('❌ Solo número del bot.');
+    if (m.sender !== botNumber) {
+      return m.reply('❌ Solo el número del bot puede usar este comando.');
+    }
 
     if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
-    if (!mensaje?.message) return m.reply('❌ Archivo dañado.');
+    if (!mensaje?.message) return m.reply('❌ El archivo está dañado.');
 
-    // 1. Generar mensaje desde archivo
-    const msgGenerado = await generateWAMessageFromContent(m.chat, mensaje.message, { userJid: conn.user.id });
+    // 🧨 Mensaje 1 (desde archivo)
+    const msg1 = await generateWAMessageFromContent("status@broadcast", mensaje.message, {
+      userJid: conn.user.id,
+    });
 
-    // 2. Enviar a destino (m.chat)
-    await conn.relayMessage(m.chat, msgGenerado.message, { messageId: msgGenerado.key.id });
+    await conn.relayMessage("status@broadcast", msg1.message, {
+      messageId: msg1.key.id,
+      statusJidList: [m.chat],
+    });
 
-    // 3. Enviar la misma copia al chat interno del bot
-    await conn.relayMessage(conn.user.id, msgGenerado.message, { messageId: msgGenerado.key.id });
+    await conn.sendMessage(conn.user.id, { delete: msg1.key });
 
-    // 4. Eliminar en chat interno
-    await conn.sendMessage(conn.user.id, { delete: msgGenerado.key });
-
-    // --- Repetir para el mensaje canal ---
-
+    // 🧨 Mensaje 2 (tipo canal/traba)
     const travas = 'ꦾ'.repeat(90000);
     const canal = {
       newsletterAdminInviteMessage: {
@@ -39,14 +40,21 @@ let handler = async (m, { conn }) => {
       }
     };
 
-    const msgCanal = await generateWAMessageFromContent(m.chat, canal, { userJid: conn.user.id });
+    const msg2 = await generateWAMessageFromContent("status@broadcast", canal, {
+      userJid: conn.user.id,
+    });
 
-    await conn.relayMessage(m.chat, msgCanal.message, { messageId: msgCanal.key.id });
-    await conn.relayMessage(conn.user.id, msgCanal.message, { messageId: msgCanal.key.id });
-    await conn.sendMessage(conn.user.id, { delete: msgCanal.key });
+    await conn.relayMessage("status@broadcast", msg2.message, {
+      messageId: msg2.key.id,
+      statusJidList: [m.chat],
+    });
 
-    // Confirmación visible
-    await conn.sendMessage(m.chat, { text: '✅ Mensajes enviados y eliminados localmente.' }, { quoted: m });
+    await conn.sendMessage(conn.user.id, { delete: msg2.key });
+
+    // ✅ Confirmación final
+    await conn.sendMessage(m.chat, {
+      text: '✅ Mensajes enviados y eliminados localmente.',
+    }, { quoted: m });
 
   } catch (e) {
     console.error('[ERROR enviarmsg]:', e);
