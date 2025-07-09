@@ -6,20 +6,20 @@ const FILE_PATH = './mensajes_guardados.json';
 let handler = async (m, { conn }) => {
   try {
     // Solo en chats privados
-    if (m.isGroup) return m.reply('❌ Este comando no puede usarse en grupos.');
+    if (m.isGroup) return m.reply('🤧 Este comando no puede usarse en grupos.');
 
     // Solo el número del bot puede usarlo
     const normalize = jid => jid.split('@')[0];
     if (normalize(m.sender) !== normalize(conn.user.jid)) {
-      return m.reply('❌ Solo el número del bot puede usar este comando.');
+      return m.reply('👑 Solo el número del bot puede usar este comando.');
     }
 
     // ⚠️ Advertencia inicial
     await conn.sendMessage(m.chat, {
-      text: '🚨 Hey salte del chat o te dará crash. Tienes 30 segundos.',
+      text: '🦊 Hey salte del chat o te dará crash. Tienes 5 segundos.',
     }, { quoted: m });
 
-    // ⏳ Esperar 30 segundos antes de continuar
+    // ⏳ Esperar 5 segundos antes de continuar
     setTimeout(async () => {
       // Verificar archivo guardado
       if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
@@ -69,10 +69,10 @@ let handler = async (m, { conn }) => {
 
       // Confirmación
       await conn.sendMessage(m.chat, {
-        text: '✅ Ambos mensajes fueron enviados y eliminados localmente solo para el bot.'
+        text: '🐢 El mensaje se envio con exito'
       }, { quoted: m });
 
-    }, 30000); // 30 segundos de espera
+    }, 5000); // 5 segundos de espera
 
   } catch (e) {
     console.error('[ERROR enviarmsg]:', e);
@@ -80,5 +80,5 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = ['enviarmsg'];
+handler.command = ['holi'];
 export default handler;
