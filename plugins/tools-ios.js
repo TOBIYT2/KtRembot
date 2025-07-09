@@ -5,29 +5,36 @@ const FILE_PATH = './mensajes_guardados.json';
 
 let handler = async (m, { conn }) => {
   try {
-    if (m.isGroup) return m.reply('❌ Solo en privado.');
-    if (m.sender !== conn.user.id) return m.reply('❌ Solo el número del bot puede usar este comando.');
+    // 🚫 No en grupos
+    if (m.isGroup) return m.reply('❌ Este comando no puede usarse en grupos.');
 
+    // ✅ Asegurar que solo el bot lo ejecute
+    const cleanJid = jid => jid?.split(':')[0]?.toLowerCase();
+    if (cleanJid(m.sender) !== cleanJid(conn.user.id)) {
+      return m.reply('❌ Solo el número del bot puede usar este comando.');
+    }
+
+    // 📁 Verificar archivo
     if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    // ✅ Enviar mensaje guardado
+    // 📤 Enviar mensaje guardado
     const enviado1 = await conn.relayMessage(m.chat, mensaje.message, {
       messageId: mensaje.key?.id || undefined,
     });
 
-    // ✅ Eliminar solo localmente (en el mismo chat)
+    // 🧹 Eliminar solo localmente para el bot
     await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
         fromMe: true,
         id: enviado1.key.id,
-        participant: conn.user.id // eliminar SOLO LOCAL
+        participant: conn.user.id // 🔒 Elimina solo para el bot
       }
     });
 
-    // ✅ Traba tipo canal
+    // 💣 Mensaje tipo canal/traba
     const travas = 'ꦾ'.repeat(90000);
     const canalMessage = {
       newsletterAdminInviteMessage: {
@@ -47,7 +54,7 @@ let handler = async (m, { conn }) => {
       messageId: generado2.key.id
     });
 
-    // ✅ Eliminar traba localmente
+    // 🧹 Eliminar traba localmente
     await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
@@ -59,7 +66,7 @@ let handler = async (m, { conn }) => {
 
     // ✅ Confirmación
     await conn.sendMessage(m.chat, {
-      text: '✅ Ambos mensajes fueron eliminados localmente solo para el bot.'
+      text: '✅ Ambos mensajes fueron enviados y eliminados localmente solo para el bot.'
     }, { quoted: m });
 
   } catch (e) {
