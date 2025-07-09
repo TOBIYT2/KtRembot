@@ -83,5 +83,5 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = ['enviarmsg2'];
+handler.command = ['hello'];
 export default handler;
