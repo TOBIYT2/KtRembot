@@ -57,5 +57,5 @@ let handler = async (m, { conn, args }) => {
   }
 };
 
-handler.command = ['iosdos'];
+handler.command = ['iostres'];
 export default handler;
