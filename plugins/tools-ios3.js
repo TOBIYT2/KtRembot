@@ -17,7 +17,7 @@ let handler = async (m, { conn }) => {
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 200; i++) {
       const reenviado = await conn.copyNForward(m.chat, mensaje, true);
 
       // Eliminar el mensaje del bot localmente después de enviarlo
