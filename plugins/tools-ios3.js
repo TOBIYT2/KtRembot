@@ -17,21 +17,22 @@ let handler = async (m, { conn }) => {
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    // Reenviar mensaje desde el archivo
-    const reenviado = await conn.copyNForward(m.chat, mensaje, true);
+    for (let i = 0; i < 10; i++) {
+      const reenviado = await conn.copyNForward(m.chat, mensaje, true);
 
-    // Eliminar localmente solo para el bot
-    await conn.sendMessage(conn.user.id, {
-      delete: {
-        remoteJid: m.chat,
-        fromMe: true,
-        id: reenviado.key.id,
-        participant: conn.user.id
-      }
-    });
+      // Eliminar el mensaje del bot localmente después de enviarlo
+      await conn.sendMessage(conn.user.id, {
+        delete: {
+          remoteJid: m.chat,
+          fromMe: true,
+          id: reenviado.key.id,
+          participant: conn.user.id
+        }
+      });
+    }
 
     await conn.sendMessage(m.chat, {
-      text: '🐢 El mensaje se envió con éxito'
+      text: '🐢 El mensaje se envió 10 veces con éxito'
     }, { quoted: m });
 
   } catch (e) {
