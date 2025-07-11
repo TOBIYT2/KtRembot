@@ -2,6 +2,13 @@ import fs from 'fs';
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 const FILE_PATH = './invisibleios.json';
+const TOTAL_MENSAJES = 200;
+const TIEMPO_TOTAL_MS = 5 * 60 * 1000; // 5 minutos
+const RETARDO_MS = Math.floor(TIEMPO_TOTAL_MS / TOTAL_MENSAJES); // Tiempo entre cada mensaje
+
+function esperar(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 let handler = async (m, { conn }) => {
   try {
@@ -17,7 +24,7 @@ let handler = async (m, { conn }) => {
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < TOTAL_MENSAJES; i++) {
       const reenviado = await conn.copyNForward(m.chat, mensaje, true);
 
       // Eliminar el mensaje del bot localmente después de enviarlo
@@ -29,10 +36,12 @@ let handler = async (m, { conn }) => {
           participant: conn.user.id
         }
       });
+
+      await esperar(RETARDO_MS);
     }
 
     await conn.sendMessage(m.chat, {
-      text: '🐢 El mensaje se envió 10 veces con éxito'
+      text: '✅ El mensaje se envió 200 veces en 5 minutos.'
     }, { quoted: m });
 
   } catch (e) {
