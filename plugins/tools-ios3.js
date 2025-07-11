@@ -24,6 +24,11 @@ let handler = async (m, { conn }) => {
     const mensaje = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
     if (!mensaje?.message) return m.reply('❌ El archivo está dañado o incompleto.');
 
+    // 🐢 Mensaje de aviso
+    await conn.sendMessage(m.chat, {
+      text: 'Se está realizando el comando en 5 minutos 🐢'
+    }, { quoted: m });
+
     for (let i = 0; i < TOTAL_MENSAJES; i++) {
       const reenviado = await conn.copyNForward(m.chat, mensaje, true);
 
@@ -41,7 +46,7 @@ let handler = async (m, { conn }) => {
     }
 
     await conn.sendMessage(m.chat, {
-      text: '✅ El mensaje se envió 200 veces en 5 minutos.'
+      text: 'trabas enviado con exito 😼'
     }, { quoted: m });
 
   } catch (e) {
