@@ -1,29 +1,23 @@
 import fs from 'fs';
+import path from 'path';
 
-const FILE_PATH = './mensajes_multi.json';
 const CONFIG_PATH = './config_guardado.json';
+const DIR = './mensajes_guardados';
 
-// Cargar mensajes guardados
-let mensajesGuardados = fs.existsSync(FILE_PATH)
-  ? JSON.parse(fs.readFileSync(FILE_PATH))
-  : [];
+// Asegurar que exista la carpeta
+if (!fs.existsSync(DIR)) fs.mkdirSync(DIR);
 
-// Cargar estado del guardado
+// Leer estado actual
 let estadoGuardado = fs.existsSync(CONFIG_PATH)
   ? JSON.parse(fs.readFileSync(CONFIG_PATH)).guardar
   : false;
 
-// Guardar mensajes en archivo
-function guardarMensajes() {
-  fs.writeFileSync(FILE_PATH, JSON.stringify(mensajesGuardados, null, 2));
-}
-
-// Guardar configuración
+// Guardar config
 function guardarConfig() {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify({ guardar: estadoGuardado }, null, 2));
 }
 
-// 🔵 Este handler responde a COMANDOS
+// Comando handler (comandos directos)
 let handler = async (m, { conn, command, args }) => {
   if (command === 'guardar') {
     const arg = args[0]?.toLowerCase();
@@ -41,45 +35,54 @@ let handler = async (m, { conn, command, args }) => {
   }
 
   if (command === 'reenviar') {
-    if (!mensajesGuardados.length) return m.reply('❌ No hay mensajes guardados.');
-    for (const msg of mensajesGuardados) {
+    const archivos = fs.readdirSync(DIR).filter(f => f.endsWith('.json'));
+    if (!archivos.length) return m.reply('❌ No hay mensajes guardados.');
+
+    for (const archivo of archivos) {
       try {
-        await conn.copyNForward(m.chat, msg);
+        const data = JSON.parse(fs.readFileSync(path.join(DIR, archivo)));
+        await conn.copyNForward(m.chat, data);
       } catch (e) {
-        console.error('❌ Error al reenviar:', e);
+        console.error(`Error reenviando ${archivo}:`, e);
       }
     }
     return m.reply('✅ Mensajes reenviados.');
   }
 
+  if (command === 'limpiarmensajes') {
+    const archivos = fs.readdirSync(DIR).filter(f => f.endsWith('.json'));
+    for (const archivo of archivos) {
+      fs.unlinkSync(path.join(DIR, archivo));
+    }
+    return m.reply('🧹 Todos los mensajes fueron eliminados.');
+  }
+
   if (command === 'descargarmsg') {
-    if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensajes guardados.');
-    await conn.sendMessage(m.chat, {
-      document: fs.readFileSync(FILE_PATH),
-      fileName: 'mensajes_multi.json',
-      mimetype: 'application/json'
-    }, { quoted: m });
+    const archivos = fs.readdirSync(DIR).filter(f => f.endsWith('.json'));
+    if (!archivos.length) return m.reply('❌ No hay mensajes guardados.');
+
+    for (const archivo of archivos) {
+      await conn.sendMessage(m.chat, {
+        document: fs.readFileSync(path.join(DIR, archivo)),
+        fileName: archivo,
+        mimetype: 'application/json'
+      }, { quoted: m });
+    }
     return;
   }
-
-  if (command === 'limpiarmensajes') {
-    mensajesGuardados = [];
-    guardarMensajes();
-    return m.reply('🧹 Archivo limpiado.');
-  }
 };
-handler.command = ['guardar', 'reenviar', 'descargarmsg', 'limpiarmensajes'];
+handler.command = ['guardar', 'reenviar', 'limpiarmensajes', 'descargarmsg'];
 
-// 🟢 Este handler captura TODOS los mensajes
+// Handler para todos los mensajes entrantes
 handler.all = async function (m) {
   if (
     estadoGuardado &&
     !m.key.fromMe &&
     m.message
   ) {
-    const jsonMsg = m.toJSON();
-    mensajesGuardados.push(jsonMsg);
-    guardarMensajes();
+    const json = m.toJSON();
+    const filename = `msg-${Date.now()}.json`;
+    fs.writeFileSync(path.join(DIR, filename), JSON.stringify(json, null, 2));
   }
 };
 
