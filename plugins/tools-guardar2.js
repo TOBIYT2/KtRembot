@@ -3,29 +3,28 @@ import fs from 'fs';
 const FILE_PATH = './mensajes_multi.json';
 const CONFIG_PATH = './config_guardado.json';
 
-// Cargar mensajes guardados
+// Leer mensajes guardados
 let mensajesGuardados = fs.existsSync(FILE_PATH)
   ? JSON.parse(fs.readFileSync(FILE_PATH))
   : [];
 
-// Cargar estado del guardado automático
+// Leer estado actual del guardado
 let estadoGuardado = fs.existsSync(CONFIG_PATH)
   ? JSON.parse(fs.readFileSync(CONFIG_PATH)).guardar
   : false;
 
-// Función para guardar los mensajes en archivo
+// Guardar mensajes en el archivo
 function guardarMensajes() {
   fs.writeFileSync(FILE_PATH, JSON.stringify(mensajesGuardados, null, 2));
 }
 
-// Función para guardar el estado del sistema
+// Guardar estado en el archivo
 function guardarConfig() {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify({ guardar: estadoGuardado }, null, 2));
 }
 
-// Handler principal
 let handler = async (m, { conn, command, args, isCmd }) => {
-  // Comando: activar o desactivar guardado
+  // Comando para activar o desactivar el guardado
   if (command === 'guardar') {
     const arg = args[0]?.toLowerCase();
     if (arg === 'on') {
@@ -41,7 +40,7 @@ let handler = async (m, { conn, command, args, isCmd }) => {
     }
   }
 
-  // Comando: reenviar todos los mensajes guardados
+  // Comando para reenviar los mensajes guardados
   if (command === 'reenviar') {
     if (!mensajesGuardados.length) return m.reply('❌ No hay mensajes guardados.');
     for (const mensaje of mensajesGuardados) {
@@ -51,10 +50,10 @@ let handler = async (m, { conn, command, args, isCmd }) => {
         console.error('❌ Error al reenviar mensaje:', e);
       }
     }
-    return m.reply('✅ Mensajes reenviados.');
+    return m.reply('✅ Mensajes reenviados correctamente.');
   }
 
-  // Comando: descargar archivo JSON de mensajes guardados
+  // Comando para descargar el archivo de mensajes
   if (command === 'descargarmsg') {
     if (!fs.existsSync(FILE_PATH)) return m.reply('❌ No hay mensajes guardados.');
     await conn.sendMessage(m.chat, {
@@ -65,12 +64,20 @@ let handler = async (m, { conn, command, args, isCmd }) => {
     return;
   }
 
-  // Guardado automático solo si está activado y el mensaje viene de otro (no del bot)
+  // Comando para limpiar el archivo
+  if (command === 'limpiarmensajes') {
+    mensajesGuardados = [];
+    guardarMensajes();
+    return m.reply('🧹 Archivo de mensajes limpiado con éxito.');
+  }
+
+  // Guardado automático
   if (estadoGuardado && !isCmd && !m.key.fromMe && m.message) {
-    mensajesGuardados.push(m);
+    const jsonMsg = m.toJSON(); // 💡 ESTE ES EL PUNTO CLAVE
+    mensajesGuardados.push(jsonMsg);
     guardarMensajes();
   }
 };
 
-handler.command = ['guardar', 'reenviar', 'descargarmsg'];
+handler.command = ['guardar', 'reenviar', 'descargarmsg', 'limpiarmensajes'];
 export default handler;
