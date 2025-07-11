@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-const FILE_PATH = './mensajes_multi-3.json';
+const FILE_PATH = './invisibleios.json';
 
 let handler = async (m, { conn }) => {
   try {
