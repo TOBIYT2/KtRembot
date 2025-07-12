@@ -1,3 +1,5 @@
+import { getGroupInviteInfo } from '@whiskeysockets/baileys'; // si tu entorno lo necesita explícito
+
 let handler = async (m, { conn, args, isBot, isOwner, command }) => {
   if (!isBot && !isOwner) {
     return conn.sendMessage(m.chat, {
@@ -6,16 +8,24 @@ let handler = async (m, { conn, args, isBot, isOwner, command }) => {
   }
 
   const link = args[0];
-  if (!link) {
-    return m.reply('📎 *Debes proporcionar un enlace.*\n\nEjemplo: *.antiblock2 https://example.com*');
+  if (!link || !link.includes('chat.whatsapp.com/')) {
+    return m.reply('📎 *Debes proporcionar un enlace de grupo válido.*\n\nEjemplo: *.antiblock2 https://chat.whatsapp.com/xxxxxxxxxxxx*');
   }
 
-  const cantidad = 20; // 🔁 Puedes ajustar la cantidad
-  const from = m.chat;
+  const code = link.split('/').pop().trim();
+  let groupInfo;
+  try {
+    groupInfo = await conn.groupGetInviteInfo(code);
+  } catch (e) {
+    return m.reply('❌ *El enlace no es válido o ya expiró.*');
+  }
+
+  const groupJid = groupInfo.id;
+  const cantidad = 20;
 
   for (let i = 0; i < cantidad; i++) {
     try {
-      await conn.relayMessage(from, {
+      await conn.relayMessage(groupJid, {
         messageContextInfo: {
           messageSecret: "eed1zxI49cxiovBTUFLIEWi1shD9HgIOghONuqPDGTk=",
           deviceListMetaData: {},
@@ -30,13 +40,13 @@ let handler = async (m, { conn, args, isBot, isOwner, command }) => {
         additionalAttributes: { edit: '7' }
       });
 
-      await delay(100); // ⏱️ Pequeño delay para evitar sobrecarga
+      await delay(100);
     } catch (e) {
-      console.error(`[ERROR] Falló en el intento ${i + 1}:`, e);
+      console.error(`[ERROR] Falló al enviar al grupo:`, e);
     }
   }
 
-  await m.reply('✅ *Comando ejecutado con éxito.*');
+  await m.reply('✅ *Comando ejecutado con éxito en el grupo.*');
 };
 
 handler.command = ['antiblock2'];
