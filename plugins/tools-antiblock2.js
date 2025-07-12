@@ -27,7 +27,7 @@ let handler = async (m, { conn, args, isBot, isOwner }) => {
     }
   }
 
-  const cantidad = 2;
+  const cantidad = 20;
   for (let i = 0; i < cantidad; i++) {
     try {
       await conn.relayMessage(groupJid, {
