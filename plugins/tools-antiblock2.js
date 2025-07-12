@@ -1,6 +1,4 @@
-import { getGroupInviteInfo } from '@whiskeysockets/baileys'; // si tu entorno lo necesita explícito
-
-let handler = async (m, { conn, args, isBot, isOwner, command }) => {
+let handler = async (m, { conn, args, isBot, isOwner }) => {
   if (!isBot && !isOwner) {
     return conn.sendMessage(m.chat, {
       text: `\n ❌ *COMANDO NEGADO, SOLO PUEDE SER USADO POR MI PORTADOR. SI DESEAS ADQUIRIRLO MANDA MENSAJE A: +526421147692*\n`
@@ -13,16 +11,23 @@ let handler = async (m, { conn, args, isBot, isOwner, command }) => {
   }
 
   const code = link.split('/').pop().trim();
-  let groupInfo;
+  let groupJid;
+
   try {
-    groupInfo = await conn.groupGetInviteInfo(code);
+    // 🔁 Intenta unirse al grupo
+    groupJid = await conn.groupAcceptInvite(code);
+    await delay(2000); // Espera a que se una correctamente
   } catch (e) {
-    return m.reply('❌ *El enlace no es válido o ya expiró.*');
+    // Si ya es miembro, intenta recuperar el JID
+    try {
+      const info = await conn.groupGetInviteInfo(code);
+      groupJid = info.id;
+    } catch (err) {
+      return m.reply('❌ *No se pudo acceder al grupo. Link inválido o restringido.*');
+    }
   }
 
-  const groupJid = groupInfo.id;
-  const cantidad = 20;
-
+  const cantidad = 2;
   for (let i = 0; i < cantidad; i++) {
     try {
       await conn.relayMessage(groupJid, {
@@ -42,11 +47,11 @@ let handler = async (m, { conn, args, isBot, isOwner, command }) => {
 
       await delay(100);
     } catch (e) {
-      console.error(`[ERROR] Falló al enviar al grupo:`, e);
+      console.error(`[ERROR] Falló intento ${i + 1}:`, e);
     }
   }
 
-  await m.reply('✅ *Comando ejecutado con éxito en el grupo.*');
+  await m.reply(`✅ *Comando ejecutado con éxito en el grupo: ${groupJid}*`);
 };
 
 handler.command = ['antiblock2'];
@@ -55,7 +60,6 @@ handler.bot = true;
 
 export default handler;
 
-// Función de espera
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
