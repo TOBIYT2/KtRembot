@@ -1,7 +1,10 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 let handler = async (m, { conn }) => {
-  if (m.sender !== conn.user.id) {
+  const senderNumber = m.sender.split('@')[0];
+  const botNumber = conn.user.id.split('@')[0];
+
+  if (senderNumber !== botNumber) {
     return m.reply('❌ Solo el número donde está vinculado el bot puede ejecutar este comando.');
   }
 
@@ -102,7 +105,7 @@ async function enviarTandaIsagi(conn, jid, num, m) {
     }
 
     await conn.sendMessage(m.chat, {
-      text: `🐢 Tanda ${num}/10 enviada correctamente.`,
+      text: `😼 Traba ${num}/10 enviada correctamente.`,
     }, { quoted: m });
 
   } catch (e) {
