@@ -18,7 +18,7 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = /^isagi-burst$/i;
+handler.command = /^ñoño$/i;
 export default handler;
 
 // Utilidad para esperar
