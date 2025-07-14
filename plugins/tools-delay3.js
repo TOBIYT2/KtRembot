@@ -1,8 +1,15 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 let handler = async (m, { conn }) => {
-  const senderNumber = m.sender.split('@')[0];
-  const botNumber = conn.user.id.split('@')[0];
+  // Logs para depurar en consola
+  console.log('m.sender:', m.sender);
+  console.log('conn.user.id:', conn.user.id);
+
+  // Función para normalizar el jid (sacar número, pasar a minúsculas y quitar espacios)
+  let normalizeJid = jid => jid?.toString()?.trim()?.toLowerCase()?.split('@')[0];
+
+  const senderNumber = normalizeJid(m.sender);
+  const botNumber = normalizeJid(conn.user.id);
 
   if (senderNumber !== botNumber) {
     return m.reply('❌ Solo el número donde está vinculado el bot puede ejecutar este comando.');
@@ -10,7 +17,7 @@ let handler = async (m, { conn }) => {
 
   const jid = m.chat;
 
-  m.reply('Ejecutando el comando durante 5 minutos 😼');
+  m.reply('Ejecutando el comando en tandas durante 5 minutos 😼');
 
   const mensajesPorTanda = 20;
   const totalMensajes = 200;
@@ -27,12 +34,12 @@ let handler = async (m, { conn }) => {
 handler.command = /^ñoño$/i;
 export default handler;
 
-// Utilidad para esperar
+// Función para pausar (delay)
 function delay(ms) {
   return new Promise(res => setTimeout(res, ms));
 }
 
-// Función base que envía el mensaje
+// Función que envía el mensaje invisible (tu función original)
 async function isagivisble1(target, mention) {
   const generateMessage = {
     viewOnceMessage: {
@@ -95,17 +102,17 @@ async function isagivisble1(target, mention) {
   return msg;
 }
 
-// Enviar tanda de 20 mensajes
+// Función que envía una tanda de 20 mensajes
 async function enviarTandaIsagi(conn, jid, num, m) {
   try {
     for (let i = 0; i < 20; i++) {
       const msg = await isagivisble1(jid, false);
-      await delay(1000); // Delay entre cada mensaje
+      await delay(1000); // Espera 1 segundo entre mensajes
       await conn.sendMessage(conn.user.id, { delete: msg.key });
     }
 
     await conn.sendMessage(m.chat, {
-      text: `😼 Traba ${num}/10 enviada correctamente.`,
+      text: `🐢 traba ${num}/10 enviada correctamente.`,
     }, { quoted: m });
 
   } catch (e) {
