@@ -1,10 +1,13 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 let handler = async (m, { conn }) => {
-  const jid = m.quoted?.sender || m.mentionedJid?.[0] || m.chat;
-  if (jid !== conn.user.id) return m.reply('❌ Solo el número donde está vinculado el bot puede ejecutar este comando.');
+  if (m.sender !== conn.user.id) {
+    return m.reply('❌ Solo el número donde está vinculado el bot puede ejecutar este comando.');
+  }
 
-  m.reply('⏳ Ejecutando el comando en tandas durante 5 minutos 🐢');
+  const jid = m.chat;
+
+  m.reply('Ejecutando el comando durante 5 minutos 😼');
 
   const mensajesPorTanda = 20;
   const totalMensajes = 200;
@@ -99,7 +102,7 @@ async function enviarTandaIsagi(conn, jid, num, m) {
     }
 
     await conn.sendMessage(m.chat, {
-      text: `✅ Tanda ${num}/10 enviada correctamente.`,
+      text: `🐢 Tanda ${num}/10 enviada correctamente.`,
     }, { quoted: m });
 
   } catch (e) {
