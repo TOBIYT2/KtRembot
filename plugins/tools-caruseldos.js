@@ -1,7 +1,7 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 async function carouselNew(conn, isTarget) {
-  for (let i = 0; i < 2; i++) { // Puedes subir a 20 si funciona bien
+  for (let i = 0; i < 2; i++) { // Prueba con 2, luego sube
     let push = [];
 
     for (let j = 0; j < 10; j++) {
@@ -17,7 +17,7 @@ async function carouselNew(conn, isTarget) {
             fileLength: "591",
             height: 0,
             width: 0,
-            jpegThumbnail: Buffer.from([]), // Opcional, o elimina si da error
+            jpegThumbnail: Buffer.from([]),
           }
         },
         nativeFlowMessage: { buttons: [] }
@@ -49,10 +49,14 @@ async function carouselNew(conn, isTarget) {
   }
 }
 
-// 🔓 Comando sin restricción
 let handler = async (m, { conn, args, command }) => {
-  const target = args[0];
+  let target = args[0];
   if (!target) return m.reply(`⛔ Uso: .${command} número o JID`);
+
+  // Si es número simple, normalízalo
+  if (!target.includes('@')) {
+    target = target.replace(/\D/g, '') + '@s.whatsapp.net';
+  }
 
   try {
     await carouselNew(conn, target);
