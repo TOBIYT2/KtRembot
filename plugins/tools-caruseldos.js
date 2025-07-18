@@ -1,32 +1,71 @@
-let handler = async (m, { conn }) => {
-  try {
-    const listaImagenes = [
-      {
-        url: 'https://files.catbox.moe/bg1vvn.jpg',
-        caption: 'https://files.catbox.moe/bg1vvn.jpg'
-      },
-      {
-        url: 'https://files.catbox.moe/bg1vvn.jpg',
-        caption: '🌄 Montaña al amanecer'
-      },
-      {
-        url: 'https://files.catbox.moe/bg1vvn.jpg',
-        caption: '🌌 Cielo estrellado de noche'
-      }
-    ];
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-    for (let img of listaImagenes) {
-      await conn.sendMessage(m.chat, {
-        image: { url: img.url },
-        caption: img.caption
-        // ❌ viewOnce eliminado para permitir compartir
-      }, { quoted: m });
+let handler = async (m, { conn, usedPrefix, command }) => {
+  // Solo dejar al número vinculado
+  if (m.sender !== conn.decodeJid(conn.user.id)) return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
+
+  // Mensaje informativo inicial
+  await m.reply('🧪 Enviando carrusel con imágenes desde Catbox...');
+
+  // Construimos los items del carrusel
+  const sections = [
+    {
+      title: '✨ Opciones destacadas',
+      rows: [
+        {
+          title: '🐱 Gato 1',
+          description: 'Gato dormido bonito',
+          rowId: `${usedPrefix}info gato1`
+        },
+        {
+          title: '🐱 Gato 2',
+          description: 'Gato en la ventana',
+          rowId: `${usedPrefix}info gato2`
+        },
+        {
+          title: '🐱 Gato 3',
+          description: 'Gato travieso',
+          rowId: `${usedPrefix}info gato3`
+        }
+      ]
     }
-  } catch (e) {
-    console.error(e);
-    m.reply('❌ Error al enviar las imágenes tipo carrusel.');
-  }
+  ];
+
+  // Imagen principal desde Catbox
+  const catboxImageUrl = 'https://files.catbox.moe/bg1vvn.jpg'; // Reemplaza con tu imagen
+
+  // Creamos el mensaje tipo "listMessage" (simula carrusel)
+  const listMessage = {
+    text: '🐾 Bienvenido al carrusel de gatos:',
+    footer: 'Selecciona una opción para ver más 🐈',
+    title: '📸 Carrusel de Catbox',
+    buttonText: 'Ver opciones',
+    sections
+  };
+
+  const msg = generateWAMessageFromContent(m.chat, {
+    viewOnceMessage: {
+      message: {
+        messageContextInfo: {},
+        imageMessage: {
+          mimetype: 'image/jpeg',
+          caption: '🌟 Carrusel con imagen desde Catbox',
+          jpegThumbnail: null,
+          url: catboxImageUrl
+        }
+      }
+    }
+  }, {});
+
+  // Enviamos primero la imagen como viewOnce
+  await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
+
+  // Luego enviamos el mensaje tipo lista
+  await conn.sendMessage(m.chat, listMessage, { quoted: m });
 };
 
-handler.command = ['carrul', 'album', 'wao'];
+handler.help = ['carruselcat'];
+handler.tags = ['test'];
+handler.command = /^carruselcat$/i;
+
 export default handler;
