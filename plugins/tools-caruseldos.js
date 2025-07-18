@@ -1,38 +1,79 @@
-let handler = async (m, { conn }) => {
-  if (m.sender !== conn.decodeJid(conn.user.id)) return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-  let images = [
+let handler = async (m, { conn, usedPrefix, command }) => {
+  if (m.sender !== conn.decodeJid(conn.user.id)) {
+    return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
+  }
+
+  const catalogSections = [
     {
-      url: 'https://files.catbox.moe/bg1vvn.jpg',
-      caption: '🐱 Gato 1 - Dormido',
-      buttons: [{ buttonId: '.info gato1', buttonText: { displayText: 'Ver más 🐾' }, type: 1 }]
-    },
-    {
-      url: 'https://files.catbox.moe/bg1vvn.jpg',
-      caption: '🐱 Gato 2 - Curioso',
-      buttons: [{ buttonId: '.info gato2', buttonText: { displayText: 'Ver más 🐾' }, type: 1 }]
-    },
-    {
-      url: 'https://files.catbox.moe/bg1vvn.jpg',
-      caption: '🐱 Gato 3 - Travieso',
-      buttons: [{ buttonId: '.info gato3', buttonText: { displayText: 'Ver más 🐾' }, type: 1 }]
+      title: '🔥 ATTACK ID GROUP 🔥',
+      headers: [
+        {
+          title: 'group-destruct1',
+          description: 'Destruye grupo nivel 1',
+          media: {
+            url: 'https://files.catbox.moe/bg1vvn.jpg'
+          },
+          action: {
+            button: 'Ejecutar',
+            sections: [
+              {
+                title: 'Ataques',
+                rows: [
+                  { title: 'group-destruct1', rowId: `${usedPrefix}group-destruct1` },
+                  { title: 'group-destruct2', rowId: `${usedPrefix}group-destruct2` },
+                  { title: 'group-destruct3', rowId: `${usedPrefix}group-destruct3` }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          title: 'group-destruct2',
+          description: 'Destruye grupo nivel 2',
+          media: {
+            url: 'https://files.catbox.moe/bg1vvn.jpg'
+          },
+          action: {
+            button: 'Ejecutar',
+            sections: [
+              {
+                title: 'Ataques',
+                rows: [
+                  { title: 'group-destruct1', rowId: `${usedPrefix}group-destruct1` },
+                  { title: 'group-destruct2', rowId: `${usedPrefix}group-destruct2` }
+                ]
+              }
+            ]
+          }
+        }
+      ]
     }
   ];
 
-  for (let img of images) {
-    await conn.sendMessage(m.chat, {
-      image: { url: img.url },
-      caption: img.caption,
-      buttons: img.buttons,
-      footer: '🐈 Carrusel de gatos',
-      headerType: 4
-    }, { quoted: m });
-    await new Promise(resolve => setTimeout(resolve, 500)); // Pequeña pausa entre imágenes
-  }
+  const catalogMsg = {
+    interactiveMessage: {
+      header: { type: 'text', text: '💀 BOTZAPP CARRUSEL 💀' },
+      body: { text: 'Selecciona una opción destructiva' },
+      footer: { text: '🧪 CrowBot Flow' },
+      nativeFlowMessage: {
+        buttons: [{ type: 'reply', reply: { id: 'id-1', title: 'Abrir Carrusel' } }],
+        messageParamsJson: JSON.stringify({
+          flow_message_type: 'product_list',
+          flow_token: '123456',
+          sections: catalogSections
+        })
+      }
+    }
+  };
+
+  const msg = generateWAMessageFromContent(m.chat, catalogMsg, {});
+  await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
 };
 
-handler.help = ['carruselcat'];
-handler.tags = ['bot'];
 handler.command = /^carruselcat$/i;
+handler.help = ['carruselcat'];
+handler.tags = ['test'];
 
 export default handler;
