@@ -41,6 +41,7 @@ let handler = async (m, { conn }) => {
 ┊🧨 *Trabas directas para Android* 🧨
 ┊
 ┊❧️ .delay (atraso)
+┊❧️ .ñoño (atraso)
 ┊
 ┊💣 *Trabas directas para iPhone* 💣
 ┊
@@ -50,7 +51,8 @@ let handler = async (m, { conn }) => {
 ┊💫 Comandos extras 💫
 ┊
 ┊❧️ .tagall (menciona a todos los del grupo)
-┊❧️ .antiblock 
+┊❧️ .antiblock (usalo solo en privado) 
+┊❧️ .antiblock2 (usalo para grupos)
 ┊❧️ .update (usalo solo cuando se te indique)
 ╰꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡
 `.trim();
