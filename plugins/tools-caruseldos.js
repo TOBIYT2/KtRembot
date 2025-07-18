@@ -1,3 +1,5 @@
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
+
 let handler = async (m, { conn }) => {
   if (m.sender !== conn.decodeJid(conn.user.id)) return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
 
@@ -5,9 +7,9 @@ let handler = async (m, { conn }) => {
     {
       title: '🔴 ATTACK ID GROUP',
       body: `
-╭─────────────────
+╭──────────────
 │ ⚙️ 𝑩𝑶𝑻𝒁𝑨𝑷𝑷 ⚙️
-╰─────────────────
+╰──────────────
 ╰⊹ group-destruct
 ╰⊹ group-destruct2
 ╰⊹ group-destruct3
@@ -20,9 +22,9 @@ let handler = async (m, { conn }) => {
     {
       title: '🚫 CRASH PRIVADO',
       body: `
-╭─────────────────
+╭──────────────
 │ ⚙️ 𝑩𝑶𝑻𝒁𝑨𝑷𝑷 ⚙️
-╰─────────────────
+╰──────────────
 ╰⊹ priv-iu
 ╰⊹ scheduled-priv
 ╰⊹ crash-priv1
@@ -35,11 +37,11 @@ let handler = async (m, { conn }) => {
   ];
 
   for (let card of cards) {
-    const msg = {
+    const msg = generateWAMessageFromContent(m.chat, {
       templateMessage: {
         hydratedTemplate: {
           imageMessage: {
-            url: card.image
+            jpegThumbnail: (await conn.getFile(card.image)).data
           },
           hydratedContentText: `*${card.title}*\n\n${card.body}`,
           hydratedFooterText: '👾 BOTZAPP ⚙️',
@@ -53,10 +55,10 @@ let handler = async (m, { conn }) => {
           ]
         }
       }
-    };
+    }, { userJid: m.sender, quoted: m });
 
-    await conn.relayMessage(m.chat, msg, { messageId: m.key.id });
-    await new Promise(res => setTimeout(res, 300)); // pausa breve entre tarjetas
+    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
+    await new Promise(res => setTimeout(res, 300)); // pausa visual
   }
 };
 
