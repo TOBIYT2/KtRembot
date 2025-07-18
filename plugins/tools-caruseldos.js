@@ -1,4 +1,5 @@
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
+import fetch from 'node-fetch'; // solo si tu entorno no tiene fetch global
 
 let handler = async (m, { conn }) => {
   if (m.sender !== conn.decodeJid(conn.user.id)) return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
@@ -17,63 +18,59 @@ let handler = async (m, { conn }) => {
       buttonCmd: '.crash-priv1'
     },
     {
-      title: '⚡ ATAQUE MASIVO',
-      body: 'mass-attack1\nmass-attack2\nmass-attack3',
+      title: '🚫 CRASH PRIVADO',
+      body: 'priv-iu\nscheduled-priv\ncrash-priv1\ncrash-priv2',
       image: 'https://files.catbox.moe/bg1vvn.jpg',
-      buttonCmd: '.mass-attack1'
+      buttonCmd: '.crash-priv1'
     },
-    {
-      title: '👻 GHOST MODE',
-      body: 'ghost-on\nghost-off',
+        {
+      title: '🚫 CRASH PRIVADO',
+      body: 'priv-iu\nscheduled-priv\ncrash-priv1\ncrash-priv2',
       image: 'https://files.catbox.moe/bg1vvn.jpg',
-      buttonCmd: '.ghost-on'
+      buttonCmd: '.crash-priv1'
     },
-    {
-      title: '📦 ENCRYPTED FLOOD',
-      body: 'enc-flood1\nenc-flood2',
+        {
+      title: '🚫 CRASH PRIVADO',
+      body: 'priv-iu\nscheduled-priv\ncrash-priv1\ncrash-priv2',
       image: 'https://files.catbox.moe/bg1vvn.jpg',
-      buttonCmd: '.enc-flood1'
+      buttonCmd: '.crash-priv1'
     },
-    {
-      title: '🧠 MENTELOOP',
-      body: 'loop-start\nloop-stop',
+        {
+      title: '🚫 CRASH PRIVADO',
+      body: 'priv-iu\nscheduled-priv\ncrash-priv1\ncrash-priv2',
       image: 'https://files.catbox.moe/bg1vvn.jpg',
-      buttonCmd: '.loop-start'
+      buttonCmd: '.crash-priv1'
     },
-    {
-      title: '💣 OVERLOAD',
-      body: 'overload-test\nsafe-overload',
+        {
+      title: '🚫 CRASH PRIVADO',
+      body: 'priv-iu\nscheduled-priv\ncrash-priv1\ncrash-priv2',
       image: 'https://files.catbox.moe/bg1vvn.jpg',
-      buttonCmd: '.overload-test'
+      buttonCmd: '.crash-priv1'
     },
-    {
-      title: '🔐 ANTI-BAN',
-      body: 'antiban-enable\nantiban-status',
+        {
+      title: '🚫 CRASH PRIVADO',
+      body: 'priv-iu\nscheduled-priv\ncrash-priv1\ncrash-priv2',
       image: 'https://files.catbox.moe/bg1vvn.jpg',
-      buttonCmd: '.antiban-enable'
+      buttonCmd: '.crash-priv1'
     },
-    {
-      title: '🎭 CAMUFLAJE',
-      body: 'fake-disconnect\nstealth-mode',
+        {
+      title: '🚫 CRASH PRIVADO',
+      body: 'priv-iu\nscheduled-priv\ncrash-priv1\ncrash-priv2',
       image: 'https://files.catbox.moe/bg1vvn.jpg',
-      buttonCmd: '.stealth-mode'
-    },
-    {
-      title: '🧪 EXPERIMENTAL',
-      body: 'beta-module1\nbeta-module2',
-      image: 'https://files.catbox.moe/bg1vvn.jpg',
-      buttonCmd: '.beta-module1'
+      buttonCmd: '.crash-priv1'
     }
+    // Puedes añadir 8 tarjetas más aquí si esto te funciona
   ];
 
   for (let card of cards) {
-    const thumbnailBuffer = (await conn.getFile(card.image)).data;
+    const res = await fetch(card.image);
+    const buffer = await res.buffer();
 
     const msg = generateWAMessageFromContent(m.chat, {
       templateMessage: {
         hydratedTemplate: {
           imageMessage: {
-            jpegThumbnail: thumbnailBuffer
+            image: buffer
           },
           hydratedContentText: `*${card.title}*\n\n${card.body}`,
           hydratedFooterText: '⚙️ BOTZAPP SYSTEM ⚙️',
@@ -90,7 +87,7 @@ let handler = async (m, { conn }) => {
     }, { userJid: m.sender, quoted: m });
 
     await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
-    await new Promise(res => setTimeout(res, 300)); // Pausa visual entre tarjetas
+    await new Promise(res => setTimeout(res, 300));
   }
 };
 
