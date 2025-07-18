@@ -1,22 +1,19 @@
-import { prepareWAMessageMedia, generateMessageID } from '@whiskeysockets/baileys';
+import { prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID } from '@whiskeysockets/baileys';
 
 let handler = async (m, { conn }) => {
-  const target = m.chat;
   const imagePath = './src/foto.jpg';
   const groupLink = 'https://chat.whatsapp.com/D1IJDyndCxTIiYfvmaavCE';
-  const travaSend = 3; // Cuántas veces repetir el envío
+  const target = m.chat;
+  const travaSend = 3;
 
-  // Subir imagen y preparar contenido multimedia
   const media = await prepareWAMessageMedia({ image: { url: imagePath } }, { upload: conn.waUploadToServer });
 
-  // Función para generar tarjetas
   const makeCard = () => ({
     header: {
       ...media.imageMessage,
-      title: `\n${groupLink}\n`,
-      gifPlayback: true,
-      subtitle: " ",
-      hasMediaAttachment: false
+      title: `¡Únete ahora!`,
+      subtitle: "Haz clic abajo",
+      hasMediaAttachment: true
     },
     body: {
       text: "🎠 𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛"
@@ -33,26 +30,19 @@ let handler = async (m, { conn }) => {
     }
   });
 
-  // Generar las 10 tarjetas
   const cards = Array.from({ length: 10 }, makeCard);
 
-  // Crear mensaje tipo carrusel visual
-  const msg = {
-    viewOnceMessage: {
-      message: {
-        interactiveMessage: {
-          body: {
-            text: "🎠 𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛\n\n" + "\0".repeat(5000) // Cuerpo relleno para estilo
-          },
-          carouselMessage: { cards }
-        }
-      }
+  const msg = generateWAMessageFromContent(target, {
+    interactiveMessage: {
+      body: {
+        text: "🎠 𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛\n\nDesliza para ver más opciones."
+      },
+      carouselMessage: { cards }
     }
-  };
+  }, { userJid: conn.user.id });
 
-  // Enviar carrusel N veces (travaSend)
   for (let i = 0; i < travaSend; i++) {
-    await conn.relayMessage(target, msg, { messageId: generateMessageID() });
+    await conn.relayMessage(target, msg.message, { messageId: generateMessageID() });
   }
 };
 
