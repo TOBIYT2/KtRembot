@@ -1,34 +1,71 @@
 let handler = async (m, { conn }) => {
   if (m.sender !== conn.decodeJid(conn.user.id)) return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
 
-  const sections = [
+  const productItems = [
     {
-      title: '🔴 ATTACK COMMANDS',
-      rows: [
-        { title: '💥 Destruct 1', description: 'Destruye el grupo versión 1', rowId: '.group-destruct1' },
-        { title: '💥 Destruct 2', description: 'Destruye el grupo versión 2', rowId: '.group-destruct2' },
-        { title: '💥 Crash Priv', description: 'Crash privado 1', rowId: '.crash-priv1' },
-        { title: '⚡ Mass Attack', description: 'Ataque masivo', rowId: '.mass-attack1' },
-        { title: '👻 Ghost Mode', description: 'Modo fantasma on', rowId: '.ghost-on' },
-        { title: '📦 Encrypted Flood', description: 'Flood cifrado', rowId: '.enc-flood1' },
-        { title: '🧠 Menteloop', description: 'Loop mental', rowId: '.loop-start' },
-        { title: '💣 Overload', description: 'Sobrecarga', rowId: '.overload-test' },
-        { title: '🔐 Antiban', description: 'Activa antiban', rowId: '.antiban-enable' },
-        { title: '🧪 Experimental', description: 'Beta módulo 1', rowId: '.beta-module1' }
-      ]
+      productId: '001',
+      title: '🔥 Destruct Group',
+      description: 'Comando: .group-destruct1',
+      currencyCode: 'USD',
+      priceAmount1000: 1000,
+      imageUrl: 'https://files.catbox.moe/bg1vvn.jpg'
+    },
+    {
+      productId: '002',
+      title: '💣 Crash Privado',
+      description: 'Comando: .crash-priv1',
+      currencyCode: 'USD',
+      priceAmount1000: 1000,
+      imageUrl: 'https://files.catbox.moe/bg1vvn.jpg'
+    },
+    {
+      productId: '003',
+      title: '⚡ Ataque Masivo',
+      description: 'Comando: .mass-attack1',
+      currencyCode: 'USD',
+      priceAmount1000: 1000,
+      imageUrl: 'https://files.catbox.moe/bg1vvn.jpg'
     }
   ];
 
-  const listMessage = {
-    text: '🎯 *Carrusel Visual BotZapp*',
-    footer: '⚙️ BOTZAPP SYSTEM',
-    title: '🧰 Elige una acción:',
-    buttonText: '📂 Ver Opciones',
-    sections
+  const message = {
+    contextInfo: {
+      businessMessageForwardInfo: {},
+      forwardingScore: 999,
+      isForwarded: true
+    },
+    multiProductMessage: {
+      header: {
+        title: '🧰 Menú de Funciones BotZapp'
+      },
+      businessOwnerJid: conn.decodeJid(conn.user.id),
+      sections: [
+        {
+          title: '⚙️ Comandos disponibles',
+          productItems: productItems.map(p => ({
+            productId: p.productId
+          }))
+        }
+      ]
+    }
   };
 
-  await conn.sendMessage(m.chat, listMessage, { quoted: m });
+  // Registrar los productos en el catálogo (falsos)
+  conn.catalog = conn.catalog || {};
+  for (let item of productItems) {
+    conn.catalog[item.productId] = {
+      productId: item.productId,
+      title: item.title,
+      description: item.description,
+      currencyCode: item.currencyCode,
+      priceAmount1000: item.priceAmount1000,
+      productImageCount: 1,
+      imageUrl: item.imageUrl
+    };
+  }
+
+  await conn.sendMessage(m.chat, message, { quoted: m });
 };
 
-handler.command = /^carruselcat$/i;
+handler.command = /^carruselreal$/i;
 export default handler;
