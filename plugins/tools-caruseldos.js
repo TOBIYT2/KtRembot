@@ -1,80 +1,34 @@
-import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
-
 let handler = async (m, { conn }) => {
-  if (m.sender !== conn.decodeJid(conn.user.id)) {
-    return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
-  }
+  if (m.sender !== conn.decodeJid(conn.user.id)) return m.reply('❌ Solo el número vinculado al bot puede usar este comando.');
 
-  const catalogFlow = {
-    interactiveMessage: {
-      body: { text: '💥 Selecciona una opción destructiva' },
-      footer: { text: '🧪 CrowBot Flow' },
-      header: { type: 'text', text: '☠️ ATAQUES DISPONIBLES ☠️' },
-      nativeFlowMessage: {
-        buttons: [
-          {
-            type: 'reply',
-            reply: {
-              id: 'abrir-carrusel',
-              title: '🚀 Ver ataques'
-            }
-          }
-        ],
-        messageParamsJson: JSON.stringify({
-          flow_message_type: 'product_list',
-          flow_token: 'abc123',
-          sections: [
-            {
-              title: '🔥 ATAQUES DESTRUCTIVOS 🔥',
-              headers: [
-                {
-                  title: 'group-destruct1',
-                  description: 'Destruye grupo 1',
-                  media: {
-                    url: 'https://files.catbox.moe/bg1vvn.jpg'
-                  },
-                  action: {
-                    button: 'Ejecutar',
-                    sections: [
-                      {
-                        title: 'Comandos',
-                        rows: [
-                          { title: 'group-destruct1', rowId: '.group-destruct1' },
-                          { title: 'group-destruct2', rowId: '.group-destruct2' }
-                        ]
-                      }
-                    ]
-                  }
-                },
-                {
-                  title: 'group-destruct2',
-                  description: 'Destruye grupo 2',
-                  media: {
-                    url: 'https://files.catbox.moe/bg1vvn.jpg'
-                  },
-                  action: {
-                    button: 'Ejecutar',
-                    sections: [
-                      {
-                        title: 'Comandos',
-                        rows: [
-                          { title: 'group-destruct3', rowId: '.group-destruct3' },
-                          { title: 'group-destruct4', rowId: '.group-destruct4' }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          ]
-        })
-      }
+  const cards = [
+    {
+      title: '🔥 ATTACK ID GROUP',
+      body: 'group-destruct1\ngroup-destruct2\ngroup-destruct3',
+      image: 'https://files.catbox.moe/bg1vvn.jpg',
+      button: '.group-destruct1'
+    },
+    {
+      title: '🚫 CRASH PRIVADO',
+      body: 'priv-iu\nscheduled-priv\ncrash-priv1\ncrash-priv2',
+      image: 'https://files.catbox.moe/bg1vvn.jpg',
+      button: '.crash-priv1'
     }
-  };
+  ];
 
-  const msg = generateWAMessageFromContent(m.chat, catalogFlow, {});
-  await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
+  for (let card of cards) {
+    await conn.sendMessage(m.chat, {
+      image: { url: card.image },
+      caption: `*${card.title}*\n\n${card.body}`,
+      footer: '⚙ BOTZAPP',
+      buttons: [
+        { buttonId: card.button, buttonText: { displayText: '💥 Ejecutar' }, type: 1 }
+      ],
+      headerType: 4
+    }, { quoted: m });
+
+    await new Promise(resolve => setTimeout(resolve, 300)); // Pausa corta para simular efecto carrusel
+  }
 };
 
 handler.command = /^carruselcat$/i;
