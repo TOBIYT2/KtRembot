@@ -388,6 +388,7 @@ let handler = async (m, { conn, text, command, args }) => {
           });
         }
         break;
+        }
 
     case 'stickerinfo':
       if (!m.quoted?.stickerMessage) return m.reply('❌ Responde a un sticker');
