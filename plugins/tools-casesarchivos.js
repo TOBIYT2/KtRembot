@@ -1,3 +1,5 @@
+import { prepareWAMessageMedia, proto } from '@whiskeysockets/baileys';
+
 let handler = async (m, { conn, text, command, args }) => {
   switch (command) {
     
@@ -12,6 +14,8 @@ let handler = async (m, { conn, text, command, args }) => {
       break;
 
     case 'atraso-kamikaze':
+    let travaSend = 5;
+    let from = m.chat;
       for (let i = 0; i < travaSend; i++) {
           await conn.relayMessage(from, {
             'viewOnceMessage': {
