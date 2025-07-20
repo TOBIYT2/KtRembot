@@ -13,7 +13,7 @@ let handler = async (m, { conn, text, command, args }) => {
       await conn.reply(m.chat, `Usuario ${user} ha sido baneado (ejemplo).`, m);
       break;
 
-    case 'atraso-kamikaze':
+    case 'atraso-kamikaze': {
     let travaSend = 5;
     let from = m.chat;
       for (let i = 0; i < travaSend; i++) {
