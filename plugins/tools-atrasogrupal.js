@@ -1,4 +1,6 @@
-import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys';
+const baileys = require('@whiskeysockets/baileys');
+const proto = baileys.proto;
+const generateWAMessageFromContent = baileys.generateWAMessageFromContent;
 
 let handler = async (m, { conn, args, usedPrefix, command }) => {
   // Verifica si el usuario dio el link
