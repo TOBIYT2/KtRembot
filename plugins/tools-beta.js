@@ -1,3 +1,5 @@
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
+
 let handler = async (m, { conn, args, isBot }) => {
   if (!args[0] || !args[0].includes('whatsapp.com')) {
     return m.reply('*⚠️ Ingresa el link de un grupo válido.*\n\nEjemplo: .stiker https://chat.whatsapp.com/...');
