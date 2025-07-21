@@ -1,25 +1,33 @@
-const handler = async (m, { conn, args, usedPrefix, command }) => {
-  m.reply('✅ Recibí el comando .togrup');
+let handler = async (m, { conn, args, isBot, isOwner }) => {
+  if (!isBot && !isOwner) {
+    return conn.sendMessage(m.chat, {
+      text: `❌ *COMANDO DENEGADO: Solo puede ser usado por mi portador.*\n\nSi deseas adquirir este bot, contacta a: +526421147692`
+    }, { quoted: m });
+  }
 
-  // Solo prueba básica por ahora
-  if (!args[0]) return m.reply(`Envíame un link de grupo como:\n${usedPrefix + command} <link>`);
+  const link = args[0];
+  if (!link || !link.includes('chat.whatsapp.com/')) {
+    return m.reply('📎 *Debes proporcionar un enlace de grupo válido.*\n\nEjemplo: *.togrup https://chat.whatsapp.com/xxxxxxxxxxxx*');
+  }
 
-  let groupLink = args[0];
-  let code = groupLink.match(/chat\.whatsapp\.com\/([0-9A-Za-z]{20,24})/i)?.[1];
-
-  if (!code) return m.reply('❌ Link inválido.');
+  const code = link.split('/').pop().trim();
+  let groupJid;
 
   try {
-    let jid = await conn.groupAcceptInvite(code);
-    m.reply('✅ Me uní al grupo: ' + jid);
+    groupJid = await conn.groupAcceptInvite(code);
+    await delay(1500);
+    await m.reply(`✅ *Se unió correctamente al grupo: ${groupJid}*`);
   } catch (e) {
-    console.error(e);
-    m.reply('❌ Error: No me pude unir.');
+    return m.reply('❌ *No se pudo unir al grupo. Link inválido, expulsado o el bot ya es miembro.*');
   }
 };
 
-handler.command = /^togrup$/i;
-handler.group = false;
-handler.private = false;
+handler.command = ['togrup'];
+handler.owner = false;
+handler.bot = true;
 
-module.exports = handler;
+export default handler;
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
