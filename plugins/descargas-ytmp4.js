@@ -15,8 +15,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     let res = await fetch(`https://api.siputzx.my.id/api/d/ytmp4?url=${text}`);
     let json = await res.json();
 
+    console.log('[DEBUG] Respuesta JSON:', json);
+
     if (!json.status || !json.data?.dl) {
-      throw new Error('⚠️ No se pudo obtener el video. Revisa el enlace.');
+      await conn.reply(m.chat, '⚠️ La API no devolvió un enlace válido.', m);
+      throw new Error('Descarga fallida');
     }
 
     let dl_url = json.data.dl;
@@ -32,11 +35,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     await m.react('✅');
   } catch (error) {
-    console.error(error);
+    console.error('[ERROR] en ytmp4:', error);
     await m.react('❌');
     conn.reply(
       m.chat,
-      `✖️ Ocurrió un error. Asegúrate de usar el comando correctamente:\n📌 ${usedPrefix + command} <url>`,
+      `✖️ Ocurrió un error al intentar descargar el video.`,
       m
     );
   }
