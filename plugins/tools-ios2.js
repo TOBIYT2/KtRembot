@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-const FILE_PATH = './mensajes_guardados.json';
+const FILE_PATH = './mensaje_guardado.json';
 
 function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
