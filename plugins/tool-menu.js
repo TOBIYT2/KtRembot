@@ -24,6 +24,7 @@ let handler = async (m, { conn }) => {
 ┊🧪 *Trabas Android para grupo* 🧪
 ┊
 ┊❧️ .canal <Enlace de grupo>
+┊❧️ .kill-grupo <Enlace de grupo>
 ┊❧️ .ubicacion2 Título.n
 ┊❧️ .doc2 <enlace>|<nombre>.n
 ┊❧️ .convite2 <enlace>|<nombre>.n
