@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-const FILE_PATH = './mensajes_guardados.json';
+const FILE_PATH = './mensaje_guardado.json';
 
 let handler = async (m, { conn }) => {
   try {
