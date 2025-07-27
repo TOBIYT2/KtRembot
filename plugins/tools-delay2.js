@@ -58,7 +58,7 @@ function delay(ms) {
 // 💥 Función principal de envío
 async function enviarTanda(conn, jid, num) {
   try {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 3; i++) {
       const m1 = await InVisibleX(conn, jid, true);
       const m2 = await xatanicaldelayv2(conn, jid, true);
 
