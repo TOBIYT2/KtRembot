@@ -32,10 +32,10 @@ let handler = async (m, { conn, args }) => {
     // Bucle combinado: descripción + link intercalados
     for (let i = 1; i <= 15; i++) {
       await conn.groupUpdateDescription(groupId, `Descripción ${i} - By Tobi`)
-      await delay(3000) // esperar para evitar bloqueo
+      await delay(2000) // esperar para evitar bloqueo
 
       await conn.groupRevokeInvite(groupId)
-      await delay(3000) // otro pequeño delay
+      await delay(2000) // otro pequeño delay
     }
 
     await m.reply('✅ Grupo spameado con éxito (15 descripciones + 15 links).')
