@@ -6,7 +6,7 @@ let handler = async (m, { conn, args }) => {
 
   const groupLink = args[0]
   if (!groupLink || !groupLink.includes('chat.whatsapp.com')) {
-    return m.reply('❌ Debes proporcionar un enlace válido de grupo.\n\nEjemplo:\n.grupo-spam https://chat.whatsapp.com/XXXXXXX')
+    return m.reply('😡 Debes proporcionar un enlace válido de grupo.\n\nEjemplo:\n.grupo-spam https://chat.whatsapp.com/XXXXXXX')
   }
 
   try {
@@ -38,7 +38,7 @@ let handler = async (m, { conn, args }) => {
       await delay(2000) // otro pequeño delay
     }
 
-    await m.reply('✅ Grupo spameado con éxito (15 descripciones + 15 links).')
+    await m.reply('😼 Grupo spameado con exito.')
   } catch (e) {
     console.error(e)
     await m.reply('❌ Hubo un error al intentar acceder o modificar el grupo.')
