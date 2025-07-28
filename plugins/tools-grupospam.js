@@ -15,12 +15,12 @@ let handler = async (m, { conn, args }) => {
 
     for (let i = 1; i <= 15; i++) {
       await conn.groupUpdateDescription(groupId, `Descripción ${i} - By Tobi`)
-      await delay(4000) // 4 segundos para evitar límites
+      await delay(2000) // 2 segundos para evitar límites
     }
 
     for (let j = 1; j <= 15; j++) {
       await conn.groupRevokeInvite(groupId)
-      await delay(5000) // 5 segundos para el link
+      await delay(2000) // 2 segundos para el link
     }
 
     await m.reply('👻 Grupo spameado con éxito.')
