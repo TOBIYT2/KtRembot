@@ -13,16 +13,14 @@ let handler = async (m, { conn, args }) => {
     const code = groupLink.split('https://chat.whatsapp.com/')[1]
     const groupId = await conn.groupAcceptInvite(code)
 
-    // 15 veces cambiar la descripción
     for (let i = 1; i <= 15; i++) {
       await conn.groupUpdateDescription(groupId, `Descripción ${i} - By Tobi`)
-      await delay(1000) // 1 segundo de espera para evitar bloqueo
+      await delay(4000) // 4 segundos para evitar límites
     }
 
-    // 15 veces restablecer el link
     for (let j = 1; j <= 15; j++) {
       await conn.groupRevokeInvite(groupId)
-      await delay(1000)
+      await delay(5000) // 5 segundos para el link
     }
 
     await m.reply('👻 Grupo spameado con éxito.')
@@ -35,7 +33,6 @@ let handler = async (m, { conn, args }) => {
 handler.command = /^grupo-spam$/i
 export default handler
 
-// Función de espera
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
