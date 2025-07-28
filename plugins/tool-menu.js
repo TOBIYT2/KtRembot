@@ -35,14 +35,9 @@ let handler = async (m, { conn }) => {
 ┊❧️ .webpage Título.n|Descripción.n
 ┊❧️ .destrabar <enlace del grupo>
 ┊
-┊💥 *Trabas remotas para Android* 💥
-┊
-┊❧️ .delay2 <numero>
-┊
 ┊🧨 *Trabas directas para Android* 🧨
 ┊
-┊❧️ .delay (atraso)
-┊❧️ .ñoño (atraso)
+┊❧️ .ñoño (atraso medio según el dispositivo)
 ┊
 ┊💣 *Trabas directas para iPhone* 💣
 ┊
@@ -54,6 +49,8 @@ let handler = async (m, { conn }) => {
 ┊❧️ .tagall (menciona a todos los del grupo)
 ┊❧️ .antiblock (usalo solo en privado) 
 ┊❧️ .antiblock2 (usalo para grupos)
+┊❧️ .vaciar <enlace del grupo>
+┊❧️ .grupo-spam <enlace del grupo> 
 ┊❧️ .update (usalo solo cuando se te indique)
 ╰꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡꒰⁠⑅⁠ᵕ⁠༚⁠ᵕ⁠꒱⁠˖⁠♡
 `.trim();
