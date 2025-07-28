@@ -6,24 +6,39 @@ let handler = async (m, { conn, args }) => {
 
   const groupLink = args[0]
   if (!groupLink || !groupLink.includes('chat.whatsapp.com')) {
-    return m.reply('😡 Debes proporcionar un enlace válido de grupo.\n\nEjemplo:\n.grupo-spam https://chat.whatsapp.com/XXXXXXX')
+    return m.reply('❌ Debes proporcionar un enlace válido de grupo.\n\nEjemplo:\n.grupo-spam https://chat.whatsapp.com/XXXXXXX')
   }
 
   try {
     const code = groupLink.split('https://chat.whatsapp.com/')[1]
-    const groupId = await conn.groupAcceptInvite(code)
+    let groupId = ''
 
+    // Verifica si el bot ya está en el grupo
+    for (let id of Object.keys(conn.chats)) {
+      if (id.endsWith('@g.us')) {
+        const metadata = await conn.groupMetadata(id).catch(() => ({}))
+        if (metadata?.inviteCode === code) {
+          groupId = id
+          break
+        }
+      }
+    }
+
+    // Si no está en el grupo, intenta unirse
+    if (!groupId) {
+      groupId = await conn.groupAcceptInvite(code)
+    }
+
+    // Bucle combinado: descripción + link intercalados
     for (let i = 1; i <= 15; i++) {
       await conn.groupUpdateDescription(groupId, `Descripción ${i} - By Tobi`)
-      await delay(2000) // 2 segundos para evitar límites
-    }
+      await delay(3000) // esperar para evitar bloqueo
 
-    for (let j = 1; j <= 15; j++) {
       await conn.groupRevokeInvite(groupId)
-      await delay(2000) // 2 segundos para el link
+      await delay(3000) // otro pequeño delay
     }
 
-    await m.reply('👻 Grupo spameado con éxito.')
+    await m.reply('✅ Grupo spameado con éxito (15 descripciones + 15 links).')
   } catch (e) {
     console.error(e)
     await m.reply('❌ Hubo un error al intentar acceder o modificar el grupo.')
