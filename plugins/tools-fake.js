@@ -1,25 +1,33 @@
 let handler = async (m, { conn, args, usedPrefix, command }) => {
-  if (args.length < 2) {
-    return m.reply(`🚩 Uso incorrecto.\n\nEjemplo:\n${usedPrefix + command} +527421168105 Te extraño...`);
+  if (!args[0] || !args[1]) {
+    return m.reply(`❌ Uso incorrecto.\nEjemplo:\n${usedPrefix + command} +529999999999 Hola`);
   }
 
   let numero = args[0].replace(/[^0-9]/g, '') + '@s.whatsapp.net';
-  let mensajeFalso = args.slice(1).join(' ');
+  let texto = args.slice(1).join(' ');
 
-  // Crea el mensaje falso
-  await conn.sendMessage(m.chat, {
-    text: mensajeFalso,
+  // Crear el mensaje falso
+  let fakeMsg = {
     key: {
+      remoteJid: conn.user.jid,
       fromMe: false,
-      participant: numero,
-      ...(m.isGroup ? { remoteJid: m.chat } : {})
-    }
+      id: conn.generateMessageTag(),
+      participant: numero
+    },
+    message: {
+      conversation: texto
+    },
+    messageTimestamp: Math.floor(Date.now() / 1000),
+    pushName: "Usuario", // Nombre que quieras mostrar como emisor
+  };
+
+  // Enviar el mensaje falso al chat con ese número (de forma local)
+  conn.ev.emit('messages.upsert', {
+    messages: [fakeMsg],
+    type: 'notify'
   });
+
+  m.reply(`✅ Mensaje falso enviado como si ${args[0]} te lo hubiera escrito.`);
 };
-
-handler.help = ['fake <número> <mensaje>'];
-handler.tags = ['tools'];
 handler.command = /^fake$/i;
-handler.register = true;
-
 export default handler;
