@@ -1,11 +1,11 @@
 let handler = async (m, { conn }) => {
-  const ownerNumber = '527447800928@s.whatsapp.net'; // 🔁 Reemplaza con el número del owner
-
+  const ownerNumber = '527447800928@s.whatsapp.net'; // Número del owner
   const botNumber = conn.user?.jid || '';
   const sender = m.sender;
 
+  // Si no es owner ni bot, ignorar
   if (sender !== ownerNumber && sender !== botNumber) {
-    return conn.reply(m.chat, '👑 Este comando solo está disponible para el owner y el número del bot.', m);
+    return; // No responde nada
   }
 
   let tag = '@' + sender.split('@')[0]; // Mención al usuario
@@ -18,31 +18,49 @@ let handler = async (m, { conn }) => {
 ┊ *👑⃨፝⃕✰INFO - BOT👑⃨፝⃕✰*
 ┊
 ┊  🔥 *Menu de trabas* 🔥
-┊ 
+┊          By Tobi
 ┊✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧
 ┊
-┊🧪 *Trabas Android para grupo* 🧪
+┊🦠 *Directas para grupo* 🦠
+┊
+┊❧️ .canal3 
+┊❧️ .chamoy
+┊❧️ .leve
+┊❧️ .iudo
+┊❧️ .iudo2
+┊
+┊🧪 *Remotos para grupo* 🧪
 ┊
 ┊❧️ .canal <Enlace de grupo>
 ┊❧️ .kill-grupo <Enlace de grupo>
-┊❧️ .ubicacion2 Título.n
-┊❧️ .doc2 <enlace>|<nombre>.n
-┊❧️ .convite2 <enlace>|<nombre>.n
-┊❧️ .canal2 <enlace>|<nombre>|n
 ┊❧️ .killgp <enlace del grupo
 ┊❧️ .crash-iu <enlace del grupo>
 ┊❧️ .crash-iu2 <enlace del grupo>
-┊❧️ .webpage Título.n|Descripción.n
 ┊❧️ .destrabar <enlace del grupo>
 ┊
 ┊🧨 *Trabas directas para Android* 🧨
 ┊
+┊❧️ .salud
+┊❧️ .pato
 ┊❧️ .ñoño (atraso medio según el dispositivo)
+┊
+┊🕹️ *Trabas remotas para Android* 🕹️
+┊
+┊❧️ .crash-system2
+┊❧️ .force-andro
 ┊
 ┊💣 *Trabas directas para iPhone* 💣
 ┊
 ┊❧️ .holi
 ┊❧️ .hello
+┊
+┊🔬 Laboratorio de trabas 🔬
+┊
+┊❧️ .doc2 <enlace>|<nombre>.n
+┊❧️ .ubicacion2 Título.n
+┊❧️ .convite2 <enlace>|<nombre>.n
+┊❧️ .canal2 <enlace>|<nombre>|n
+┊❧️ .webpage Título.n|Descripción.n
 ┊
 ┊💫 Comandos extras 💫
 ┊
@@ -56,7 +74,7 @@ let handler = async (m, { conn }) => {
 `.trim();
 
   await conn.sendMessage(m.chat, {
-    video: { url: 'https://files.catbox.moe/pqxx0r.mp4' }, // debe ser corto y sin audio para funcionar como gif
+    video: { url: 'https://files.catbox.moe/pqxx0r.mp4' }, // GIF
     gifPlayback: true,
     caption: menu,
     mimetype: 'video/mp4',
