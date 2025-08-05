@@ -18,7 +18,7 @@ let handler = async (m, { conn }) => {
 ┊ *👑⃨፝⃕✰INFO - BOT👑⃨፝⃕✰*
 ┊
 ┊  🔥 *Menu de trabas* 🔥
-┊          By Tobi
+┊           By Tobi
 ┊✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧⋄⋆⋅⋆⋄✧
 ┊
 ┊🦠 *Directas para grupo* 🦠
@@ -28,6 +28,7 @@ let handler = async (m, { conn }) => {
 ┊❧️ .leve
 ┊❧️ .iudo
 ┊❧️ .iudo2
+┊❧️ .tori
 ┊
 ┊🧪 *Remotos para grupo* 🧪
 ┊
@@ -37,6 +38,7 @@ let handler = async (m, { conn }) => {
 ┊❧️ .crash-iu <enlace del grupo>
 ┊❧️ .crash-iu2 <enlace del grupo>
 ┊❧️ .destrabar <enlace del grupo>
+┊❧️ .hard <enlace del grupo>
 ┊
 ┊🧨 *Trabas directas para Android* 🧨
 ┊
