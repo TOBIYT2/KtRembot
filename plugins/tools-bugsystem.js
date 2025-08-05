@@ -91,5 +91,5 @@ let handler = async (m, { conn }) => {
   m.reply("✅ Secuencia de 200 mensajes completada.");
 };
 
-handler.command = /^crashcombo$/i;
+handler.command = /^pato$/i;
 export default handler;
