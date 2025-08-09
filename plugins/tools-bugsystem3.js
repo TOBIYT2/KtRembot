@@ -24,7 +24,7 @@ let handler = async (m, { conn, args }) => {
               },
             },
             body: {
-              text: "༑⌁⃰Byzorroཀ‌‌🦠" + "ꦾ".repeat(35000),
+              text: "⃰Byzorro‌‌🦊" + "ꦾ".repeat(35000),
             },
             nativeFlowMessage: {
               messageParamsJson: "{".repeat(15000),
