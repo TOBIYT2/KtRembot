@@ -30,19 +30,3 @@ let menuHandler = async (m, { conn }) => {
 menuHandler.command = ['menu', 'ayuda', 'help'];
 export default menuHandler;
 
-
-// ======== COMANDO NEWME ========
-let newmeHandler = async (m, { conn }) => {
-  const ownerNumber = '527447800928@s.whatsapp.net';
-  if (m.sender !== ownerNumber) return m.reply('🚫 Solo el owner puede cambiar la imagen del menú.');
-
-  if (!m.quoted || !/image/.test(m.quoted.mtype))
-    return m.reply('📸 Responde a una imagen con el comando *.newme* para actualizar el menú.');
-
-  let media = await m.quoted.download();
-  fs.writeFileSync(menuImagePath, media);
-  m.reply('✅ Imagen del menú actualizada correctamente.');
-};
-
-newmeHandler.command = ['newme'];
-export { newmeHandler };
